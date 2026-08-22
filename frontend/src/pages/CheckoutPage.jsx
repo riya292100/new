@@ -11,7 +11,8 @@ import CheckoutPaymentMethods from '../components/checkout/CheckoutPaymentMethod
 import CheckoutOrderSummary from '../components/checkout/CheckoutOrderSummary';
 
 const CheckoutPage = () => {
-  const { cart, appliedCoupon, removeCoupon, setCouponModalOpen, finalPayableAmount, clearCart } = useCart();
+  const { cart, appliedCoupon, removeCoupon, setCouponModalOpen, finalPayableAmount, clearCart } =
+    useCart();
   const { user } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
@@ -44,7 +45,8 @@ const CheckoutPage = () => {
       return;
     }
 
-    addressApi.getAddresses()
+    addressApi
+      .getAddresses()
       .then((res) => {
         if (res?.data && res.data.length > 0) {
           setAddresses(res.data);
@@ -104,7 +106,9 @@ const CheckoutPage = () => {
             spread: 70,
             origin: { y: 0.6 },
           });
-        } catch (e) {}
+        } catch (_e) {
+          // Confetti animation is progressive enhancement
+        }
 
         addToast('Order placed successfully!', 'success');
         navigate(`/track/${res.data.orderNumber}`);
@@ -119,7 +123,19 @@ const CheckoutPage = () => {
   return (
     <div className="container" style={{ paddingTop: '28px', paddingBottom: '60px' }}>
       {/* 15-Min Delivery Badge */}
-      <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '16px', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', color: '#065f46' }}>
+      <div
+        style={{
+          background: '#ecfdf5',
+          border: '1px solid #a7f3d0',
+          borderRadius: '16px',
+          padding: '14px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          marginBottom: '24px',
+          color: '#065f46',
+        }}
+      >
         <Clock size={24} color="#059669" />
         <div>
           <strong style={{ fontSize: '0.95rem' }}>⚡ 10-15 Minute Express Delivery Active</strong>
@@ -129,7 +145,13 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '28px',
+        }}
+      >
         {/* Left Column: Address & Payment */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <CheckoutAddressSelector
