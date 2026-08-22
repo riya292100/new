@@ -1,17 +1,19 @@
 # ⚡ QuickCart — Instant 10-15 Min Grocery Delivery Platform
 
+[![CI/CD Pipeline](https://github.com/riya292100/new/actions/workflows/ci.yml/badge.svg)](https://github.com/riya292100/new/actions/workflows/ci.yml)
+[![CodeQL Security Scan](https://github.com/riya292100/new/actions/workflows/codeql.yml/badge.svg)](https://github.com/riya292100/new/actions/workflows/codeql.yml)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.3-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb.svg)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.4-646cff.svg)](https://vitejs.dev/)
-[![STOMP / SockJS](https://img.shields.io/badge/WebSocket-STOMP%20%2F%20SockJS-blue.svg)](https://stomp.github.io/)
-[![Database](https://img.shields.io/badge/Database-H2%20%2F%20MySQL%208-4479A1.svg)](https://www.mysql.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**QuickCart** is a modern, full-stack, hyper-local quick commerce grocery delivery platform (inspired by Blinkit, Zepto, and Instacart) engineered with a **Java 21 / Spring Boot 3** REST & WebSocket backend and a **React 18 / Vite** glassmorphism storefront.
+**QuickCart** is a modern, enterprise-grade, fullstack quick-commerce grocery delivery platform (inspired by Blinkit, Zepto, and Instacart) engineered with a **Java 21 / Spring Boot 3** REST & WebSocket backend and a **React 18 / Vite** glassmorphism storefront, fully packaged as a **Progressive Web App (PWA)** and **Native Android App (Capacitor)** for Google Play Store release.
 
 ---
 
-## 🌟 Key Features
+## 🌟 Key Capabilities
 
 ### 🛒 1. Customer Storefront
 - **Hyper-Local Catalog**: Instant grocery catalog with category filtering, search autocomplete, brand filters, and deals of the day.
@@ -26,160 +28,104 @@
 - **One-Click Navigation & Customer Calling**: In-app links to customer address and contact number.
 
 ### 🛡️ 3. Admin Control Center
-- **Executive KPI Dashboard**: Live metrics for total sales, completed orders, active delivery partners, and daily sales charts.
+- **Executive KPI Dashboard**: Live metrics for total sales, completed orders, active delivery partners, and inventory alerts.
 - **Dark Store Catalog Management**: Add, update, delete, and restock products with instant threshold alerts.
 - **Order Dispatcher**: Real-time order monitor with manual/automatic delivery partner assignment.
 - **Promotions Manager**: Create and manage promo coupons and discount rules.
+
+### 📱 4. Mobile & Google Play Store Ready
+- **Progressive Web App (PWA)**: Web App Manifest, Service Worker offline caching, and 1-click home screen installation.
+- **Native Android Project**: Capacitor Gradle project with release Keystore pre-configured for `.aab` / `.apk` generation.
+- **Privacy Policy**: Google Play Store compliant privacy policy at [`privacy-policy.html`](file:///c:/Users/HP/Desktop/new/frontend/public/privacy-policy.html).
 
 ---
 
 ## 🏗️ Architecture & Tech Stack
 
-### Backend
-- **Framework**: Spring Boot 3.3.3
-- **Language**: Java 21
-- **Security**: Spring Security 6 with JWT (Stateless authentication & Role-Based Access Control)
-- **Real-Time Communication**: Spring WebSocket (`@EnableWebSocketMessageBroker`) + SockJS + STOMP
-- **Data Persistence**: Spring Data JPA / Hibernate 6
-- **Database**: H2 In-Memory (Dev Profile) / MySQL 8 (Prod Profile)
-- **API Documentation**: SpringDoc OpenAPI / Swagger UI 2.6.0
-- **Utilities**: Lombok, JJWT 0.12.6, Bean Validation (Hibernate Validator)
-
-### Frontend
-- **Framework**: React 18.3 + Vite 5.4
-- **Routing**: React Router DOM 6
-- **State Management**: React Context API (`AuthContext`, `CartContext`, `LocationContext`, `ToastContext`)
-- **HTTP Client**: Axios with interceptors for JWT injection
-- **Real-Time Client**: `@stomp/stompjs` + `sockjs-client`
-- **Icons & UI**: Lucide React + Canvas Confetti + Custom Vanilla CSS Glassmorphism Design System
-
----
-
-## 📁 Repository Structure
-
-```
-quickcart/
-├── backend/
-│   ├── src/main/java/com/quickcart/
-│   │   ├── config/             # Security, WebConfig, WebSocket, DataSeeder
-│   │   ├── controller/         # Auth, Product, Cart, Order, Admin, Delivery, Review, Payment
-│   │   ├── dto/                # Request & Response Data Transfer Objects
-│   │   ├── entity/             # JPA Entities (User, Role, Product, Order, Cart, Coupon, etc.)
-│   │   ├── exception/          # Global Exception Handler & Custom Exceptions
-│   │   ├── repository/         # Spring Data JPA Repositories
-│   │   ├── security/           # JWT Utils, AuthTokenFilter, UserDetails
-│   │   ├── service/            # Business Logic & WebSocket Event Broadcasting
-│   │   └── QuickCartApplication.java
-│   ├── src/main/resources/
-│   │   ├── application.yml     # Core Configuration
-│   │   ├── application-dev.yml # H2 in-memory DB profile
-│   │   ├── application-prod.yml# MySQL 8 production profile
-│   │   └── schema-mysql.sql    # DDL schema script
-│   └── pom.xml
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/         # Header, Footer, Modals, ProductCards, LiveRadarMap, etc.
-│   │   ├── context/            # Auth, Cart, Location, Toast context providers
-│   │   ├── pages/              # Home, Category, Details, Checkout, Tracking, Admin, Driver
-│   │   ├── services/           # Axios API services & STOMP WebSocket service
-│   │   ├── App.jsx             # Main Application Routing
-│   │   ├── index.css           # Custom Glassmorphism design system
-│   │   └── main.jsx
-│   ├── package.json
-│   └── vite.config.js
-│
-├── .gitignore
-└── README.md
+```mermaid
+graph TD
+  User[Mobile & Web Client] -->|HTTPS & REST| SpringBoot[Spring Boot 3.3.3 Backend API]
+  User -->|WSS / STOMP| STOMPBroker[In-Memory Message Broker /ws-quickcart]
+  SpringBoot -->|Spring Data JPA| Database[(H2 Dev / MySQL 8 Prod)]
+  Driver[Delivery Partner App] -->|WebSocket GPS Feeds| STOMPBroker
+  STOMPBroker -->|Live Radar Push| User
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start with Docker Compose
 
-### Prerequisites
-- **JDK 21** or higher
-- **Node.js 18+** and **npm**
-- **Maven 3.8+** (or use bundled IntelliJ/IDE maven)
+Run the entire fullstack platform (MySQL 8.0, Spring Boot Backend, and Nginx React Frontend) in one command:
 
----
+```bash
+# 1. Clone repository
+git clone https://github.com/riya292100/new.git
+cd new
 
-### Running the Backend
+# 2. Launch multi-container stack
+docker compose up --build
+```
 
-1. Navigate to the `backend/` directory:
-   ```bash
-   cd backend
-   ```
-
-2. Compile and launch with Spring Boot:
-   ```bash
-   mvn spring-boot:run
-   ```
-   *The server will start on **`http://localhost:8080`** with sample products, categories, coupons, and demo accounts pre-seeded.*
-
-3. Access the API documentation:
-   - **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-   - **H2 Console**: [http://localhost:8080/h2-console](http://localhost:8080/h2-console) (`jdbc:h2:mem:quickcartdb`, User: `sa`, Password: `""`)
+- **Frontend App**: `http://localhost:5173` (or `http://localhost:80`)
+- **Backend REST API**: `http://localhost:8080`
+- **Swagger API Docs**: `http://localhost:8080/swagger-ui.html`
 
 ---
 
-### Running the Frontend
+## 💻 Local Development Setup
 
-1. Navigate to the `frontend/` directory:
-   ```bash
-   cd frontend
-   ```
+### Backend (Spring Boot 3.3.3 / Java 21)
+```bash
+cd backend
+mvn clean spring-boot:run
+```
 
-2. Install dependencies (if not already installed):
-   ```bash
-   npm install
-   ```
-
-3. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-   *The storefront will be available at **`http://localhost:5173`**.*
+### Frontend (React 18 / Vite 5)
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ---
 
-## 🔐 1-Click Demo Accounts
+## 🧪 Automated Testing
 
-| Role | Email | Password | Primary Interface |
-| :--- | :--- | :--- | :--- |
-| **Customer** | `customer@quickcart.com` | `Customer@123` | Storefront, Cart, Checkout, Order Tracking |
-| **Delivery Rider** | `driver@quickcart.com` | `Driver@123` | Driver Portal (`/delivery-partner`) |
-| **Admin** | `admin@quickcart.com` | `Admin@123` | Admin Control Center (`/admin`) |
+### Frontend Test Suite (Vitest + React Testing Library)
+```bash
+cd frontend
+npm test
+```
 
----
+### Backend Test Suite (JUnit 5 & Mockito)
+```bash
+cd backend
+mvn test
+```
 
-## 📡 Key API Endpoints
-
-### 🔑 Authentication (`/api/auth`)
-- `POST /api/auth/register` — Register customer or delivery partner
-- `POST /api/auth/login` — Sign in and receive JWT token
-- `GET /api/auth/me` — Current authenticated user profile
-
-### 🛒 Catalog & Search (`/api`)
-- `GET /api/categories` — List active categories
-- `GET /api/products` — Filter products by category, price, brand, and sorting
-- `GET /api/products/featured` — Get featured items
-- `GET /api/products/daily-deals` — Get daily flash deals
-- `GET /api/products/search/suggestions?q=` — Real-time instant search suggestions
-
-### 🛍️ Cart & Checkout (`/api/cart`, `/api/orders`, `/api/coupons`)
-- `GET /api/cart` / `POST /api/cart/items` — Manage user cart
-- `POST /api/coupons/validate` — Validate promo code and calculate discount
-- `POST /api/orders` — Create new instant delivery order
-- `GET /api/orders/track/{orderNumber}` — Real-time order details and tracking status
-
-### 🛡️ Admin & Inventory (`/api/admin`)
-- `GET /api/admin/dashboard/stats` — KPI metrics, sales analytics, top-selling items
-- `GET /api/admin/inventory/low-stock` — Products below re-order threshold
-- `POST /api/admin/products` / `PUT /api/admin/products/{id}` — CRUD operations for catalog
-- `POST /api/admin/orders/assign-partner` — Manual order assignment to delivery partners
+### Linting & Formatting
+```bash
+cd frontend
+npm run lint
+npm run format
+```
 
 ---
 
-## 📄 License
-This project is open-source and available under the [MIT License](LICENSE).
+## 🔑 Demo Accounts
+
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Customer** | `customer@quickcart.com` | `Customer@123` |
+| **Delivery Driver** | `driver@quickcart.com` | `Driver@123` |
+| **Admin** | `admin@quickcart.com` | `Admin@123` |
+
+---
+
+## 📄 License & Governance
+
+- **License**: [MIT License](LICENSE)
+- **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Security Policy**: [SECURITY.md](SECURITY.md)
+- **Code of Conduct**: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- **Changelog**: [CHANGELOG.md](CHANGELOG.md)

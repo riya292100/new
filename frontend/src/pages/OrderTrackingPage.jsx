@@ -25,14 +25,17 @@ const OrderTrackingPage = () => {
   const [cancelling, setCancelling] = useState(false);
   const { addToast } = useToast();
 
+  const [fetchError, setFetchError] = useState(null);
+
   const fetchOrder = async () => {
     try {
+      setFetchError(null);
       const res = await orderApi.trackOrder(orderNumber);
       if (res?.data) {
         setOrder(res.data);
       }
     } catch (err) {
-      console.warn('Track order failed:', err);
+      setFetchError(err.message || 'Unable to retrieve order details. Retrying...');
     } finally {
       setLoading(false);
     }

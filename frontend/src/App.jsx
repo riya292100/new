@@ -14,6 +14,7 @@ import RoleSwitcher from './components/RoleSwitcher';
 import BottomNav from './components/BottomNav';
 import PwaInstallPrompt from './components/PwaInstallPrompt';
 import OfflineNotice from './components/OfflineNotice';
+import ErrorBoundary from './components/ErrorBoundary';
 
 import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
@@ -136,17 +137,19 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <ToastProvider>
-        <AuthProvider>
-          <LocationProvider>
-            <CartProvider>
-              <AppContent />
-            </CartProvider>
-          </LocationProvider>
-        </AuthProvider>
-      </ToastProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ToastProvider>
+          <AuthProvider>
+            <LocationProvider>
+              <CartProvider>
+                <AppContent />
+              </CartProvider>
+            </LocationProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 };
 

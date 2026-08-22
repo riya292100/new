@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # MySQL Database Service
+  mysql-db:
+    image: mysql:8.0
+    container_name: quickcart-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: quickcart_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: quickcart_user
+      MYSQL_PASSWORD: quickcart_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quickcart-net
+
+  # Spring Boot Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: quickcart-backend
+    restart: unless-stopped
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/quickcart_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: quickcart_user
+      SPRING_DATASOURCE_PASSWORD: quickcart_password
+      QUICKCART_APP_JWT_SECRET: dGVzdFNlY3JldEtleUZvclF1aWNrQ2FydEFwcGxpY2F0aW9uTG9uZ0Vub3VnaFRvQmVTZWN1cmUyMDI2
+    ports:
+      - "8080:8080"
+    networks:
+      - quickcart-net
+
+  # React / Vite Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: quickcart-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "5173:80"
+    networks:
+      - quickcart-net
+
+networks:
+  quickcart-net:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authApi } from '../services/api';
 import { useToast } from './ToastContext';
+import { DEMO_USERS } from '../utils/demoConfig';
 
 const AuthContext = createContext(null);
 
@@ -21,7 +22,6 @@ export const AuthProvider = ({ children }) => {
             setUser(res.data);
           }
         } catch (err) {
-          console.warn('Session expired or invalid token:', err);
           localStorage.removeItem('quickcart_token');
           setUser(null);
         }
@@ -29,8 +29,8 @@ export const AuthProvider = ({ children }) => {
         // Auto-login as demo customer if fresh session to make exploration effortless
         try {
           const demoRes = await authApi.login({
-            email: 'customer@quickcart.com',
-            password: 'Customer@123',
+            email: DEMO_USERS.customer.email,
+            password: DEMO_USERS.customer.password,
           });
           if (demoRes?.data) {
             localStorage.setItem('quickcart_token', demoRes.data.token);
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
             });
           }
         } catch (e) {
-          console.log('Demo auto-login fallback ready');
+          // Demo fallback ready
         }
       }
       setLoading(false);
@@ -109,18 +109,15 @@ export const AuthProvider = ({ children }) => {
 
   const switchDemoRole = async (roleName) => {
     try {
-      let email = 'customer@quickcart.com';
-      let password = 'Customer@123';
+      let targetUser = DEMO_USERS.customer;
 
       if (roleName === 'ADMIN') {
-        email = 'admin@quickcart.com';
-        password = 'Admin@123';
+        targetUser = DEMO_USERS.admin;
       } else if (roleName === 'DELIVERY') {
-        email = 'driver@quickcart.com';
-        password = 'Driver@123';
+        targetUser = DEMO_USERS.driver;
       }
 
-      await login(email, password);
+      await login(targetUser.email, targetUser.password);
       addToast(`Switched to ${roleName} mode`, 'info');
     } catch (err) {
       addToast('Failed to switch demo role', 'error');

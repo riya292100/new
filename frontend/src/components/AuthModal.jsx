@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { X, Zap, Lock, Mail, User, Phone, Shield, Bike, ShoppingBag } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { DEMO_USERS } from '../utils/demoConfig';
+import { validateEmail, validatePassword, validatePhone, sanitizeInput } from '../utils/validation';
 
 const AuthModal = () => {
   const { authModalOpen, authModalMode, closeAuthModal, openAuthModal, login, register } = useAuth();
+  const { addToast } = useToast();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,36 +22,57 @@ const AuthModal = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Input validations
+    const emailVal = validateEmail(email);
+    if (!emailVal.isValid) {
+      addToast(emailVal.error, 'error');
+      return;
+    }
+
+    const passVal = validatePassword(password);
+    if (!passVal.isValid) {
+      addToast(passVal.error, 'error');
+      return;
+    }
+
+    if (!isLogin) {
+      const phoneVal = validatePhone(phone);
+      if (!phoneVal.isValid) {
+        addToast(phoneVal.error, 'error');
+        return;
+      }
+      if (!fullName.trim()) {
+        addToast('Full name is required', 'error');
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       if (isLogin) {
-        await login(email, password);
+        await login(sanitizeInput(email), password);
       } else {
         await register({
-          fullName,
-          email,
-          phone,
+          fullName: sanitizeInput(fullName),
+          email: sanitizeInput(email),
+          phone: sanitizeInput(phone),
           password,
           roles: [selectedRole],
         });
       }
     } catch (err) {
-      // toast shown in context
+      // toast handled in auth context
     } finally {
       setLoading(false);
     }
   };
 
   const handleQuickDemoFill = (type) => {
-    if (type === 'customer') {
-      setEmail('customer@quickcart.com');
-      setPassword('Customer@123');
-    } else if (type === 'driver') {
-      setEmail('driver@quickcart.com');
-      setPassword('Driver@123');
-    } else if (type === 'admin') {
-      setEmail('admin@quickcart.com');
-      setPassword('Admin@123');
+    const demoUser = DEMO_USERS[type];
+    if (demoUser) {
+      setEmail(demoUser.email);
+      setPassword(demoUser.password);
     }
   };
 
