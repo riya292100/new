@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.0] - 2026-08-22
+
+### Added
+- **Monorepo & Developer Tooling**:
+  - Root `package.json` with npm workspaces and unified lifecycle commands (`npm run test:all`, `npm run lint:all`).
+  - Root `Makefile` for single-step build and test orchestration (`make test-all`).
+  - VS Code DevContainer definition (`.devcontainer/devcontainer.json`).
+- **Structured Logging & Robustness**:
+  - Client-side structured logger (`utils/logger.js`) with log levels, metadata tagging, and error serialization.
+  - Replaced bare console statements and silent error swallowing across all pages and context providers.
+- **Isolated Frontend Page Tests**:
+  - Added unit test suites with mocked API services for `HomePage`, `DeliveryPartnerPortal`, `CategoryPage`, `OrderHistoryPage`, `ProfilePage`, and `Header`.
+- **CSS Modularization**:
+  - Extracted shared component styling into `styles/components.css`.
+- **Linter & Formatter Recognition**:
+  - Committed explicit `.eslintrc.cjs` and `.prettierrc.json` configs for multi-tool static analyzer compatibility.
+
+---
+
+## [1.1.0] - 2026-08-22
+
+### Added
+- **Coverage & Test Thresholds**:
+  - Integrated `@vitest/coverage-v8` with enforced CI coverage thresholds.
+  - Added 20 component and unit test suites across core application features.
+- **Backend Test Profile**:
+  - Dedicated `application-test.yml` for isolated in-memory H2 database testing with zero external dependencies.
+- **CI/CD Hardening**:
+  - Added Prettier format verification and `npm audit --audit-level=critical` security checks in GitHub Actions.
+
+---
+
 ## [1.0.0] - 2026-08-22
 
 ### Added

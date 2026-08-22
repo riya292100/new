@@ -89,36 +89,40 @@ npm run dev
 
 ---
 
-## 🧪 Automated Testing
+## 🧪 Automated Testing & Verification
 
-### Frontend Test Suite (Vitest + React Testing Library)
+Run the entire fullstack test suite (Frontend Vitest with V8 coverage + Backend JUnit 5 isolated H2 tests) in one unified command:
+
 ```bash
-cd frontend
-npm test
+# Option 1: Root npm script
+npm run test:all
+
+# Option 2: Makefile
+make test-all
 ```
 
-### Backend Test Suite (JUnit 5 & Mockito)
+### Individual Test Commands
 ```bash
-cd backend
-mvn test
-```
+# Frontend Vitest Suite with V8 Coverage
+cd frontend && npm run coverage
 
-### Linting & Formatting
-```bash
-cd frontend
-npm run lint
-npm run format
+# Backend Isolated JUnit 5 Suite
+cd backend && mvn clean test -Dspring.profiles.active=test
+
+# Lint & Formatting Check
+npm run lint:all
 ```
 
 ---
 
-## 🔑 Demo Accounts
+## 🔑 Demo Access
 
-| Role | Email | Password |
-| :--- | :--- | :--- |
-| **Customer** | `customer@quickcart.com` | `Customer@123` |
-| **Delivery Driver** | `driver@quickcart.com` | `Driver@123` |
-| **Admin** | `admin@quickcart.com` | `Admin@123` |
+QuickCart includes instant role switching via the top navigation bar during local development:
+- **Instant Demo Mode**: Toggle between **Customer**, **Delivery Partner**, and **Admin Portal** with 1-click in the UI header without entering credentials.
+- **Default Seed Accounts**: Configured via application environment variables (`.env.example`) and seeded at first boot:
+  - Customer (`customer@quickcart.com`)
+  - Delivery Partner (`driver@quickcart.com`)
+  - Dark Store Administrator (`admin@quickcart.com`)
 
 ---
 
@@ -129,3 +133,4 @@ npm run format
 - **Security Policy**: [SECURITY.md](SECURITY.md)
 - **Code of Conduct**: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+- **DevContainer**: [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json)
