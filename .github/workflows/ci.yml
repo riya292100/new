@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  frontend-ci:
-    name: Frontend Tests & Build
+  lint-and-format:
+    name: Frontend Lint & Code Style
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -25,16 +25,47 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
-      - name: Run Frontend Tests (Vitest)
+      - name: Verify Formatting (Prettier)
         working-directory: ./frontend
-        run: npm test
+        run: npm run format:check
+
+      - name: Run ESLint
+        working-directory: ./frontend
+        run: npm run lint
+
+  frontend-ci:
+    name: Frontend Tests & Coverage
+    runs-on: ubuntu-latest
+    needs: [ lint-and-format ]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Security Vulnerability Audit
+        working-directory: ./frontend
+        run: npm audit --audit-level=critical
+
+      - name: Run Vitest Suite with V8 Coverage
+        working-directory: ./frontend
+        run: npm run coverage
 
       - name: Build Production Assets
         working-directory: ./frontend
         run: npm run build
 
   backend-ci:
-    name: Backend Tests & Build
+    name: Backend Tests & Build (Standalone H2)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -47,16 +78,16 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: Compile and Run JUnit 5 Tests
+      - name: Compile and Run Isolated JUnit 5 Tests
         working-directory: ./backend
-        run: mvn clean test
+        run: mvn clean test -Dspring.profiles.active=test
 
-      - name: Package JAR
+      - name: Package Standalone Production JAR
         working-directory: ./backend
         run: mvn package -DskipTests
 
   docker-ci:
-    name: Docker Build Validation
+    name: Docker Stack Build Validation
     runs-on: ubuntu-latest
     needs: [ frontend-ci, backend-ci ]
     steps:
@@ -66,5 +97,5 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker Compose Stack
+      - name: Build Fullstack Docker Stack
         run: docker compose build
