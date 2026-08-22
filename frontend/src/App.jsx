@@ -11,6 +11,9 @@ import CartDrawer from './components/CartDrawer';
 import CouponModal from './components/CouponModal';
 import AuthModal from './components/AuthModal';
 import RoleSwitcher from './components/RoleSwitcher';
+import BottomNav from './components/BottomNav';
+import PwaInstallPrompt from './components/PwaInstallPrompt';
+import OfflineNotice from './components/OfflineNotice';
 
 import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
@@ -57,6 +60,12 @@ const AppContent = () => {
       {/* Top role-switcher demo bar */}
       <RoleSwitcher />
 
+      {/* Network Offline / Reconnected Banner */}
+      <OfflineNotice />
+
+      {/* 1-Click PWA / Mobile Install Banner */}
+      <PwaInstallPrompt />
+
       {/* Sticky Header */}
       <Header />
 
@@ -70,7 +79,7 @@ const AppContent = () => {
       <AuthModal />
 
       {/* Main Page Routes */}
-      <main style={{ flex: 1 }}>
+      <main style={{ flex: 1, paddingBottom: '70px' }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
@@ -115,6 +124,9 @@ const AppContent = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
+
+      {/* Native App Bottom Navigation Bar (Mobile / Tablet) */}
+      <BottomNav />
 
       {/* Footer */}
       <Footer />
