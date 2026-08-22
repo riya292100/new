@@ -1,3 +1,5 @@
+@import './styles/modal.css';
+
 :root {
   --primary: #059669;
   --primary-hover: #047857;
@@ -39,7 +41,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Plus Jakarta Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -50,7 +56,13 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6, .brand-font {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.brand-font {
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -217,8 +229,15 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 
 /* Animations */
 @keyframes pulse-subtle {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.04); opacity: 0.9; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.9;
+  }
 }
 
 .animate-pulse-subtle {
@@ -226,8 +245,12 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .skeleton {
@@ -239,7 +262,9 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 
 /* Card Hover Elevation */
 .hover-elevate {
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hover-elevate:hover {
@@ -313,11 +338,15 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 
 @media (min-width: 640px) {
-  .container { padding: 0 24px; }
+  .container {
+    padding: 0 24px;
+  }
 }
 
 @media (min-width: 1024px) {
-  .container { padding: 0 32px; }
+  .container {
+    padding: 0 32px;
+  }
 }
 
 /* Modal and Drawer Overlays */
@@ -357,15 +386,28 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 
 @keyframes slideInRight {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 /* Radar & GPS Animation */
 @keyframes radarPulse {
-  0% { transform: scale(0.9); opacity: 0.8; }
-  50% { transform: scale(1.4); opacity: 0.2; }
-  100% { transform: scale(1.8); opacity: 0; }
+  0% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
 }
 
 .radar-wave {
@@ -379,8 +421,12 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 
 /* Spinner for loading states */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-spin {
@@ -409,14 +455,30 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   animation: slideInRight 0.3s ease-out;
 }
 
-.toast-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
-.toast-error   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-.toast-info    { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
-.toast-warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+.toast-success {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+.toast-error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+.toast-info {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+.toast-warning {
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
 
 /* Native Mobile Bottom Navigation */
 .mobile-bottom-nav {
@@ -510,8 +572,14 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 
 @keyframes slideDown {
-  from { transform: translateY(-100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .pwa-install-content {
@@ -638,5 +706,3 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   background: #059669;
   color: #ffffff;
 }
-
-
