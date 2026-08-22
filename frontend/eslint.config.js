@@ -1,14 +1,15 @@
-import js from '@eslint/js';
-import reactPlugin from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import globals from 'globals';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const reactPlugin = require('eslint-plugin-react');
+const reactHooks = require('eslint-plugin-react-hooks');
+const reactRefresh = require('eslint-plugin-react-refresh');
+const globals = require('globals');
 
 export default [
   {
-    ignores: ['dist/**', 'android/**', 'node_modules/**', 'coverage/**'],
+    ignores: ['dist/**', 'android/**', 'node_modules/**', 'coverage/**', '**/*.local'],
   },
-  js.configs.recommended,
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
