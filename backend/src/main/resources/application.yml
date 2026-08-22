@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: quickcart-backend
+  profiles:
+    active: dev
+
+server:
+  port: 8080
+
+quickcart:
+  app:
+    jwtSecret: "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"
+    jwtExpirationMs: 86400000 # 24 hours
+    deliveryRadiusKm: 15.0
+    freeDeliveryThreshold: 199.0
+    baseDeliveryFee: 25.0
+    platformFee: 5.0
+    taxRate: 0.05
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
