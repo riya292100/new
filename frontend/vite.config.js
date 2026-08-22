@@ -7,7 +7,11 @@ export default defineConfig({
     global: 'window',
   },
   server: {
+    host: '0.0.0.0',
     port: 5173,
+    watch: {
+      ignored: ['**/android/**', '**/dist/**', '**/node_modules/**'],
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:8080',
