@@ -1,0 +1,31 @@
+{
+  "name": "quickcart-monorepo",
+  "version": "1.2.0",
+  "private": true,
+  "description": "QuickCart - 10-Minute Hyperlocal Fullstack Grocery Delivery Application",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "test": "cd frontend && npm run test",
+    "test:coverage": "cd frontend && npm run coverage",
+    "test:all": "cd frontend && npm run coverage",
+    "lint": "cd frontend && npm run lint",
+    "format": "cd frontend && npm run format",
+    "format:check": "cd frontend && npm run format:check",
+    "lint:all": "cd frontend && npm run lint && npm run format:check"
+  },
+  "keywords": [
+    "quickcart",
+    "grocery-delivery",
+    "react",
+    "vite",
+    "spring-boot",
+    "vitest",
+    "docker"
+  ],
+  "author": "QuickCart Engineering Team",
+  "license": "MIT"
+}
