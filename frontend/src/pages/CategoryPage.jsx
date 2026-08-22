@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
-import { catalogApi } from '../services/api';
+import { catalogApi, categoryApi } from '../services/api';
+import logger from '../utils/logger';
 import ProductCard from '../components/ProductCard';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { Filter, SlidersHorizontal, ArrowUpDown, Check } from 'lucide-react';
@@ -68,7 +69,7 @@ const CategoryPage = () => {
           }
         }
       } catch (err) {
-        console.warn('Error fetching category products:', err);
+        logger.warn('CategoryPage', 'Error fetching category products', err);
       } finally {
         setLoading(false);
       }

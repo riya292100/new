@@ -3,6 +3,7 @@ import { Search, X, Zap, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { catalogApi } from '../services/api';
 import { useCart } from '../context/CartContext';
+import logger from '../utils/logger';
 
 const POPULAR_SEARCHES = [
   'Mangoes',
@@ -38,7 +39,7 @@ const SearchAutocomplete = () => {
           setSuggestions(res.data);
         }
       } catch (err) {
-        console.warn('Search suggestions failed:', err);
+        logger.warn('SearchAutocomplete', 'Search suggestions failed', err);
       } finally {
         setLoading(false);
       }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { deliveryApi } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import logger from '../utils/logger';
 import {
   Bike,
   CheckCircle2,
@@ -34,7 +35,7 @@ const DeliveryPartnerPortal = () => {
       if (profRes?.data) setProfile(profRes.data);
       if (ordersRes?.data) setAssignedOrders(ordersRes.data);
     } catch (err) {
-      console.warn('Driver fetch failed:', err);
+      logger.warn('DeliveryPartnerPortal', 'Driver fetch failed', err);
     } finally {
       setLoading(false);
     }

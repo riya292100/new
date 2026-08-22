@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, Clock, ShieldCheck, Tag, ArrowRight, Sparkles, Flame, ThumbsUp } from 'lucide-react';
-import { catalogApi } from '../services/api';
+import logger from '../utils/logger';
+import { catalogApi, categoryApi } from '../services/api';
 import CategoryCarousel from '../components/CategoryCarousel';
 import ProductCard from '../components/ProductCard';
 import ProductDetailModal from '../components/ProductDetailModal';
@@ -58,11 +59,25 @@ const HomePage = () => {
           catalogApi.getFeaturedProducts(),
           catalogApi.getDailyDeals(),
         ]);
-        if (catRes?.data) setCategories(catRes.data);
-        if (featRes?.data) setFeaturedProducts(featRes.data);
-        if (dealsRes?.data) setDailyDeals(dealsRes.data);
+        if (catRes?.data) {
+          setCategories(catRes.data);
+        } else if (Array.isArray(catRes)) {
+          setCategories(catRes);
+        }
+
+        if (featRes?.data) {
+          setFeaturedProducts(featRes.data);
+        } else if (Array.isArray(featRes)) {
+          setFeaturedProducts(featRes);
+        }
+
+        if (dealsRes?.data) {
+          setDailyDeals(dealsRes.data);
+        } else if (Array.isArray(dealsRes)) {
+          setDailyDeals(dealsRes);
+        }
       } catch (err) {
-        console.warn('Failed to load homepage data:', err);
+        logger.warn('HomePage', 'Failed to load homepage data', err);
       } finally {
         setLoading(false);
       }

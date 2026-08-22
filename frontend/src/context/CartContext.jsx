@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { cartApi, couponApi } from '../services/api';
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
+import logger from '../utils/logger';
 
 export const CartContext = createContext(null);
 
@@ -36,7 +37,7 @@ export const CartProvider = ({ children }) => {
         setCart(res.data);
       }
     } catch (err) {
-      console.warn('Could not load cart:', err.message);
+      logger.warn('CartContext', 'Could not load cart', err);
     }
   }, [user]);
 

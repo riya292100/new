@@ -1,5 +1,6 @@
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import logger from '../utils/logger';
 
 class WebSocketService {
   constructor() {
@@ -28,13 +29,19 @@ class WebSocketService {
           this.connected = false;
         },
         onStompError: (frame) => {
-          console.warn('STOMP broker error:', frame.headers['message']);
+          logger.warn('WebSocketService', 'STOMP broker error', {
+            message: frame.headers['message'],
+          });
         },
       });
 
       this.client.activate();
     } catch (err) {
-      console.warn('WebSocket connection init failed, will use polling fallback:', err);
+      logger.warn(
+        'WebSocketService',
+        'WebSocket connection init failed, will use polling fallback',
+        err
+      );
     }
   }
 
