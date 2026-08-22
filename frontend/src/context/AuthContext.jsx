@@ -3,7 +3,7 @@ import { authApi } from '../services/api';
 import { useToast } from './ToastContext';
 import { DEMO_USERS } from '../utils/demoConfig';
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

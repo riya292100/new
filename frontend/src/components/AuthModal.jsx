@@ -6,7 +6,8 @@ import { DEMO_USERS } from '../utils/demoConfig';
 import { validateEmail, validatePassword, validatePhone, sanitizeInput } from '../utils/validation';
 
 const AuthModal = () => {
-  const { authModalOpen, authModalMode, closeAuthModal, openAuthModal, login, register } = useAuth();
+  const { authModalOpen, authModalMode, closeAuthModal, openAuthModal, login, register } =
+    useAuth();
   const { addToast } = useToast();
 
   const [email, setEmail] = useState('');
@@ -132,12 +133,22 @@ const AuthModal = () => {
             {isLogin ? 'Welcome to QuickCart' : 'Create an Account'}
           </h3>
           <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>
-            {isLogin ? 'Instant 10-30 min grocery delivery at your doorstep' : 'Join thousands getting superfast deliveries every day'}
+            {isLogin
+              ? 'Instant 10-30 min grocery delivery at your doorstep'
+              : 'Join thousands getting superfast deliveries every day'}
           </p>
         </div>
 
         {/* Mode Switch Tabs */}
-        <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: '12px', padding: '4px', marginBottom: '20px' }}>
+        <div
+          style={{
+            display: 'flex',
+            background: '#f1f5f9',
+            borderRadius: '12px',
+            padding: '4px',
+            marginBottom: '20px',
+          }}
+        >
           <button
             type="button"
             onClick={() => openAuthModal('login')}
@@ -178,8 +189,24 @@ const AuthModal = () => {
 
         {/* 1-Click Demo Quick Fill Buttons */}
         {isLogin && (
-          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '12px', marginBottom: '20px' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '8px' }}>
+          <div
+            style={{
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '12px',
+              marginBottom: '20px',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: '700',
+                color: '#64748b',
+                textTransform: 'uppercase',
+                marginBottom: '8px',
+              }}
+            >
               ⚡ 1-Click Demo Credentials
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
@@ -248,15 +275,30 @@ const AuthModal = () => {
         )}
 
         {/* Auth Form */}
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
+        >
           {!isLogin && (
             <>
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    color: '#334155',
+                    marginBottom: '4px',
+                  }}
+                >
                   Full Name
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <User size={16} color="#94a3b8" style={{ position: 'absolute', left: '14px', top: '13px' }} />
+                  <User
+                    size={16}
+                    color="#94a3b8"
+                    style={{ position: 'absolute', left: '14px', top: '13px' }}
+                  />
                   <input
                     type="text"
                     required
@@ -270,11 +312,23 @@ const AuthModal = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    color: '#334155',
+                    marginBottom: '4px',
+                  }}
+                >
                   Phone Number
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Phone size={16} color="#94a3b8" style={{ position: 'absolute', left: '14px', top: '13px' }} />
+                  <Phone
+                    size={16}
+                    color="#94a3b8"
+                    style={{ position: 'absolute', left: '14px', top: '13px' }}
+                  />
                   <input
                     type="tel"
                     required
@@ -288,7 +342,15 @@ const AuthModal = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    color: '#334155',
+                    marginBottom: '4px',
+                  }}
+                >
                   Account Type
                 </label>
                 <select
@@ -304,11 +366,23 @@ const AuthModal = () => {
           )}
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.8rem',
+                fontWeight: '600',
+                color: '#334155',
+                marginBottom: '4px',
+              }}
+            >
               Email Address
             </label>
             <div style={{ position: 'relative' }}>
-              <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '14px', top: '13px' }} />
+              <Mail
+                size={16}
+                color="#94a3b8"
+                style={{ position: 'absolute', left: '14px', top: '13px' }}
+              />
               <input
                 type="email"
                 required
@@ -322,11 +396,23 @@ const AuthModal = () => {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.8rem',
+                fontWeight: '600',
+                color: '#334155',
+                marginBottom: '4px',
+              }}
+            >
               Password
             </label>
             <div style={{ position: 'relative' }}>
-              <Lock size={16} color="#94a3b8" style={{ position: 'absolute', left: '14px', top: '13px' }} />
+              <Lock
+                size={16}
+                color="#94a3b8"
+                style={{ position: 'absolute', left: '14px', top: '13px' }}
+              />
               <input
                 type="password"
                 required

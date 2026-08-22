@@ -77,16 +77,38 @@ const CartDrawer = () => {
         </div>
 
         {/* Free Delivery Milestone Progress */}
-        <div style={{ background: '#ecfdf5', padding: '12px 20px', borderBottom: '1px solid #d1fae5' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.8rem', fontWeight: '700', color: '#065f46' }}>
+        <div
+          style={{ background: '#ecfdf5', padding: '12px 20px', borderBottom: '1px solid #d1fae5' }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '6px',
+              fontSize: '0.8rem',
+              fontWeight: '700',
+              color: '#065f46',
+            }}
+          >
             {cart.freeDeliveryUnlocked ? (
               <span>🎉 Congratulations! FREE delivery unlocked</span>
             ) : (
-              <span>Add ₹{Math.max(0, 199 - cart.itemTotal).toFixed(0)} more for FREE Delivery</span>
+              <span>
+                Add ₹{Math.max(0, 199 - cart.itemTotal).toFixed(0)} more for FREE Delivery
+              </span>
             )}
             <span>₹199</span>
           </div>
-          <div style={{ width: '100%', height: '6px', background: '#a7f3d0', borderRadius: '9999px', overflow: 'hidden' }}>
+          <div
+            style={{
+              width: '100%',
+              height: '6px',
+              background: '#a7f3d0',
+              borderRadius: '9999px',
+              overflow: 'hidden',
+            }}
+          >
             <div
               style={{
                 width: `${freeDeliveryProgress}%`,
@@ -120,10 +142,23 @@ const CartDrawer = () => {
                   <img
                     src={item.productImage}
                     alt={item.productName}
-                    style={{ width: '56px', height: '56px', objectFit: 'cover', borderRadius: '10px', border: '1px solid #e2e8f0' }}
+                    style={{
+                      width: '56px',
+                      height: '56px',
+                      objectFit: 'cover',
+                      borderRadius: '10px',
+                      border: '1px solid #e2e8f0',
+                    }}
                   />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#0f172a', lineHeight: '1.2' }}>
+                    <div
+                      style={{
+                        fontSize: '0.88rem',
+                        fontWeight: '700',
+                        color: '#0f172a',
+                        lineHeight: '1.2',
+                      }}
+                    >
                       {item.productName}
                     </div>
                     <div style={{ fontSize: '0.78rem', color: '#64748b', margin: '2px 0 4px' }}>
@@ -134,7 +169,13 @@ const CartDrawer = () => {
                         ₹{item.unitPrice * item.quantity}
                       </span>
                       {item.mrp > item.unitPrice && (
-                        <span style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                        <span
+                          style={{
+                            fontSize: '0.75rem',
+                            color: '#94a3b8',
+                            textDecoration: 'line-through',
+                          }}
+                        >
                           ₹{item.mrp * item.quantity}
                         </span>
                       )}
@@ -156,21 +197,27 @@ const CartDrawer = () => {
             </div>
           ) : (
             <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748b' }}>
-              <div style={{
-                width: '70px',
-                height: '70px',
-                borderRadius: '50%',
-                background: '#f1f5f9',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 16px',
-                color: '#94a3b8',
-              }}>
+              <div
+                style={{
+                  width: '70px',
+                  height: '70px',
+                  borderRadius: '50%',
+                  background: '#f1f5f9',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 16px',
+                  color: '#94a3b8',
+                }}
+              >
                 <ShoppingBag size={32} />
               </div>
-              <h4 style={{ fontSize: '1.1rem', color: '#0f172a', marginBottom: '6px' }}>Your cart is empty</h4>
-              <p style={{ fontSize: '0.85rem' }}>Add fresh vegetables, dairy, snacks & essentials to start order</p>
+              <h4 style={{ fontSize: '1.1rem', color: '#0f172a', marginBottom: '6px' }}>
+                Your cart is empty
+              </h4>
+              <p style={{ fontSize: '0.85rem' }}>
+                Add fresh vegetables, dairy, snacks & essentials to start order
+              </p>
               <button
                 onClick={() => setCartDrawerOpen(false)}
                 className="btn btn-primary"
@@ -184,27 +231,48 @@ const CartDrawer = () => {
 
         {/* Bill Summary & Sticky Checkout Footer */}
         {cart.items && cart.items.length > 0 && (
-          <div style={{ borderTop: '1px solid #e2e8f0', background: '#ffffff', padding: '16px 20px' }}>
+          <div
+            style={{ borderTop: '1px solid #e2e8f0', background: '#ffffff', padding: '16px 20px' }}
+          >
             {/* Coupon Bar */}
             <div style={{ marginBottom: '14px' }}>
               {appliedCoupon ? (
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  background: '#ecfdf5',
-                  border: '1px solid #a7f3d0',
-                  borderRadius: '10px',
-                  padding: '8px 12px',
-                  fontSize: '0.82rem',
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#065f46', fontWeight: '700' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: '#ecfdf5',
+                    border: '1px solid #a7f3d0',
+                    borderRadius: '10px',
+                    padding: '8px 12px',
+                    fontSize: '0.82rem',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      color: '#065f46',
+                      fontWeight: '700',
+                    }}
+                  >
                     <Sparkles size={16} color="#059669" />
-                    <span>'{appliedCoupon.code}' applied (-₹{appliedCoupon.discountAmount})</span>
+                    <span>
+                      '{appliedCoupon.code}' applied (-₹{appliedCoupon.discountAmount})
+                    </span>
                   </div>
                   <button
                     onClick={removeCoupon}
-                    style={{ background: 'transparent', border: 'none', color: '#ef4444', fontWeight: '700', fontSize: '0.78rem', cursor: 'pointer' }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#ef4444',
+                      fontWeight: '700',
+                      fontSize: '0.78rem',
+                      cursor: 'pointer',
+                    }}
                   >
                     Remove
                   </button>
@@ -236,7 +304,16 @@ const CartDrawer = () => {
             </div>
 
             {/* Bill Details */}
-            <div style={{ fontSize: '0.82rem', color: '#64748b', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px' }}>
+            <div
+              style={{
+                fontSize: '0.82rem',
+                color: '#64748b',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '6px',
+                marginBottom: '14px',
+              }}
+            >
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>Item Total</span>
                 <span>₹{cart.itemTotal}</span>
@@ -260,12 +337,29 @@ const CartDrawer = () => {
                 <span>₹{cart.taxAmount}</span>
               </div>
               {appliedCoupon && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#059669', fontWeight: '700' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    color: '#059669',
+                    fontWeight: '700',
+                  }}
+                >
                   <span>Coupon Discount</span>
                   <span>-₹{appliedCoupon.discountAmount}</span>
                 </div>
               )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #f1f5f9', paddingTop: '8px', fontSize: '1rem', fontWeight: '800', color: '#0f172a' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  borderTop: '1px solid #f1f5f9',
+                  paddingTop: '8px',
+                  fontSize: '1rem',
+                  fontWeight: '800',
+                  color: '#0f172a',
+                }}
+              >
                 <span>To Pay</span>
                 <span>₹{finalPayableAmount}</span>
               </div>
@@ -281,7 +375,9 @@ const CartDrawer = () => {
                 <div style={{ fontSize: '1.05rem', fontWeight: '800' }}>₹{finalPayableAmount}</div>
                 <div style={{ fontSize: '0.72rem', opacity: 0.9 }}>TOTAL PAYABLE</div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.95rem' }}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.95rem' }}
+              >
                 Proceed to Checkout <ArrowRight size={18} />
               </div>
             </button>

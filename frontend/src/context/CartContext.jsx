@@ -3,7 +3,7 @@ import { cartApi, couponApi } from '../services/api';
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
 
-const CartContext = createContext(null);
+export const CartContext = createContext(null);
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState({

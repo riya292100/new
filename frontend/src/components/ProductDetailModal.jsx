@@ -21,13 +21,15 @@ const ProductDetailModal = ({ product, onClose }) => {
 
   useEffect(() => {
     if (product) {
-      reviewApi.getProductReviews(product.id)
+      reviewApi
+        .getProductReviews(product.id)
         .then((res) => {
           if (res?.data) setReviews(res.data);
         })
         .catch(() => {});
 
-      catalogApi.getRelatedProducts(product.id, 4)
+      catalogApi
+        .getRelatedProducts(product.id, 4)
         .then((res) => {
           if (res?.data) setRelatedProducts(res.data);
         })
@@ -106,17 +108,26 @@ const ProductDetailModal = ({ product, onClose }) => {
         </button>
 
         {/* Top Product Summary */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px', marginBottom: '32px' }}>
-          <div style={{
-            background: '#f8fafc',
-            borderRadius: '20px',
-            overflow: 'hidden',
-            height: '300px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '1px solid #e2e8f0',
-          }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '28px',
+            marginBottom: '32px',
+          }}
+        >
+          <div
+            style={{
+              background: '#f8fafc',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              height: '300px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid #e2e8f0',
+            }}
+          >
             <img
               src={product.imageUrl}
               alt={product.name}
@@ -128,25 +139,43 @@ const ProductDetailModal = ({ product, onClose }) => {
             <span className="badge badge-delivery" style={{ marginBottom: '8px' }}>
               ⚡ Delivered in 10-15 Mins
             </span>
-            <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: '0.85rem',
+                fontWeight: '700',
+                color: '#64748b',
+                textTransform: 'uppercase',
+              }}
+            >
               {product.brand}
             </div>
-            <h2 style={{ fontSize: '1.4rem', color: '#0f172a', margin: '4px 0 8px', lineHeight: '1.3' }}>
+            <h2
+              style={{
+                fontSize: '1.4rem',
+                color: '#0f172a',
+                margin: '4px 0 8px',
+                lineHeight: '1.3',
+              }}
+            >
               {product.name}
             </h2>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <span style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                background: '#ecfdf5',
-                color: '#059669',
-                fontSize: '0.85rem',
-                fontWeight: '700',
-                padding: '3px 8px',
-                borderRadius: '6px',
-              }}>
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}
+            >
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: '#ecfdf5',
+                  color: '#059669',
+                  fontSize: '0.85rem',
+                  fontWeight: '700',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                }}
+              >
                 <Star size={14} fill="#059669" /> {product.rating}
               </span>
               <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
@@ -159,24 +188,28 @@ const ProductDetailModal = ({ product, onClose }) => {
             </div>
 
             {/* Price & Action */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}
+            >
               <div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
                   <span style={{ fontSize: '1.6rem', fontWeight: '800', color: '#0f172a' }}>
                     ₹{product.sellingPrice}
                   </span>
                   {product.mrp > product.sellingPrice && (
-                    <span style={{ fontSize: '1rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                    <span
+                      style={{ fontSize: '1rem', color: '#94a3b8', textDecoration: 'line-through' }}
+                    >
                       MRP ₹{product.mrp}
                     </span>
                   )}
                   {product.discountPercentage > 0 && (
-                    <span className="badge badge-discount">
-                      {product.discountPercentage}% OFF
-                    </span>
+                    <span className="badge badge-discount">{product.discountPercentage}% OFF</span>
                   )}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>(Inclusive of all taxes)</div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                  (Inclusive of all taxes)
+                </div>
               </div>
 
               {quantity > 0 ? (
@@ -201,7 +234,17 @@ const ProductDetailModal = ({ product, onClose }) => {
             </div>
 
             {/* Guarantees */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.8rem', color: '#475569', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '10px',
+                fontSize: '0.8rem',
+                color: '#475569',
+                borderTop: '1px solid #f1f5f9',
+                paddingTop: '16px',
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Clock size={16} color="#059669" /> 10-15 Min Express fulfillment
               </div>
@@ -214,33 +257,75 @@ const ProductDetailModal = ({ product, onClose }) => {
 
         {/* Product Description */}
         <div style={{ marginBottom: '32px' }}>
-          <h4 style={{ fontSize: '1.05rem', color: '#0f172a', marginBottom: '8px' }}>Product Details & Description</h4>
+          <h4 style={{ fontSize: '1.05rem', color: '#0f172a', marginBottom: '8px' }}>
+            Product Details & Description
+          </h4>
           <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.6' }}>
-            {product.description || 'Premium quality fresh groceries and daily essentials sourced directly to bring maximum freshness and value.'}
+            {product.description ||
+              'Premium quality fresh groceries and daily essentials sourced directly to bring maximum freshness and value.'}
           </p>
         </div>
 
         {/* Reviews Section */}
         <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h4 style={{ fontSize: '1.1rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <MessageSquare size={18} color="#059669" /> Customer Reviews & Ratings ({reviews.length})
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '16px',
+            }}
+          >
+            <h4
+              style={{
+                fontSize: '1.1rem',
+                color: '#0f172a',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <MessageSquare size={18} color="#059669" /> Customer Reviews & Ratings (
+              {reviews.length})
             </h4>
           </div>
 
           {/* Add Review Form */}
-          <form onSubmit={handleReviewSubmit} style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', marginBottom: '20px', border: '1px solid #e2e8f0' }}>
-            <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#0f172a', marginBottom: '8px' }}>
+          <form
+            onSubmit={handleReviewSubmit}
+            style={{
+              background: '#f8fafc',
+              borderRadius: '16px',
+              padding: '16px',
+              marginBottom: '20px',
+              border: '1px solid #e2e8f0',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '0.88rem',
+                fontWeight: '700',
+                color: '#0f172a',
+                marginBottom: '8px',
+              }}
+            >
               Rate & Review this product
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}
+            >
               <span style={{ fontSize: '0.82rem', color: '#64748b' }}>Rating:</span>
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   type="button"
                   key={star}
                   onClick={() => setNewRating(star)}
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                  }}
                 >
                   <Star
                     size={22}
@@ -275,26 +360,70 @@ const ProductDetailModal = ({ product, onClose }) => {
           {reviews.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {reviews.map((r) => (
-                <div key={r.id} style={{ padding: '12px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <div
+                  key={r.id}
+                  style={{
+                    padding: '12px 16px',
+                    borderRadius: '12px',
+                    background: '#f8fafc',
+                    border: '1px solid #f1f5f9',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '6px',
+                    }}
+                  >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#059669', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 'bold' }}>
+                      <div
+                        style={{
+                          width: '28px',
+                          height: '28px',
+                          borderRadius: '50%',
+                          background: '#059669',
+                          color: 'white',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.75rem',
+                          fontWeight: 'bold',
+                        }}
+                      >
                         {r.userName?.charAt(0) || 'U'}
                       </div>
-                      <span style={{ fontSize: '0.88rem', fontWeight: '700', color: '#0f172a' }}>{r.userName}</span>
+                      <span style={{ fontSize: '0.88rem', fontWeight: '700', color: '#0f172a' }}>
+                        {r.userName}
+                      </span>
                     </div>
                     <div style={{ display: 'flex', gap: '2px' }}>
                       {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} size={13} fill={s <= r.rating ? '#f59e0b' : 'none'} color={s <= r.rating ? '#f59e0b' : '#cbd5e1'} />
+                        <Star
+                          key={s}
+                          size={13}
+                          fill={s <= r.rating ? '#f59e0b' : 'none'}
+                          color={s <= r.rating ? '#f59e0b' : '#cbd5e1'}
+                        />
                       ))}
                     </div>
                   </div>
-                  <p style={{ fontSize: '0.84rem', color: '#475569', lineHeight: '1.4' }}>{r.comment}</p>
+                  <p style={{ fontSize: '0.84rem', color: '#475569', lineHeight: '1.4' }}>
+                    {r.comment}
+                  </p>
                 </div>
               ))}
             </div>
           ) : (
-            <p style={{ fontSize: '0.84rem', color: '#94a3b8', textAlign: 'center', padding: '16px' }}>
+            <p
+              style={{
+                fontSize: '0.84rem',
+                color: '#94a3b8',
+                textAlign: 'center',
+                padding: '16px',
+              }}
+            >
               No reviews yet. Be the first to review this product!
             </p>
           )}
