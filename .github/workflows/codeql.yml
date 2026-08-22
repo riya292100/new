@@ -26,12 +26,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Java 21 (for Java analysis)
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
 
-      - name: Autobuild
+      - name: Build Java Backend (CodeQL)
+        if: matrix.language == 'java-kotlin'
+        working-directory: ./backend
+        run: mvn clean compile -DskipTests
+
+      - name: Autobuild (JavaScript/TypeScript)
+        if: matrix.language != 'java-kotlin'
         uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL Analysis
