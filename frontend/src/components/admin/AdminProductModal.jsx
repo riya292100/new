@@ -16,21 +16,59 @@ const AdminProductModal = ({
     <div className="modal-overlay" onClick={onClose}>
       <div
         className="glass-card"
-        style={{ width: '100%', maxWidth: '580px', borderRadius: '24px', padding: '28px', background: '#ffffff', maxHeight: '90vh', overflowY: 'auto' }}
+        style={{
+          width: '100%',
+          maxWidth: '580px',
+          borderRadius: '24px',
+          padding: '28px',
+          background: '#ffffff',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '20px',
+          }}
+        >
           <h3 style={{ fontSize: '1.25rem', color: '#0f172a' }}>
             {editingProduct ? 'Edit Catalog Product' : 'Add New Product'}
           </h3>
-          <button onClick={onClose} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+          <button
+            onClick={onClose}
+            style={{
+              background: '#f1f5f9',
+              border: 'none',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}
+          >
             <X size={18} color="#64748b" />
           </button>
         </div>
 
         <form onSubmit={onSave} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>Product Title</label>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.8rem',
+                fontWeight: '600',
+                color: '#334155',
+                marginBottom: '4px',
+              }}
+            >
+              Product Title
+            </label>
             <input
               type="text"
               required
@@ -43,20 +81,44 @@ const AdminProductModal = ({
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>Category</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  color: '#334155',
+                  marginBottom: '4px',
+                }}
+              >
+                Category
+              </label>
               <select
                 value={productForm.categoryId}
-                onChange={(e) => setProductForm({ ...productForm, categoryId: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setProductForm({ ...productForm, categoryId: parseInt(e.target.value) })
+                }
                 className="input-control"
               >
                 {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>Brand / Farm</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  color: '#334155',
+                  marginBottom: '4px',
+                }}
+              >
+                Brand / Farm
+              </label>
               <input
                 type="text"
                 value={productForm.brand}
@@ -69,7 +131,17 @@ const AdminProductModal = ({
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>Selling Price (₹)</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  color: '#334155',
+                  marginBottom: '4px',
+                }}
+              >
+                Selling Price (₹)
+              </label>
               <input
                 type="number"
                 step="0.01"
@@ -82,7 +154,17 @@ const AdminProductModal = ({
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>MRP (₹)</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  color: '#334155',
+                  marginBottom: '4px',
+                }}
+              >
+                MRP (₹)
+              </label>
               <input
                 type="number"
                 step="0.01"
@@ -95,7 +177,17 @@ const AdminProductModal = ({
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>Unit / Weight</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  color: '#334155',
+                  marginBottom: '4px',
+                }}
+              >
+                Unit / Weight
+              </label>
               <input
                 type="text"
                 value={productForm.unitQuantity}
@@ -108,28 +200,65 @@ const AdminProductModal = ({
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>Initial Stock</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  color: '#334155',
+                  marginBottom: '4px',
+                }}
+              >
+                Initial Stock
+              </label>
               <input
                 type="number"
                 value={productForm.stockQuantity}
-                onChange={(e) => setProductForm({ ...productForm, stockQuantity: parseInt(e.target.value) || 0 })}
+                onChange={(e) =>
+                  setProductForm({ ...productForm, stockQuantity: parseInt(e.target.value) || 0 })
+                }
                 className="input-control"
               />
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>Low Stock Alert Below</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  color: '#334155',
+                  marginBottom: '4px',
+                }}
+              >
+                Low Stock Alert Below
+              </label>
               <input
                 type="number"
                 value={productForm.lowStockThreshold}
-                onChange={(e) => setProductForm({ ...productForm, lowStockThreshold: parseInt(e.target.value) || 0 })}
+                onChange={(e) =>
+                  setProductForm({
+                    ...productForm,
+                    lowStockThreshold: parseInt(e.target.value) || 0,
+                  })
+                }
                 className="input-control"
               />
             </div>
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#334155', marginBottom: '4px' }}>Image URL</label>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.8rem',
+                fontWeight: '600',
+                color: '#334155',
+                marginBottom: '4px',
+              }}
+            >
+              Image URL
+            </label>
             <input
               type="url"
               value={productForm.imageUrl}
@@ -139,7 +268,17 @@ const AdminProductModal = ({
           </div>
 
           <div style={{ display: 'flex', gap: '16px', marginTop: '6px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '600', color: '#334155', cursor: 'pointer' }}>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                color: '#334155',
+                cursor: 'pointer',
+              }}
+            >
               <input
                 type="checkbox"
                 checked={productForm.isFeatured}
@@ -148,7 +287,17 @@ const AdminProductModal = ({
               Featured Product
             </label>
 
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '600', color: '#334155', cursor: 'pointer' }}>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                color: '#334155',
+                cursor: 'pointer',
+              }}
+            >
               <input
                 type="checkbox"
                 checked={productForm.isDailyDeal}
@@ -158,9 +307,15 @@ const AdminProductModal = ({
             </label>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '12px' }}>
-            <button type="button" onClick={onClose} className="btn btn-outline">Cancel</button>
-            <button type="submit" className="btn btn-primary">{editingProduct ? 'Save Changes' : 'Create Product'}</button>
+          <div
+            style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '12px' }}
+          >
+            <button type="button" onClick={onClose} className="btn btn-outline">
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary">
+              {editingProduct ? 'Save Changes' : 'Create Product'}
+            </button>
           </div>
         </form>
       </div>
