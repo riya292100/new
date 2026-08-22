@@ -1,0 +1,36 @@
+{
+  "name": "QuickCart: 10-Min Grocery Delivery",
+  "short_name": "QuickCart",
+  "description": "Instant 10-15 minute hyper-local grocery and daily essentials delivery app.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#059669",
+  "categories": ["shopping", "food", "lifestyle"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%23059669'/><path d='M160 384c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32zm224 0c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32zm-283.4-272l23.6 48h270.2c14.2 0 25.1 12.8 22.8 26.8l-36 216c-2 11.8-12.2 20.4-24.2 20.4H172.6c-11.8 0-21.9-8.4-24.1-20l-45.9-243.2H48c-17.7 0-32-14.3-32-32s14.3-32 32-32h72.2c14.2 0 26.3 9.4 29.8 23.2z' fill='%23ffffff'/><path d='M256 120l-40 80h48v64l56-96h-48l24-48h-40z' fill='%23fbbf24'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Deals of the Day",
+      "short_name": "Deals",
+      "description": "View daily flash grocery deals",
+      "url": "/category/all?deal=true",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'><path d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/></svg>", "sizes": "96x96" }]
+    },
+    {
+      "name": "Track Orders",
+      "short_name": "Orders",
+      "description": "Live GPS radar order tracking",
+      "url": "/orders",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23059669'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/></svg>", "sizes": "96x96" }]
+    }
+  ]
+}
