@@ -15,7 +15,10 @@ const OrderSuccessPage = () => {
   }, []);
 
   return (
-    <div className="container" style={{ paddingTop: '40px', paddingBottom: '80px', maxWidth: '640px' }}>
+    <div
+      className="container"
+      style={{ paddingTop: '40px', paddingBottom: '80px', maxWidth: '640px' }}
+    >
       <div
         style={{
           background: '#ffffff',
@@ -51,8 +54,11 @@ const OrderSuccessPage = () => {
         <h1 style={{ fontSize: '1.8rem', color: '#0f172a', marginBottom: '8px' }}>
           Order Placed Successfully!
         </h1>
-        <p style={{ fontSize: '0.95rem', color: '#64748b', marginBottom: '24px', lineHeight: '1.5' }}>
-          Your order <strong>#{orderNumber}</strong> has been received by our dark store team and is being packed.
+        <p
+          style={{ fontSize: '0.95rem', color: '#64748b', marginBottom: '24px', lineHeight: '1.5' }}
+        >
+          Your order <strong>#{orderNumber}</strong> has been received by our dark store team and is
+          being packed.
         </p>
 
         {/* 15 Mins ETA Card */}
@@ -69,19 +75,53 @@ const OrderSuccessPage = () => {
           }}
         >
           <div>
-            <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: '700',
+                color: '#64748b',
+                textTransform: 'uppercase',
+              }}
+            >
               Estimated Delivery
             </div>
-            <div style={{ fontSize: '1.3rem', fontWeight: '800', color: '#059669', display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
+            <div
+              style={{
+                fontSize: '1.3rem',
+                fontWeight: '800',
+                color: '#059669',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                justifyContent: 'center',
+              }}
+            >
               <Clock size={20} /> 12–15 Mins
             </div>
           </div>
           <div style={{ width: '1px', height: '40px', background: '#cbd5e1' }} />
           <div>
-            <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: '700',
+                color: '#64748b',
+                textTransform: 'uppercase',
+              }}
+            >
               Delivery Mode
             </div>
-            <div style={{ fontSize: '1rem', fontWeight: '700', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
+            <div
+              style={{
+                fontSize: '1rem',
+                fontWeight: '700',
+                color: '#0f172a',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                justifyContent: 'center',
+              }}
+            >
               <Zap size={18} color="#f59e0b" /> Contactless Express
             </div>
           </div>
@@ -92,14 +132,17 @@ const OrderSuccessPage = () => {
           <Link
             to={`/track/${orderNumber}`}
             className="btn btn-primary btn-lg btn-block"
-            style={{ fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+            style={{
+              fontWeight: '800',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+            }}
           >
             Track Live Delivery Status <ArrowRight size={20} />
           </Link>
-          <Link
-            to="/"
-            className="btn btn-outline btn-block"
-          >
+          <Link to="/" className="btn btn-outline btn-block">
             Continue Shopping
           </Link>
         </div>
