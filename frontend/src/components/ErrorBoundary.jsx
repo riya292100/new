@@ -28,42 +28,63 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{
-          minHeight: '70vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '24px',
-        }}>
-          <div style={{
-            maxWidth: '520px',
-            width: '100%',
-            background: '#ffffff',
-            borderRadius: '24px',
-            padding: '36px 28px',
-            textAlign: 'center',
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.08)',
-            border: '1px solid #f1f5f9',
-          }}>
-            <div style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '20px',
-              background: '#fef2f2',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 20px',
-              color: '#ef4444',
-            }}>
+        <div
+          style={{
+            minHeight: '70vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              maxWidth: '520px',
+              width: '100%',
+              background: '#ffffff',
+              borderRadius: '24px',
+              padding: '36px 28px',
+              textAlign: 'center',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.08)',
+              border: '1px solid #f1f5f9',
+            }}
+          >
+            <div
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '20px',
+                background: '#fef2f2',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 20px',
+                color: '#ef4444',
+              }}
+            >
               <AlertTriangle size={32} />
             </div>
 
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>
+            <h2
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: '800',
+                color: '#0f172a',
+                marginBottom: '8px',
+              }}
+            >
               Something went wrong
             </h2>
-            <p style={{ fontSize: '0.92rem', color: '#64748b', marginBottom: '28px', lineHeight: 1.6 }}>
-              We encountered an unexpected error while loading this view. You can reload the page or return to the storefront.
+            <p
+              style={{
+                fontSize: '0.92rem',
+                color: '#64748b',
+                marginBottom: '28px',
+                lineHeight: 1.6,
+              }}
+            >
+              We encountered an unexpected error while loading this view. You can reload the page or
+              return to the storefront.
             </p>
 
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>

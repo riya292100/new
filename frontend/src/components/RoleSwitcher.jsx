@@ -7,31 +7,35 @@ const RoleSwitcher = () => {
   const { user, switchDemoRole, isAdmin, isDeliveryPartner } = useAuth();
 
   return (
-    <div style={{
-      background: 'linear-gradient(90deg, #0f172a 0%, #1e293b 100%)',
-      color: '#ffffff',
-      fontSize: '0.8rem',
-      padding: '6px 16px',
-      borderBottom: '1px solid rgba(255,255,255,0.1)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      flexWrap: 'wrap',
-      gap: '8px',
-      zIndex: 100
-    }}>
+    <div
+      style={{
+        background: 'linear-gradient(90deg, #0f172a 0%, #1e293b 100%)',
+        color: '#ffffff',
+        fontSize: '0.8rem',
+        padding: '6px 16px',
+        borderBottom: '1px solid rgba(255,255,255,0.1)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '8px',
+        zIndex: 100,
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '4px',
-          background: 'rgba(16, 185, 129, 0.2)',
-          color: '#34d399',
-          padding: '2px 8px',
-          borderRadius: '9999px',
-          fontWeight: '700',
-          fontSize: '0.72rem'
-        }}>
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+            background: 'rgba(16, 185, 129, 0.2)',
+            color: '#34d399',
+            padding: '2px 8px',
+            borderRadius: '9999px',
+            fontWeight: '700',
+            fontSize: '0.72rem',
+          }}
+        >
           ⚡ INSTANT DEMO MODE
         </span>
         <span style={{ color: '#94a3b8' }}>
@@ -46,7 +50,7 @@ const RoleSwitcher = () => {
         <button
           onClick={() => switchDemoRole('CUSTOMER')}
           style={{
-            background: (!isAdmin && !isDeliveryPartner) ? '#059669' : 'rgba(255,255,255,0.08)',
+            background: !isAdmin && !isDeliveryPartner ? '#059669' : 'rgba(255,255,255,0.08)',
             color: '#ffffff',
             border: 'none',
             borderRadius: '6px',
@@ -56,7 +60,7 @@ const RoleSwitcher = () => {
             cursor: 'pointer',
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '4px'
+            gap: '4px',
           }}
         >
           <ShoppingBag size={12} /> Customer
@@ -75,7 +79,7 @@ const RoleSwitcher = () => {
             cursor: 'pointer',
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '4px'
+            gap: '4px',
           }}
         >
           <Bike size={12} /> Partner App
@@ -94,7 +98,7 @@ const RoleSwitcher = () => {
             cursor: 'pointer',
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '4px'
+            gap: '4px',
           }}
         >
           <Shield size={12} /> Admin Portal
@@ -107,7 +111,7 @@ const RoleSwitcher = () => {
               color: '#818cf8',
               textDecoration: 'none',
               fontWeight: '700',
-              marginLeft: '4px'
+              marginLeft: '4px',
             }}
           >
             Open Admin ➔
@@ -121,7 +125,7 @@ const RoleSwitcher = () => {
               color: '#fbbf24',
               textDecoration: 'none',
               fontWeight: '700',
-              marginLeft: '4px'
+              marginLeft: '4px',
             }}
           >
             Open Driver Portal ➔
