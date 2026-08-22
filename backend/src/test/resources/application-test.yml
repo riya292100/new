@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:quickcart_test_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  h2:
+    console:
+      enabled: false
+
+quickcart:
+  app:
+    jwtSecret: dGVzdFNlY3JldEtleUZvclF1aWNrQ2FydEFwcGxpY2F0aW9uTG9uZ0Vub3VnaFRvQmVTZWN1cmUyMDI2
+    jwtExpirationMs: 86400000
+    freeDeliveryThreshold: 199.0
+    baseDeliveryFee: 25.0
+    platformFee: 5.0
+    taxRate: 0.05
