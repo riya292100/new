@@ -10,7 +10,8 @@ const ProductDetailsPage = () => {
 
   useEffect(() => {
     if (id) {
-      catalogApi.getProductById(id)
+      catalogApi
+        .getProductById(id)
         .then((res) => {
           if (res?.data) setProduct(res.data);
         })
@@ -20,12 +21,7 @@ const ProductDetailsPage = () => {
 
   return (
     <div className="container" style={{ paddingTop: '20px' }}>
-      {product && (
-        <ProductDetailModal
-          product={product}
-          onClose={() => navigate(-1)}
-        />
-      )}
+      {product && <ProductDetailModal product={product} onClose={() => navigate(-1)} />}
     </div>
   );
 };

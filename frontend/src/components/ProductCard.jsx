@@ -24,12 +24,22 @@ const ProductCard = ({ product, onSelectProduct }) => {
       onClick={() => onSelectProduct && onSelectProduct(product)}
     >
       {/* Top Badges */}
-      <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', display: 'flex', justifyContent: 'space-between', zIndex: 2 }}>
+      <div
+        style={{
+          position: 'absolute',
+          top: '10px',
+          left: '10px',
+          right: '10px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          zIndex: 2,
+        }}
+      >
         {product.discountPercentage > 0 ? (
-          <span className="badge badge-discount">
-            {product.discountPercentage}% OFF
-          </span>
-        ) : <span />}
+          <span className="badge badge-discount">{product.discountPercentage}% OFF</span>
+        ) : (
+          <span />
+        )}
 
         <span className="badge badge-delivery" style={{ fontSize: '0.62rem' }}>
           ⚡ 12 MINS
@@ -67,7 +77,15 @@ const ProductCard = ({ product, onSelectProduct }) => {
 
       {/* Content */}
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: '0.72rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '2px' }}>
+        <div
+          style={{
+            fontSize: '0.72rem',
+            fontWeight: '700',
+            color: '#64748b',
+            textTransform: 'uppercase',
+            marginBottom: '2px',
+          }}
+        >
           {product.brand}
         </div>
         <h4
@@ -114,14 +132,24 @@ const ProductCard = ({ product, onSelectProduct }) => {
       </div>
 
       {/* Price & Quantity Action */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #f1f5f9' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingTop: '8px',
+          borderTop: '1px solid #f1f5f9',
+        }}
+      >
         <div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
             <span style={{ fontSize: '1.05rem', fontWeight: '800', color: '#0f172a' }}>
               ₹{product.sellingPrice}
             </span>
             {product.mrp && product.mrp > product.sellingPrice && (
-              <span style={{ fontSize: '0.78rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+              <span
+                style={{ fontSize: '0.78rem', color: '#94a3b8', textDecoration: 'line-through' }}
+              >
                 ₹{product.mrp}
               </span>
             )}

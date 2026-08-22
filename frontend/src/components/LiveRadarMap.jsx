@@ -42,27 +42,51 @@ const LiveRadarMap = ({ orderStatus, partnerLocation, customerAddress }) => {
       }}
     >
       {/* Top Map Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '12px',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{
-            display: 'inline-block',
-            width: '10px',
-            height: '10px',
-            borderRadius: '50%',
-            background: '#10b981',
-            boxShadow: '0 0 12px #10b981',
-          }} />
-          <span style={{ fontSize: '0.85rem', fontWeight: '700', letterSpacing: '0.04em', textTransform: 'uppercase', color: '#34d399' }}>
+          <span
+            style={{
+              display: 'inline-block',
+              width: '10px',
+              height: '10px',
+              borderRadius: '50%',
+              background: '#10b981',
+              boxShadow: '0 0 12px #10b981',
+            }}
+          />
+          <span
+            style={{
+              fontSize: '0.85rem',
+              fontWeight: '700',
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              color: '#34d399',
+            }}
+          >
             Live GPS Tracking Active
           </span>
         </div>
-        <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
-          Dark Store #QC-14 • 1.4 km
-        </span>
+        <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Dark Store #QC-14 • 1.4 km</span>
       </div>
 
       {/* Interactive Map Visual */}
-      <div style={{ position: 'relative', width: '100%', height: '220px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', overflow: 'hidden' }}>
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '220px',
+          background: 'rgba(255,255,255,0.03)',
+          borderRadius: '16px',
+          overflow: 'hidden',
+        }}
+      >
         {/* SVG Grid and Route Line */}
         <svg style={{ width: '100%', height: '100%' }}>
           {/* Subtle Grid Lines */}
@@ -92,41 +116,70 @@ const LiveRadarMap = ({ orderStatus, partnerLocation, customerAddress }) => {
         </svg>
 
         {/* Store Origin Marker */}
-        <div style={{ position: 'absolute', left: `${startX - 18}px`, top: `${startY - 18}px`, zIndex: 5 }}>
-          <div style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            background: '#059669',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            boxShadow: '0 0 15px rgba(16, 185, 129, 0.5)',
-          }}>
+        <div
+          style={{
+            position: 'absolute',
+            left: `${startX - 18}px`,
+            top: `${startY - 18}px`,
+            zIndex: 5,
+          }}
+        >
+          <div
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              background: '#059669',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              boxShadow: '0 0 15px rgba(16, 185, 129, 0.5)',
+            }}
+          >
             <Store size={18} />
           </div>
-          <div style={{ fontSize: '0.65rem', fontWeight: '700', textAlign: 'center', marginTop: '2px', color: '#94a3b8' }}>
+          <div
+            style={{
+              fontSize: '0.65rem',
+              fontWeight: '700',
+              textAlign: 'center',
+              marginTop: '2px',
+              color: '#94a3b8',
+            }}
+          >
             Dark Store
           </div>
         </div>
 
         {/* Customer Destination Marker */}
-        <div style={{ position: 'absolute', left: `${endX - 18}px`, top: `${endY - 18}px`, zIndex: 5 }}>
-          <div style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            background: '#ef4444',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            boxShadow: '0 0 15px rgba(239, 68, 68, 0.5)',
-          }}>
+        <div
+          style={{ position: 'absolute', left: `${endX - 18}px`, top: `${endY - 18}px`, zIndex: 5 }}
+        >
+          <div
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              background: '#ef4444',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              boxShadow: '0 0 15px rgba(239, 68, 68, 0.5)',
+            }}
+          >
             <MapPin size={18} />
           </div>
-          <div style={{ fontSize: '0.65rem', fontWeight: '700', textAlign: 'center', marginTop: '2px', color: '#94a3b8' }}>
+          <div
+            style={{
+              fontSize: '0.65rem',
+              fontWeight: '700',
+              textAlign: 'center',
+              marginTop: '2px',
+              color: '#94a3b8',
+            }}
+          >
             Your Home
           </div>
         </div>
@@ -158,40 +211,67 @@ const LiveRadarMap = ({ orderStatus, partnerLocation, customerAddress }) => {
           >
             <Bike size={22} />
           </div>
-          <div style={{
-            background: '#0f172a',
-            color: '#fbbf24',
-            padding: '2px 6px',
-            borderRadius: '4px',
-            fontSize: '0.65rem',
-            fontWeight: '800',
-            textAlign: 'center',
-            marginTop: '2px',
-            whiteSpace: 'nowrap',
-            border: '1px solid rgba(251, 191, 36, 0.3)',
-          }}>
+          <div
+            style={{
+              background: '#0f172a',
+              color: '#fbbf24',
+              padding: '2px 6px',
+              borderRadius: '4px',
+              fontSize: '0.65rem',
+              fontWeight: '800',
+              textAlign: 'center',
+              marginTop: '2px',
+              whiteSpace: 'nowrap',
+              border: '1px solid rgba(251, 191, 36, 0.3)',
+            }}
+          >
             {orderStatus === 'DELIVERED' ? 'Arrived' : 'On the way'}
           </div>
         </div>
       </div>
 
       {/* Bottom Live Metrics */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '16px', borderTop: '1px solid #334155', paddingTop: '12px', fontSize: '0.8rem', textAlign: 'center' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '10px',
+          marginTop: '16px',
+          borderTop: '1px solid #334155',
+          paddingTop: '12px',
+          fontSize: '0.8rem',
+          textAlign: 'center',
+        }}
+      >
         <div>
-          <span style={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>ESTIMATED TIME</span>
+          <span style={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>
+            ESTIMATED TIME
+          </span>
           <strong style={{ color: '#34d399', fontSize: '0.95rem' }}>
             {orderStatus === 'DELIVERED' ? 'Delivered' : '10-14 Mins'}
           </strong>
         </div>
         <div>
-          <span style={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>RIDER DISTANCE</span>
+          <span style={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>
+            RIDER DISTANCE
+          </span>
           <strong style={{ color: '#f8fafc', fontSize: '0.95rem' }}>
             {orderStatus === 'DELIVERED' ? '0.0 km' : `${(1.4 * (1 - progress)).toFixed(1)} km`}
           </strong>
         </div>
         <div>
-          <span style={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>SAFETY CHECK</span>
-          <strong style={{ color: '#60a5fa', fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+          <span style={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>
+            SAFETY CHECK
+          </span>
+          <strong
+            style={{
+              color: '#60a5fa',
+              fontSize: '0.95rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '3px',
+            }}
+          >
             <ShieldCheck size={14} /> Contactless
           </strong>
         </div>

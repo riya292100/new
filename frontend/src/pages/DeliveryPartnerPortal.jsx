@@ -3,8 +3,17 @@ import { useAuth } from '../context/AuthContext';
 import { deliveryApi } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import {
-  Bike, CheckCircle2, XCircle, MapPin, Phone, Clock,
-  Package, Navigation, ShieldCheck, RefreshCw, Zap
+  Bike,
+  CheckCircle2,
+  XCircle,
+  MapPin,
+  Phone,
+  Clock,
+  Package,
+  Navigation,
+  ShieldCheck,
+  RefreshCw,
+  Zap,
 } from 'lucide-react';
 
 const DeliveryPartnerPortal = () => {
@@ -80,20 +89,33 @@ const DeliveryPartnerPortal = () => {
   return (
     <div className="container" style={{ paddingTop: '24px', paddingBottom: '60px' }}>
       {/* Header Bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '24px',
+          flexWrap: 'wrap',
+          gap: '12px',
+        }}
+      >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{
-              width: '12px',
-              height: '12px',
-              borderRadius: '50%',
-              background: '#10b981',
-              boxShadow: '0 0 10px #10b981',
-            }} />
+            <span
+              style={{
+                width: '12px',
+                height: '12px',
+                borderRadius: '50%',
+                background: '#10b981',
+                boxShadow: '0 0 10px #10b981',
+              }}
+            />
             <h1 style={{ fontSize: '1.75rem', color: '#0f172a' }}>Delivery Partner Portal</h1>
           </div>
           <p style={{ fontSize: '0.88rem', color: '#64748b' }}>
-            Welcome back, <strong>{profile?.user?.fullName || user?.fullName || 'Express Rider'}</strong> • {profile?.vehicleType || 'Electric Scooter'}
+            Welcome back,{' '}
+            <strong>{profile?.user?.fullName || user?.fullName || 'Express Rider'}</strong> •{' '}
+            {profile?.vehicleType || 'Electric Scooter'}
           </p>
         </div>
 
@@ -107,9 +129,30 @@ const DeliveryPartnerPortal = () => {
       </div>
 
       {/* Driver Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-        <div style={{ background: '#ffffff', borderRadius: '18px', padding: '20px', border: '1px solid #e2e8f0' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '16px',
+          marginBottom: '32px',
+        }}
+      >
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: '18px',
+            padding: '20px',
+            border: '1px solid #e2e8f0',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '0.75rem',
+              fontWeight: '700',
+              color: '#64748b',
+              textTransform: 'uppercase',
+            }}
+          >
             Total Deliveries
           </div>
           <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', margin: '4px 0' }}>
@@ -120,23 +163,51 @@ const DeliveryPartnerPortal = () => {
           </div>
         </div>
 
-        <div style={{ background: '#ffffff', borderRadius: '18px', padding: '20px', border: '1px solid #e2e8f0' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: '18px',
+            padding: '20px',
+            border: '1px solid #e2e8f0',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '0.75rem',
+              fontWeight: '700',
+              color: '#64748b',
+              textTransform: 'uppercase',
+            }}
+          >
             Partner Rating
           </div>
           <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#f59e0b', margin: '4px 0' }}>
             ⭐ {profile?.rating || '4.9'}
           </div>
-          <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
-            Top Tier Express Driver
-          </div>
+          <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Top Tier Express Driver</div>
         </div>
 
-        <div style={{ background: '#ffffff', borderRadius: '18px', padding: '20px', border: '1px solid #e2e8f0' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: '18px',
+            padding: '20px',
+            border: '1px solid #e2e8f0',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '0.75rem',
+              fontWeight: '700',
+              color: '#64748b',
+              textTransform: 'uppercase',
+            }}
+          >
             Vehicle & License
           </div>
-          <div style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: '8px 0 4px' }}>
+          <div
+            style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: '8px 0 4px' }}
+          >
             {profile?.vehicleNumber || 'DL-01-QC-8821'}
           </div>
           <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
@@ -170,43 +241,109 @@ const DeliveryPartnerPortal = () => {
                   }}
                 >
                   {/* Order Banner */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '16px',
+                      flexWrap: 'wrap',
+                      gap: '8px',
+                    }}
+                  >
                     <div>
                       <span style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a' }}>
                         Order #{order.orderNumber}
                       </span>
                       <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                        Estimated Delivery: {new Date(order.estimatedDeliveryTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        Estimated Delivery:{' '}
+                        {new Date(order.estimatedDeliveryTime).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                       </div>
                     </div>
 
-                    <span className={`badge ${isDelivered ? 'badge-featured' : isCancelled ? 'badge-discount' : 'badge-deal'}`}>
+                    <span
+                      className={`badge ${isDelivered ? 'badge-featured' : isCancelled ? 'badge-discount' : 'badge-deal'}`}
+                    >
                       {order.status}
                     </span>
                   </div>
 
                   {/* Customer Info & Destination */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', background: '#f8fafc', padding: '16px', borderRadius: '16px', marginBottom: '16px' }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                      gap: '16px',
+                      background: '#f8fafc',
+                      padding: '16px',
+                      borderRadius: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
                     <div>
-                      <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      <div
+                        style={{
+                          fontSize: '0.75rem',
+                          fontWeight: '700',
+                          color: '#64748b',
+                          textTransform: 'uppercase',
+                          marginBottom: '4px',
+                        }}
+                      >
                         Customer Details
                       </div>
-                      <div style={{ fontWeight: '700', color: '#0f172a' }}>{order.customerName}</div>
-                      <a href={`tel:${order.customerPhone}`} style={{ fontSize: '0.85rem', color: '#059669', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+                      <div style={{ fontWeight: '700', color: '#0f172a' }}>
+                        {order.customerName}
+                      </div>
+                      <a
+                        href={`tel:${order.customerPhone}`}
+                        style={{
+                          fontSize: '0.85rem',
+                          color: '#059669',
+                          textDecoration: 'none',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          marginTop: '4px',
+                        }}
+                      >
                         <Phone size={14} /> {order.customerPhone}
                       </a>
                     </div>
 
                     <div>
-                      <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      <div
+                        style={{
+                          fontSize: '0.75rem',
+                          fontWeight: '700',
+                          color: '#64748b',
+                          textTransform: 'uppercase',
+                          marginBottom: '4px',
+                        }}
+                      >
                         Delivery Destination
                       </div>
                       <div style={{ fontSize: '0.85rem', color: '#334155', lineHeight: '1.4' }}>
-                        <MapPin size={14} color="#059669" style={{ display: 'inline', marginRight: '4px' }} />
-                        {order.address?.streetAddress}, {order.address?.city} - {order.address?.pincode}
+                        <MapPin
+                          size={14}
+                          color="#059669"
+                          style={{ display: 'inline', marginRight: '4px' }}
+                        />
+                        {order.address?.streetAddress}, {order.address?.city} -{' '}
+                        {order.address?.pincode}
                       </div>
                       {order.deliveryInstructions && (
-                        <div style={{ fontSize: '0.78rem', color: '#d97706', marginTop: '4px', fontWeight: '600' }}>
+                        <div
+                          style={{
+                            fontSize: '0.78rem',
+                            color: '#d97706',
+                            marginTop: '4px',
+                            fontWeight: '600',
+                          }}
+                        >
                           Instructions: "{order.deliveryInstructions}"
                         </div>
                       )}
@@ -215,7 +352,12 @@ const DeliveryPartnerPortal = () => {
 
                   {/* Items Summary */}
                   <div style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '20px' }}>
-                    Items ({order.items?.length}): <strong>{order.items?.map((i) => `${i.productName} (x${i.quantity})`).join(', ')}</strong> • Total: <strong style={{ color: '#059669' }}>₹{order.totalAmount}</strong> ({order.paymentMethod})
+                    Items ({order.items?.length}):{' '}
+                    <strong>
+                      {order.items?.map((i) => `${i.productName} (x${i.quantity})`).join(', ')}
+                    </strong>{' '}
+                    • Total: <strong style={{ color: '#059669' }}>₹{order.totalAmount}</strong> (
+                    {order.paymentMethod})
                   </div>
 
                   {/* Driver Action Workflow Buttons */}
@@ -273,10 +415,22 @@ const DeliveryPartnerPortal = () => {
             })}
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '60px 20px', background: '#ffffff', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '60px 20px',
+              background: '#ffffff',
+              borderRadius: '20px',
+              border: '1px solid #e2e8f0',
+            }}
+          >
             <Bike size={48} color="#cbd5e1" style={{ margin: '0 auto 16px' }} />
-            <h3 style={{ fontSize: '1.2rem', color: '#0f172a', marginBottom: '6px' }}>No active deliveries assigned</h3>
-            <p style={{ fontSize: '0.85rem', color: '#64748b' }}>New orders placed in your delivery radius will pop up here instantly.</p>
+            <h3 style={{ fontSize: '1.2rem', color: '#0f172a', marginBottom: '6px' }}>
+              No active deliveries assigned
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
+              New orders placed in your delivery radius will pop up here instantly.
+            </p>
           </div>
         )}
       </div>

@@ -10,7 +10,8 @@ const CouponModal = () => {
 
   useEffect(() => {
     if (couponModalOpen) {
-      couponApi.getActiveCoupons()
+      couponApi
+        .getActiveCoupons()
         .then((res) => {
           if (res?.data) setCoupons(res.data);
         })
@@ -41,23 +42,53 @@ const CouponModal = () => {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: '20px',
+          }}
+        >
           <div>
-            <h3 style={{ fontSize: '1.25rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h3
+              style={{
+                fontSize: '1.25rem',
+                color: '#0f172a',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
               <Tag size={20} color="#059669" /> Apply Promo Coupon
             </h3>
-            <p style={{ fontSize: '0.82rem', color: '#64748b' }}>Select from available offers to get instant savings</p>
+            <p style={{ fontSize: '0.82rem', color: '#64748b' }}>
+              Select from available offers to get instant savings
+            </p>
           </div>
           <button
             onClick={() => setCouponModalOpen(false)}
-            style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+            style={{
+              background: '#f1f5f9',
+              border: 'none',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}
           >
             <X size={18} color="#64748b" />
           </button>
         </div>
 
         {/* Enter Code Manual Input */}
-        <form onSubmit={handleCustomApply} style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+        <form
+          onSubmit={handleCustomApply}
+          style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}
+        >
           <input
             type="text"
             value={customCode}
@@ -72,11 +103,27 @@ const CouponModal = () => {
         </form>
 
         {/* Available Coupons List */}
-        <div style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '10px' }}>
+        <div
+          style={{
+            fontSize: '0.8rem',
+            fontWeight: '700',
+            color: '#64748b',
+            textTransform: 'uppercase',
+            marginBottom: '10px',
+          }}
+        >
           Available Offers ({coupons.length})
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '300px', overflowY: 'auto' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            maxHeight: '300px',
+            overflowY: 'auto',
+          }}
+        >
           {coupons.map((c) => {
             const isApplied = appliedCoupon?.code === c.code;
             return (
@@ -94,20 +141,31 @@ const CouponModal = () => {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                    <span style={{
-                      background: '#059669',
-                      color: '#ffffff',
-                      fontWeight: '800',
-                      fontSize: '0.85rem',
-                      padding: '3px 8px',
-                      borderRadius: '6px',
-                      letterSpacing: '0.05em',
-                    }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        background: '#059669',
+                        color: '#ffffff',
+                        fontWeight: '800',
+                        fontSize: '0.85rem',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        letterSpacing: '0.05em',
+                      }}
+                    >
                       {c.code}
                     </span>
                     <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#059669' }}>
-                      {c.discountType === 'PERCENTAGE' ? `${c.discountValue}% OFF` : `₹${c.discountValue} FLAT OFF`}
+                      {c.discountType === 'PERCENTAGE'
+                        ? `${c.discountValue}% OFF`
+                        : `₹${c.discountValue} FLAT OFF`}
                     </span>
                   </div>
                   <p style={{ fontSize: '0.82rem', color: '#475569', lineHeight: '1.3' }}>
@@ -115,7 +173,8 @@ const CouponModal = () => {
                   </p>
                   {c.minOrderValue > 0 && (
                     <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '4px' }}>
-                      Min order: ₹{c.minOrderValue} {c.maxDiscountAmount ? `• Max savings: ₹${c.maxDiscountAmount}` : ''}
+                      Min order: ₹{c.minOrderValue}{' '}
+                      {c.maxDiscountAmount ? `• Max savings: ₹${c.maxDiscountAmount}` : ''}
                     </div>
                   )}
                 </div>

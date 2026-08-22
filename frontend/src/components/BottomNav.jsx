@@ -15,7 +15,9 @@ const BottomNav = () => {
     <nav className="mobile-bottom-nav">
       <NavLink
         to="/"
-        className={({ isActive }) => `bottom-nav-item ${isActive && location.pathname === '/' ? 'active' : ''}`}
+        className={({ isActive }) =>
+          `bottom-nav-item ${isActive && location.pathname === '/' ? 'active' : ''}`
+        }
       >
         <Home size={22} />
         <span>Home</span>
@@ -23,7 +25,9 @@ const BottomNav = () => {
 
       <NavLink
         to="/category/all"
-        className={({ isActive }) => `bottom-nav-item ${isActive && !location.search.includes('deal=true') ? 'active' : ''}`}
+        className={({ isActive }) =>
+          `bottom-nav-item ${isActive && !location.search.includes('deal=true') ? 'active' : ''}`
+        }
       >
         <Grid size={22} />
         <span>Categories</span>
@@ -31,7 +35,9 @@ const BottomNav = () => {
 
       <NavLink
         to="/category/all?deal=true"
-        className={({ isActive }) => `bottom-nav-item ${location.search.includes('deal=true') ? 'active' : ''}`}
+        className={({ isActive }) =>
+          `bottom-nav-item ${location.search.includes('deal=true') ? 'active' : ''}`
+        }
       >
         <Tag size={22} />
         <span>Deals</span>
@@ -45,9 +51,7 @@ const BottomNav = () => {
       >
         <div style={{ position: 'relative' }}>
           <ShoppingBag size={22} />
-          {totalItems > 0 && (
-            <span className="cart-badge-counter">{totalItems}</span>
-          )}
+          {totalItems > 0 && <span className="cart-badge-counter">{totalItems}</span>}
         </div>
         <span>Cart</span>
       </button>
@@ -61,11 +65,7 @@ const BottomNav = () => {
           <span>Orders</span>
         </NavLink>
       ) : (
-        <button
-          type="button"
-          onClick={() => openAuthModal('login')}
-          className="bottom-nav-item"
-        >
+        <button type="button" onClick={() => openAuthModal('login')} className="bottom-nav-item">
           <User size={22} />
           <span>Login</span>
         </button>

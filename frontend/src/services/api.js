@@ -126,8 +126,10 @@ export const adminApi = {
   // Orders
   getAllOrders: () => api.get('/admin/orders'),
   updateOrderStatus: (orderId, status) => api.patch(`/admin/orders/${orderId}/status`, { status }),
-  assignDeliveryPartner: (orderId, partnerId) => api.post('/admin/orders/assign-partner', { orderId, partnerId }),
-  assignPartner: (orderId, partnerId) => api.post('/admin/orders/assign-partner', { orderId, partnerId }),
+  assignDeliveryPartner: (orderId, partnerId) =>
+    api.post('/admin/orders/assign-partner', { orderId, partnerId }),
+  assignPartner: (orderId, partnerId) =>
+    api.post('/admin/orders/assign-partner', { orderId, partnerId }),
   // Inventory
   getLowStockProducts: () => api.get('/admin/inventory/low-stock'),
   // Coupons

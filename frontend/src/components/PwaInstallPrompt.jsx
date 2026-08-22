@@ -38,7 +38,9 @@ const PwaInstallPrompt = () => {
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
       // Fallback instruction for browsers without beforeinstallprompt (e.g. iOS Safari)
-      alert('To install QuickCart on iOS/Safari: Tap the Share icon (↑) and select "Add to Home Screen".');
+      alert(
+        'To install QuickCart on iOS/Safari: Tap the Share icon (↑) and select "Add to Home Screen".'
+      );
       return;
     }
     deferredPrompt.prompt();

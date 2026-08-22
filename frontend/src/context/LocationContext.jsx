@@ -12,8 +12,8 @@ const DEFAULT_LOCATION = {
   city: 'New Delhi',
   state: 'Delhi',
   pincode: '110001',
-  latitude: 28.6190,
-  longitude: 77.2150,
+  latitude: 28.619,
+  longitude: 77.215,
   isServiceable: true,
   deliveryEta: '12-15 mins',
 };

@@ -4,7 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import { catalogApi } from '../services/api';
 import { useCart } from '../context/CartContext';
 
-const POPULAR_SEARCHES = ['Mangoes', 'Amul Milk', 'Paneer', 'Maggi', 'Chips', 'Diapers', 'Coca Cola', 'Eggs'];
+const POPULAR_SEARCHES = [
+  'Mangoes',
+  'Amul Milk',
+  'Paneer',
+  'Maggi',
+  'Chips',
+  'Diapers',
+  'Coca Cola',
+  'Eggs',
+];
 
 const SearchAutocomplete = () => {
   const [query, setQuery] = useState('');
@@ -136,7 +145,18 @@ const SearchAutocomplete = () => {
         >
           {/* Quick Popular Chips */}
           <div style={{ padding: '14px 16px', borderBottom: '1px solid #f1f5f9' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <div
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: '700',
+                color: '#64748b',
+                textTransform: 'uppercase',
+                marginBottom: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
               <Zap size={13} color="#f59e0b" /> Popular Searches
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
@@ -166,14 +186,30 @@ const SearchAutocomplete = () => {
 
           {/* Search Result Items */}
           {loading && (
-            <div style={{ padding: '20px', textAlign: 'center', color: '#64748b', fontSize: '0.88rem' }}>
+            <div
+              style={{
+                padding: '20px',
+                textAlign: 'center',
+                color: '#64748b',
+                fontSize: '0.88rem',
+              }}
+            >
               Searching fresh inventory...
             </div>
           )}
 
           {!loading && suggestions.length > 0 && (
             <div>
-              <div style={{ padding: '8px 16px', background: '#f8fafc', fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>
+              <div
+                style={{
+                  padding: '8px 16px',
+                  background: '#f8fafc',
+                  fontSize: '0.75rem',
+                  fontWeight: '700',
+                  color: '#64748b',
+                  textTransform: 'uppercase',
+                }}
+              >
                 Instant Matches ({suggestions.length})
               </div>
               {suggestions.map((item) => {
@@ -201,14 +237,32 @@ const SearchAutocomplete = () => {
                       <img
                         src={item.imageUrl}
                         alt={item.name}
-                        style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                        style={{
+                          width: '44px',
+                          height: '44px',
+                          objectFit: 'cover',
+                          borderRadius: '8px',
+                          border: '1px solid #e2e8f0',
+                        }}
                       />
                       <div>
-                        <div style={{ fontSize: '0.88rem', fontWeight: '600', color: '#0f172a' }}>{item.name}</div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: '600', color: '#0f172a' }}>
+                          {item.name}
+                        </div>
                         <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
-                          {item.unitQuantity} • <span style={{ fontWeight: '700', color: '#059669' }}>₹{item.sellingPrice}</span>
+                          {item.unitQuantity} •{' '}
+                          <span style={{ fontWeight: '700', color: '#059669' }}>
+                            ₹{item.sellingPrice}
+                          </span>
                           {item.discountPercentage > 0 && (
-                            <span style={{ textDecoration: 'line-through', color: '#94a3b8', marginLeft: '6px', fontSize: '0.72rem' }}>
+                            <span
+                              style={{
+                                textDecoration: 'line-through',
+                                color: '#94a3b8',
+                                marginLeft: '6px',
+                                fontSize: '0.72rem',
+                              }}
+                            >
                               ₹{item.mrp}
                             </span>
                           )}
@@ -253,8 +307,12 @@ const SearchAutocomplete = () => {
 
           {!loading && query && suggestions.length === 0 && (
             <div style={{ padding: '24px', textAlign: 'center', color: '#64748b' }}>
-              <p style={{ fontSize: '0.9rem', fontWeight: '600', color: '#0f172a' }}>No products found for "{query}"</p>
-              <p style={{ fontSize: '0.8rem', marginTop: '4px' }}>Try searching for fruits, milk, snacks, or groceries.</p>
+              <p style={{ fontSize: '0.9rem', fontWeight: '600', color: '#0f172a' }}>
+                No products found for "{query}"
+              </p>
+              <p style={{ fontSize: '0.8rem', marginTop: '4px' }}>
+                Try searching for fruits, milk, snacks, or groceries.
+              </p>
             </div>
           )}
         </div>

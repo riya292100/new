@@ -15,7 +15,8 @@ const PROMO_BANNERS = [
     bg: 'linear-gradient(135deg, #065f46 0%, #059669 100%)',
     cta: 'Shop Now',
     link: '/category/all',
-    image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80',
+    image:
+      'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80',
   },
   {
     id: 2,
@@ -25,7 +26,8 @@ const PROMO_BANNERS = [
     bg: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)',
     cta: 'Explore Fruits',
     link: '/category/fruits-vegetables',
-    image: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=600&auto=format&fit=crop&q=80',
+    image:
+      'https://images.unsplash.com/photo-1553279768-865429fa0078?w=600&auto=format&fit=crop&q=80',
   },
   {
     id: 3,
@@ -35,7 +37,8 @@ const PROMO_BANNERS = [
     bg: 'linear-gradient(135deg, #4338ca 0%, #6366f1 100%)',
     cta: 'Order Snacks',
     link: '/category/snacks-munchies',
-    image: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=600&auto=format&fit=crop&q=80',
+    image:
+      'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=600&auto=format&fit=crop&q=80',
   },
 ];
 
@@ -116,22 +119,33 @@ const HomePage = () => {
           >
             {banner.badge}
           </span>
-          <h1 style={{ fontSize: '2.1rem', lineHeight: '1.15', marginBottom: '8px', color: '#ffffff' }}>
+          <h1
+            style={{
+              fontSize: '2.1rem',
+              lineHeight: '1.15',
+              marginBottom: '8px',
+              color: '#ffffff',
+            }}
+          >
             {banner.title}
           </h1>
           <p style={{ fontSize: '0.95rem', opacity: 0.9, lineHeight: '1.5', marginBottom: '20px' }}>
             {banner.subtitle}
           </p>
-          <Link
-            to={banner.link}
-            className="btn btn-accent btn-lg"
-            style={{ fontWeight: '800' }}
-          >
+          <Link to={banner.link} className="btn btn-accent btn-lg" style={{ fontWeight: '800' }}>
             {banner.cta} <ArrowRight size={18} />
           </Link>
         </div>
 
-        <div style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <img
             src={banner.image}
             alt=""
@@ -147,7 +161,16 @@ const HomePage = () => {
         </div>
 
         {/* Carousel Indicators */}
-        <div style={{ position: 'absolute', bottom: '14px', left: '32px', display: 'flex', gap: '6px', zIndex: 2 }}>
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '14px',
+            left: '32px',
+            display: 'flex',
+            gap: '6px',
+            zIndex: 2,
+          }}
+        >
           {PROMO_BANNERS.map((_, idx) => (
             <button
               key={idx}
@@ -183,7 +206,18 @@ const HomePage = () => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+          <div
+            style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#ffffff',
+            }}
+          >
             <Zap size={22} fill="#ffffff" />
           </div>
           <div>
@@ -196,7 +230,16 @@ const HomePage = () => {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontSize: '0.82rem', fontWeight: '600', color: '#334155' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '20px',
+            fontSize: '0.82rem',
+            fontWeight: '600',
+            color: '#334155',
+          }}
+        >
           <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Clock size={16} color="#059669" /> Free Delivery over ₹199
           </span>
@@ -212,20 +255,43 @@ const HomePage = () => {
       {/* Deal of the Day Section */}
       {dailyDeals.length > 0 && (
         <div style={{ marginBottom: '40px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '16px',
+            }}
+          >
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Flame size={20} color="#f59e0b" />
                 <h2 style={{ fontSize: '1.35rem', color: '#0f172a' }}>Deals of the Day</h2>
               </div>
-              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Unbeatable limited-time discounts on daily groceries</p>
+              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                Unbeatable limited-time discounts on daily groceries
+              </p>
             </div>
-            <Link to="/category/all?deal=true" style={{ fontSize: '0.88rem', fontWeight: '700', color: '#059669', textDecoration: 'none' }}>
+            <Link
+              to="/category/all?deal=true"
+              style={{
+                fontSize: '0.88rem',
+                fontWeight: '700',
+                color: '#059669',
+                textDecoration: 'none',
+              }}
+            >
               View All Deals ➔
             </Link>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '16px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+              gap: '16px',
+            }}
+          >
             {dailyDeals.map((prod) => (
               <ProductCard
                 key={prod.id}
@@ -240,20 +306,43 @@ const HomePage = () => {
       {/* Best Sellers / Recommended Section */}
       {featuredProducts.length > 0 && (
         <div style={{ marginBottom: '40px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '16px',
+            }}
+          >
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <ThumbsUp size={18} color="#059669" />
                 <h2 style={{ fontSize: '1.35rem', color: '#0f172a' }}>Trending & Best Sellers</h2>
               </div>
-              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Top ordered essentials by neighborhood customers</p>
+              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                Top ordered essentials by neighborhood customers
+              </p>
             </div>
-            <Link to="/category/all" style={{ fontSize: '0.88rem', fontWeight: '700', color: '#059669', textDecoration: 'none' }}>
+            <Link
+              to="/category/all"
+              style={{
+                fontSize: '0.88rem',
+                fontWeight: '700',
+                color: '#059669',
+                textDecoration: 'none',
+              }}
+            >
               Explore All ➔
             </Link>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '16px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+              gap: '16px',
+            }}
+          >
             {featuredProducts.map((prod) => (
               <ProductCard
                 key={prod.id}
@@ -267,10 +356,7 @@ const HomePage = () => {
 
       {/* Product Detail Modal */}
       {selectedProduct && (
-        <ProductDetailModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-        />
+        <ProductDetailModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
       )}
     </div>
   );

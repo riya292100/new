@@ -34,7 +34,10 @@ const CategoryPage = () => {
           const res = await catalogApi.searchProducts(searchQuery);
           if (res?.data) {
             setProducts(res.data);
-            setCurrentCategory({ name: `Search: "${searchQuery}"`, description: `Matching products for ${searchQuery}` });
+            setCurrentCategory({
+              name: `Search: "${searchQuery}"`,
+              description: `Matching products for ${searchQuery}`,
+            });
           }
         } else if (slug && slug !== 'all') {
           const catRes = await catalogApi.getCategoryBySlug(slug);
@@ -51,8 +54,13 @@ const CategoryPage = () => {
             }
           }
         } else {
-          setCurrentCategory({ name: isDeal ? 'Deals of the Day' : 'All Groceries & Essentials', description: 'Browse full instant delivery catalog' });
-          const res = isDeal ? await catalogApi.getDailyDeals() : await catalogApi.getProducts({ size: 50, sortBy, sortDirection });
+          setCurrentCategory({
+            name: isDeal ? 'Deals of the Day' : 'All Groceries & Essentials',
+            description: 'Browse full instant delivery catalog',
+          });
+          const res = isDeal
+            ? await catalogApi.getDailyDeals()
+            : await catalogApi.getProducts({ size: 50, sortBy, sortDirection });
           if (res?.data?.content) {
             setProducts(res.data.content);
           } else if (Array.isArray(res?.data)) {
@@ -71,9 +79,8 @@ const CategoryPage = () => {
 
   // Extract unique brands for filtering
   const brands = ['ALL', ...new Set(products.map((p) => p.brand).filter(Boolean))];
-  const filteredProducts = selectedBrand === 'ALL'
-    ? products
-    : products.filter((p) => p.brand === selectedBrand);
+  const filteredProducts =
+    selectedBrand === 'ALL' ? products : products.filter((p) => p.brand === selectedBrand);
 
   return (
     <div className="container" style={{ paddingTop: '24px', paddingBottom: '60px' }}>
@@ -83,7 +90,8 @@ const CategoryPage = () => {
           {currentCategory?.name || 'Browse Groceries'}
         </h1>
         <p style={{ fontSize: '0.9rem', color: '#64748b' }}>
-          {currentCategory?.description || 'Fast 10-30 min delivery'} • {filteredProducts.length} items available
+          {currentCategory?.description || 'Fast 10-30 min delivery'} • {filteredProducts.length}{' '}
+          items available
         </p>
       </div>
 
@@ -154,7 +162,14 @@ const CategoryPage = () => {
         {/* Brand Filter */}
         {brands.length > 2 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>
+            <span
+              style={{
+                fontSize: '0.8rem',
+                fontWeight: '700',
+                color: '#64748b',
+                textTransform: 'uppercase',
+              }}
+            >
               Brand:
             </span>
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
@@ -182,7 +197,16 @@ const CategoryPage = () => {
 
         {/* Sort Dropdown */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
-          <span style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span
+            style={{
+              fontSize: '0.82rem',
+              color: '#64748b',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+          >
             <ArrowUpDown size={14} /> Sort:
           </span>
           <select
@@ -206,13 +230,25 @@ const CategoryPage = () => {
 
       {/* Products Grid */}
       {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '16px' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+            gap: '16px',
+          }}
+        >
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div key={i} className="skeleton" style={{ height: '280px', borderRadius: '16px' }} />
           ))}
         </div>
       ) : filteredProducts.length > 0 ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '16px' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+            gap: '16px',
+          }}
+        >
           {filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
@@ -222,9 +258,21 @@ const CategoryPage = () => {
           ))}
         </div>
       ) : (
-        <div style={{ textAlign: 'center', padding: '80px 20px', background: '#ffffff', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
-          <h3 style={{ fontSize: '1.2rem', color: '#0f172a', marginBottom: '8px' }}>No products found</h3>
-          <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '20px' }}>Try selecting a different category or clearing filters</p>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '80px 20px',
+            background: '#ffffff',
+            borderRadius: '20px',
+            border: '1px solid #e2e8f0',
+          }}
+        >
+          <h3 style={{ fontSize: '1.2rem', color: '#0f172a', marginBottom: '8px' }}>
+            No products found
+          </h3>
+          <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '20px' }}>
+            Try selecting a different category or clearing filters
+          </p>
           <Link to="/category/all" className="btn btn-primary">
             View All Products
           </Link>
@@ -233,10 +281,7 @@ const CategoryPage = () => {
 
       {/* Product Detail Modal */}
       {selectedProduct && (
-        <ProductDetailModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-        />
+        <ProductDetailModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
       )}
     </div>
   );

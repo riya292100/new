@@ -22,18 +22,20 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ addToast, removeToast }}>
       {children}
-      <div style={{
-        position: 'fixed',
-        bottom: '24px',
-        right: '24px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-        zIndex: 9999,
-        maxWidth: '380px',
-        width: 'calc(100% - 48px)',
-        pointerEvents: 'none'
-      }}>
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          zIndex: 9999,
+          maxWidth: '380px',
+          width: 'calc(100% - 48px)',
+          pointerEvents: 'none',
+        }}
+      >
         {toasts.map((t) => (
           <div
             key={t.id}
@@ -45,7 +47,8 @@ export const ToastProvider = ({ children }) => {
               gap: '12px',
               padding: '12px 16px',
               borderRadius: '12px',
-              background: t.type === 'success' ? '#065f46' : t.type === 'error' ? '#991b1b' : '#1e293b',
+              background:
+                t.type === 'success' ? '#065f46' : t.type === 'error' ? '#991b1b' : '#1e293b',
               color: '#ffffff',
               boxShadow: '0 10px 25px -3px rgba(0,0,0,0.25)',
               fontSize: '0.9rem',
@@ -67,7 +70,7 @@ export const ToastProvider = ({ children }) => {
                 color: 'rgba(255,255,255,0.7)',
                 cursor: 'pointer',
                 display: 'flex',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
             >
               <X size={16} />

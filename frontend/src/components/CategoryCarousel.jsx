@@ -4,10 +4,19 @@ import { Link } from 'react-router-dom';
 const CategoryCarousel = ({ categories = [] }) => {
   return (
     <div style={{ marginBottom: '36px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '16px',
+        }}
+      >
         <div>
           <h2 style={{ fontSize: '1.35rem', color: '#0f172a' }}>Shop By Category</h2>
-          <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Explore handpicked groceries & daily necessities</p>
+          <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
+            Explore handpicked groceries & daily necessities
+          </p>
         </div>
         <Link
           to="/category/all"

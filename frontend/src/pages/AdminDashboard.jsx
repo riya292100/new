@@ -33,7 +33,8 @@ const AdminDashboard = () => {
     unitQuantity: '500 g',
     stockQuantity: 50,
     lowStockThreshold: 10,
-    imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop&q=60',
+    imageUrl:
+      'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop&q=60',
     description: '',
     inStock: true,
     isFeatured: false,
@@ -142,7 +143,8 @@ const AdminDashboard = () => {
       unitQuantity: '500 g',
       stockQuantity: 50,
       lowStockThreshold: 10,
-      imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop&q=60',
+      imageUrl:
+        'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop&q=60',
       description: '',
       inStock: true,
       isFeatured: false,
@@ -175,7 +177,16 @@ const AdminDashboard = () => {
   return (
     <div className="container" style={{ paddingTop: '28px', paddingBottom: '60px' }}>
       {/* Top Bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '28px',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <ShieldCheck size={28} color="#059669" />
@@ -199,7 +210,16 @@ const AdminDashboard = () => {
       <AdminStatsCards stats={stats} />
 
       {/* Navigation Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '2px solid #f1f5f9', paddingBottom: '8px', overflowX: 'auto' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '8px',
+          marginBottom: '24px',
+          borderBottom: '2px solid #f1f5f9',
+          paddingBottom: '8px',
+          overflowX: 'auto',
+        }}
+      >
         {[
           { key: 'overview', label: 'Products & Catalog' },
           { key: 'coupons', label: 'Coupons & Promos' },
@@ -247,10 +267,7 @@ const AdminDashboard = () => {
       )}
 
       {activeTab === 'inventory' && (
-        <AdminLowStockAlerts
-          lowStockProducts={lowStockProducts}
-          onRestock={handleRestock}
-        />
+        <AdminLowStockAlerts lowStockProducts={lowStockProducts} onRestock={handleRestock} />
       )}
 
       {/* Product Modal */}

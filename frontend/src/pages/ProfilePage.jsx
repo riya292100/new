@@ -2,7 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { addressApi } from '../services/api';
 import { useToast } from '../context/ToastContext';
-import { User, MapPin, Plus, Trash2, Home, Briefcase, Building, Mail, Phone, Shield } from 'lucide-react';
+import {
+  User,
+  MapPin,
+  Plus,
+  Trash2,
+  Home,
+  Briefcase,
+  Building,
+  Mail,
+  Phone,
+  Shield,
+} from 'lucide-react';
 
 const ProfilePage = () => {
   const { user } = useAuth();
@@ -23,7 +34,8 @@ const ProfilePage = () => {
   });
 
   const fetchAddresses = () => {
-    addressApi.getAddresses()
+    addressApi
+      .getAddresses()
       .then((res) => {
         if (res?.data) setAddresses(res.data);
       })
@@ -58,41 +70,103 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="container" style={{ paddingTop: '24px', paddingBottom: '60px', maxWidth: '800px' }}>
+    <div
+      className="container"
+      style={{ paddingTop: '24px', paddingBottom: '60px', maxWidth: '800px' }}
+    >
       <h1 style={{ fontSize: '1.75rem', color: '#0f172a', marginBottom: '24px' }}>
         My Profile & Addresses
       </h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* User Card */}
-        <div style={{ background: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
-          <div style={{ width: '70px', height: '70px', borderRadius: '50%', overflow: 'hidden', background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#059669', fontSize: '1.6rem', fontWeight: 'bold' }}>
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: '20px',
+            padding: '24px',
+            border: '1px solid #e2e8f0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '20px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div
+            style={{
+              width: '70px',
+              height: '70px',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              background: '#ecfdf5',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#059669',
+              fontSize: '1.6rem',
+              fontWeight: 'bold',
+            }}
+          >
             {user?.avatarUrl ? (
-              <img src={user.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img
+                src={user.avatarUrl}
+                alt=""
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
             ) : (
               user?.fullName?.charAt(0) || 'U'
             )}
           </div>
           <div>
             <h3 style={{ fontSize: '1.3rem', color: '#0f172a' }}>{user?.fullName}</h3>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '0.85rem', color: '#64748b', marginTop: '4px', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '14px',
+                fontSize: '0.85rem',
+                color: '#64748b',
+                marginTop: '4px',
+                flexWrap: 'wrap',
+              }}
+            >
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Mail size={14} /> {user?.email}
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Phone size={14} /> {user?.phone}
               </span>
-              <span className="badge badge-featured">
-                {user?.roles?.join(', ')}
-              </span>
+              <span className="badge badge-featured">{user?.roles?.join(', ')}</span>
             </div>
           </div>
         </div>
 
         {/* Address Book Card */}
-        <div style={{ background: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-            <h3 style={{ fontSize: '1.2rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: '20px',
+            padding: '24px',
+            border: '1px solid #e2e8f0',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '18px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '1.2rem',
+                color: '#0f172a',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
               <MapPin size={20} color="#059669" /> Saved Addresses ({addresses.length})
             </h3>
             <button
@@ -106,7 +180,19 @@ const ProfilePage = () => {
 
           {/* Inline Add Address Form */}
           {showAddForm && (
-            <form onSubmit={handleAddAddress} style={{ background: '#f8fafc', padding: '18px', borderRadius: '16px', border: '1px solid #e2e8f0', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <form
+              onSubmit={handleAddAddress}
+              style={{
+                background: '#f8fafc',
+                padding: '18px',
+                borderRadius: '16px',
+                border: '1px solid #e2e8f0',
+                marginBottom: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+              }}
+            >
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
                 <select
                   value={newAddr.label}
@@ -130,7 +216,9 @@ const ProfilePage = () => {
                   required
                   placeholder="Receiver Phone"
                   value={newAddr.receiverPhone}
-                  onChange={(e) => setNewAddr({ ...newAddr, receiverPhone: e.target.value.replace(/\D/g, '') })}
+                  onChange={(e) =>
+                    setNewAddr({ ...newAddr, receiverPhone: e.target.value.replace(/\D/g, '') })
+                  }
                   className="input-control"
                 />
               </div>
@@ -169,7 +257,11 @@ const ProfilePage = () => {
                 <button type="submit" className="btn btn-primary btn-sm">
                   Save Address
                 </button>
-                <button type="button" onClick={() => setShowAddForm(false)} className="btn btn-outline btn-sm">
+                <button
+                  type="button"
+                  onClick={() => setShowAddForm(false)}
+                  className="btn btn-outline btn-sm"
+                >
                   Cancel
                 </button>
               </div>
@@ -179,23 +271,60 @@ const ProfilePage = () => {
           {/* List */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {addresses.map((a) => (
-              <div key={a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
+              <div
+                key={a.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '14px',
+                  borderRadius: '12px',
+                  background: '#f8fafc',
+                  border: '1px solid #f1f5f9',
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <div style={{ width: '34px', height: '34px', borderRadius: '8px', background: '#ffffff', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#059669', flexShrink: 0 }}>
-                    {a.label?.toLowerCase() === 'home' ? <Home size={16} /> : a.label?.toLowerCase() === 'work' ? <Briefcase size={16} /> : <Building size={16} />}
+                  <div
+                    style={{
+                      width: '34px',
+                      height: '34px',
+                      borderRadius: '8px',
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#059669',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {a.label?.toLowerCase() === 'home' ? (
+                      <Home size={16} />
+                    ) : a.label?.toLowerCase() === 'work' ? (
+                      <Briefcase size={16} />
+                    ) : (
+                      <Building size={16} />
+                    )}
                   </div>
                   <div>
                     <div style={{ fontSize: '0.92rem', fontWeight: '700', color: '#0f172a' }}>
                       {a.label} • {a.receiverName} ({a.receiverPhone})
                     </div>
                     <p style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '2px' }}>
-                      {a.streetAddress}, {a.apartmentUnit ? `${a.apartmentUnit}, ` : ''}{a.city} - {a.pincode}
+                      {a.streetAddress}, {a.apartmentUnit ? `${a.apartmentUnit}, ` : ''}
+                      {a.city} - {a.pincode}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => handleDeleteAddress(a.id)}
-                  style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '6px' }}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#ef4444',
+                    cursor: 'pointer',
+                    padding: '6px',
+                  }}
                 >
                   <Trash2 size={16} />
                 </button>

@@ -34,15 +34,17 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '80px 20px' }}>
-        <div style={{
-          width: '44px',
-          height: '44px',
-          borderRadius: '50%',
-          border: '4px solid #e2e8f0',
-          borderTop: '4px solid #059669',
-          animation: 'spin 0.8s linear infinite',
-          margin: '0 auto',
-        }} />
+        <div
+          style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            border: '4px solid #e2e8f0',
+            borderTop: '4px solid #059669',
+            animation: 'spin 0.8s linear infinite',
+            margin: '0 auto',
+          }}
+        />
         <p style={{ marginTop: '16px', color: '#64748b' }}>Authenticating...</p>
       </div>
     );
@@ -86,41 +88,62 @@ const AppContent = () => {
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/category" element={<CategoryPage />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
-          <Route path="/checkout" element={
-            <ProtectedRoute>
-              <CheckoutPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/order-success/:orderNumber" element={
-            <ProtectedRoute>
-              <OrderSuccessPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/track/:orderNumber" element={
-            <ProtectedRoute>
-              <OrderTrackingPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/orders" element={
-            <ProtectedRoute>
-              <OrderHistoryPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          } />
-          <Route path="/delivery-partner" element={
-            <ProtectedRoute requiredRole="ROLE_DELIVERY_PARTNER">
-              <DeliveryPartnerPortal />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin" element={
-            <ProtectedRoute requiredRole="ROLE_ADMIN">
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <CheckoutPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order-success/:orderNumber"
+            element={
+              <ProtectedRoute>
+                <OrderSuccessPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/track/:orderNumber"
+            element={
+              <ProtectedRoute>
+                <OrderTrackingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <OrderHistoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/delivery-partner"
+            element={
+              <ProtectedRoute requiredRole="ROLE_DELIVERY_PARTNER">
+                <DeliveryPartnerPortal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requiredRole="ROLE_ADMIN">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
