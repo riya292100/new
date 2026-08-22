@@ -20,6 +20,7 @@ jobs:
           node-version: 20
 
       - name: Install Dependencies
+        working-directory: ./frontend
         run: npm install
 
       - name: Verify Formatting (Prettier)
@@ -44,6 +45,7 @@ jobs:
           node-version: 20
 
       - name: Install Dependencies
+        working-directory: ./frontend
         run: npm install
 
       - name: Security Vulnerability Audit
