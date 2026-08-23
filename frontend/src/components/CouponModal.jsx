@@ -15,7 +15,7 @@ const CouponModal = () => {
         .then((res) => {
           if (res?.data) setCoupons(res.data);
         })
-        .catch(() => {});
+        .catch((err) => { console.error('Failed to fetch coupons:', err); });
     }
   }, [couponModalOpen]);
 

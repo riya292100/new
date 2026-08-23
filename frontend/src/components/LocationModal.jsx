@@ -25,7 +25,7 @@ const LocationModal = () => {
         .then((res) => {
           if (res?.data) setSavedAddresses(res.data);
         })
-        .catch(() => {});
+        .catch((err) => { console.error('Failed to search locations:', err); });
     }
   }, [locationModalOpen, user]);
 

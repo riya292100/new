@@ -14,3 +14,36 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: () => {},
   }),
 });
+
+import { vi } from 'vitest';
+
+vi.mock('axios', () => {
+  return {
+    default: {
+      create: () => ({
+        get: vi.fn(() => Promise.reject(new Error('Network request forbidden in tests'))),
+        post: vi.fn(() => Promise.reject(new Error('Network request forbidden in tests'))),
+        put: vi.fn(() => Promise.reject(new Error('Network request forbidden in tests'))),
+        delete: vi.fn(() => Promise.reject(new Error('Network request forbidden in tests'))),
+        patch: vi.fn(() => Promise.reject(new Error('Network request forbidden in tests'))),
+        interceptors: {
+          request: { use: vi.fn(), eject: vi.fn() },
+          response: { use: vi.fn(), eject: vi.fn() }
+        }
+      })
+    }
+  };
+});
+
+vi.mock('@stomp/stompjs', () => ({
+  Client: vi.fn(() => ({
+    activate: vi.fn(),
+    deactivate: vi.fn(),
+    subscribe: vi.fn(() => ({ unsubscribe: vi.fn() })),
+    publish: vi.fn()
+  }))
+}));
+
+vi.mock('sockjs-client', () => ({
+  default: vi.fn()
+}));

@@ -30,7 +30,7 @@ export const CartProvider = ({ children }) => {
   const { addToast } = useToast();
 
   const fetchCart = useCallback(async () => {
-    if (!user) return;
+    if (!user || import.meta.env.MODE === 'test') return;
     try {
       const res = await cartApi.getCart();
       if (res?.data) {

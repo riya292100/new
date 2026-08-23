@@ -21,7 +21,7 @@ jobs:
 
       - name: Install Dependencies
         working-directory: ./frontend
-        run: npm install
+        run: npm ci
 
       - name: Verify Formatting (Prettier)
         working-directory: ./frontend
@@ -46,7 +46,7 @@ jobs:
 
       - name: Install Dependencies
         working-directory: ./frontend
-        run: npm install
+        run: npm ci
 
       - name: Security Vulnerability Audit
         working-directory: ./frontend

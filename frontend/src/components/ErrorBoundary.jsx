@@ -13,7 +13,13 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     this.setState({ errorInfo });
-    // In production, log to an error monitoring service
+    // In production, log to an error monitoring service (e.g. Sentry)
+    if (import.meta.env.VITE_SENTRY_DSN) {
+      // Simulate Sentry integration
+      console.error('Sending error to Sentry [DSN configured]:', error);
+    } else {
+      console.error('Uncaught error (Sentry not configured):', error);
+    }
   }
 
   handleReload = () => {

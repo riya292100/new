@@ -16,7 +16,7 @@ const OrderHistoryPage = () => {
         .then((res) => {
           if (res?.data) setOrders(res.data);
         })
-        .catch(() => {})
+        .catch((err) => { console.error('Failed to fetch order history:', err); })
         .finally(() => setLoading(false));
     }
   }, [user]);

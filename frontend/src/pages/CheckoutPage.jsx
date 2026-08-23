@@ -56,7 +56,7 @@ const CheckoutPage = () => {
           setShowNewAddressForm(true);
         }
       })
-      .catch(() => {});
+      .catch((err) => { console.error('Failed to fetch user addresses:', err); });
   }, [user, navigate]);
 
   const handleCreateAddress = async (e) => {
@@ -106,9 +106,7 @@ const CheckoutPage = () => {
             spread: 70,
             origin: { y: 0.6 },
           });
-        } catch (_e) {
-          // Confetti animation is progressive enhancement
-        }
+        } catch (_e) { console.error('Error:', _e); }
 
         addToast('Order placed successfully!', 'success');
         navigate(`/track/${res.data.orderNumber}`);

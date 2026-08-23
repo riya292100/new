@@ -14,11 +14,15 @@ vi.mock('../../services/api', () => ({
   },
 }));
 
-vi.mock('../../services/websocket', () => ({
-  default: {
+vi.mock('../../services/websocket', () => {
+  const mockWs = {
     subscribeToOrder: vi.fn(() => vi.fn()),
-  },
-}));
+  };
+  return {
+    default: mockWs,
+    wsService: mockWs,
+  };
+});
 
 vi.mock('../../components/LiveRadarMap', () => ({
   default: () => <div data-testid="live-radar-map">Live Radar Map</div>,

@@ -62,9 +62,7 @@ const AuthModal = () => {
           roles: [selectedRole],
         });
       }
-    } catch (err) {
-      // toast handled in auth context
-    } finally {
+    } catch (err) { console.error('Error:', err); } finally {
       setLoading(false);
     }
   };

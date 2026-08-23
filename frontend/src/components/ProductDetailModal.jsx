@@ -26,14 +26,18 @@ const ProductDetailModal = ({ product, onClose }) => {
         .then((res) => {
           if (res?.data) setReviews(res.data);
         })
-        .catch(() => {});
+        .catch((err) => {
+          console.error('Failed to fetch reviews:', err);
+        });
 
       catalogApi
         .getRelatedProducts(product.id, 4)
         .then((res) => {
           if (res?.data) setRelatedProducts(res.data);
         })
-        .catch(() => {});
+        .catch((err) => {
+          console.error('Failed to fetch related products:', err);
+        });
     }
   }, [product]);
 

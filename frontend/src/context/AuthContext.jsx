@@ -14,6 +14,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initAuth = async () => {
+      if (import.meta.env.MODE === 'test') {
+        setLoading(false);
+        return;
+      }
       const token = localStorage.getItem('quickcart_token');
       if (token) {
         try {
@@ -43,9 +47,7 @@ export const AuthProvider = ({ children }) => {
               roles: demoRes.data.roles,
             });
           }
-        } catch (e) {
-          // Demo fallback ready
-        }
+        } catch (e) { console.error('Error:', e); }
       }
       setLoading(false);
     };

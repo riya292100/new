@@ -39,7 +39,9 @@ const ProfilePage = () => {
       .then((res) => {
         if (res?.data) setAddresses(res.data);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error('Failed to fetch addresses:', err);
+      });
   };
 
   useEffect(() => {
