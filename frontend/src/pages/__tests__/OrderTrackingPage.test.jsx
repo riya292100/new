@@ -7,6 +7,10 @@ import { ToastProvider } from '../../context/ToastContext';
 import { orderApi } from '../../services/api';
 import wsService from '../../services/websocket';
 
+const { mockSubscribeToOrder } = vi.hoisted(() => ({
+  mockSubscribeToOrder: vi.fn(() => vi.fn()),
+}));
+
 vi.mock('../../services/api', () => ({
   orderApi: {
     trackOrder: vi.fn(),
@@ -14,15 +18,14 @@ vi.mock('../../services/api', () => ({
   },
 }));
 
-vi.mock('../../services/websocket', () => {
-  const mockWs = {
-    subscribeToOrder: vi.fn(() => vi.fn()),
-  };
-  return {
-    default: mockWs,
-    wsService: mockWs,
-  };
-});
+vi.mock('../../services/websocket', () => ({
+  default: {
+    subscribeToOrder: mockSubscribeToOrder,
+  },
+  wsService: {
+    subscribeToOrder: mockSubscribeToOrder,
+  },
+}));
 
 vi.mock('../../components/LiveRadarMap', () => ({
   default: () => <div data-testid="live-radar-map">Live Radar Map</div>,
@@ -74,7 +77,7 @@ describe('OrderTrackingPage', () => {
       expect(screen.getByText(/Live Order #/i)).toBeInTheDocument();
       expect(screen.getByText(/Ramesh Kumar/i)).toBeInTheDocument();
       expect(screen.getByText(/Delivery Progress Timeline/i)).toBeInTheDocument();
-      expect(wsService.subscribeToOrder).toHaveBeenCalledWith(42, expect.any(Function));
+      expect(mockSubscribeToOrder).toHaveBeenCalledWith(42, expect.any(Function));
     });
   });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import Header from '../Header';
@@ -45,5 +45,19 @@ describe('Header Component (Isolated Unit Tests)', () => {
     expect(screen.getByText(/Delivery in 15 mins/i)).toBeInTheDocument();
     expect(screen.getByText(/Rahul/i)).toBeInTheDocument();
     expect(screen.getByText(/4 items/i)).toBeInTheDocument();
+    expect(screen.getByText(/Dining & Tables/i)).toBeInTheDocument();
+  });
+
+  it('toggles user dropdown on button click', () => {
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>
+    );
+
+    const userBtn = screen.getByText(/Rahul/i);
+    fireEvent.click(userBtn);
+    expect(screen.getByText(/My Orders/i)).toBeInTheDocument();
+    expect(screen.getByText(/Table Bookings/i)).toBeInTheDocument();
   });
 });

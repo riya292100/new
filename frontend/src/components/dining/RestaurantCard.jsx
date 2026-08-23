@@ -11,8 +11,16 @@ const RestaurantCard = ({ restaurant, onToggleFavorite = () => {}, onBookTable =
     <div className="qc-dining-card">
       <div style={{ position: 'relative', height: '180px', overflow: 'hidden' }}>
         <img
-          src={restaurant.imageUrl}
+          src={
+            restaurant.imageUrl ||
+            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=60'
+          }
           alt={restaurant.name}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src =
+              'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=60';
+          }}
           style={{
             width: '100%',
             height: '100%',

@@ -14,6 +14,7 @@ import {
   Send,
 } from 'lucide-react';
 import { restaurantApi } from '../services/restaurantApi';
+import { FALLBACK_RESTAURANTS } from '../utils/demoConfig';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import DietaryBadge from '../components/dining/DietaryBadge';
@@ -44,11 +45,16 @@ const RestaurantDetailsPage = () => {
         .then((res) => {
           if (res?.data?.data) {
             setRestaurant(res.data.data);
+          } else {
+            const fb = FALLBACK_RESTAURANTS.find((r) => String(r.id) === String(id));
+            if (fb) setRestaurant(fb);
+            else navigate('/dining');
           }
         })
-        .catch((err) => {
-          logger.error('RestaurantDetailsPage', 'Failed to load restaurant', err);
-          navigate('/dining');
+        .catch(() => {
+          const fb = FALLBACK_RESTAURANTS.find((r) => String(r.id) === String(id));
+          if (fb) setRestaurant(fb);
+          else navigate('/dining');
         })
         .finally(() => setLoading(false));
 

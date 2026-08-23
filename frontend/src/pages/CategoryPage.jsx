@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { catalogApi, categoryApi } from '../services/api';
+import { FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../utils/demoConfig';
 import logger from '../utils/logger';
 import ProductCard from '../components/ProductCard';
 import ProductDetailModal from '../components/ProductDetailModal';
@@ -12,9 +13,9 @@ const CategoryPage = () => {
   const searchQuery = searchParams.get('search');
   const isDeal = searchParams.get('deal');
 
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
   const [currentCategory, setCurrentCategory] = useState(null);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(FALLBACK_PRODUCTS);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('id');
   const [sortDirection, setSortDirection] = useState('ASC');
@@ -22,9 +23,14 @@ const CategoryPage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
-    catalogApi.getCategories().then((res) => {
-      if (res?.data) setCategories(res.data);
-    });
+    catalogApi
+      .getCategories()
+      .then((res) => {
+        if (res?.data && res.data.length > 0) setCategories(res.data);
+      })
+      .catch(() => {
+        setCategories(FALLBACK_CATEGORIES);
+      });
   }, []);
 
   useEffect(() => {
@@ -32,27 +38,51 @@ const CategoryPage = () => {
       setLoading(true);
       try {
         if (searchQuery) {
-          const res = await catalogApi.searchProducts(searchQuery);
-          if (res?.data) {
-            setProducts(res.data);
-            setCurrentCategory({
-              name: `Search: "${searchQuery}"`,
-              description: `Matching products for ${searchQuery}`,
-            });
+          const res = await catalogApi.searchProducts(searchQuery).catch(() => null);
+          const found = res?.data || (Array.isArray(res) ? res : null);
+          if (found && found.length > 0) {
+            setProducts(found);
+          } else {
+            const matches = FALLBACK_PRODUCTS.filter(
+              (p) =>
+                p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                p.brand.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setProducts(matches.length > 0 ? matches : FALLBACK_PRODUCTS);
           }
+          setCurrentCategory({
+            name: `Search: "${searchQuery}"`,
+            description: `Matching products for ${searchQuery}`,
+          });
         } else if (slug && slug !== 'all') {
-          const catRes = await catalogApi.getCategoryBySlug(slug);
-          if (catRes?.data) {
-            setCurrentCategory(catRes.data);
-            const prodRes = await catalogApi.getProducts({
-              categoryId: catRes.data.id,
+          const catRes = await catalogApi.getCategoryBySlug(slug).catch(() => null);
+          const currentCat = catRes?.data ||
+            FALLBACK_CATEGORIES.find((c) => c.slug === slug) || {
+              id: 1,
+              name: slug.replace('-', ' '),
+              description: 'Fresh groceries',
+            };
+          setCurrentCategory(currentCat);
+
+          const prodRes = await catalogApi
+            .getProducts({
+              categoryId: currentCat.id,
               sortBy,
               sortDirection,
               size: 50,
-            });
-            if (prodRes?.data?.content) {
-              setProducts(prodRes.data.content);
-            }
+            })
+            .catch(() => null);
+
+          const catProds =
+            prodRes?.data?.content || (Array.isArray(prodRes?.data) ? prodRes.data : null);
+
+          if (catProds && catProds.length > 0) {
+            setProducts(catProds);
+          } else {
+            const fallbackFiltered = FALLBACK_PRODUCTS.filter(
+              (p) => p.categorySlug === slug || p.categoryId === currentCat.id
+            );
+            setProducts(fallbackFiltered.length > 0 ? fallbackFiltered : FALLBACK_PRODUCTS);
           }
         } else {
           setCurrentCategory({
@@ -60,16 +90,20 @@ const CategoryPage = () => {
             description: 'Browse full instant delivery catalog',
           });
           const res = isDeal
-            ? await catalogApi.getDailyDeals()
-            : await catalogApi.getProducts({ size: 50, sortBy, sortDirection });
-          if (res?.data?.content) {
-            setProducts(res.data.content);
-          } else if (Array.isArray(res?.data)) {
-            setProducts(res.data);
+            ? await catalogApi.getDailyDeals().catch(() => null)
+            : await catalogApi.getProducts({ size: 50, sortBy, sortDirection }).catch(() => null);
+
+          const allProds = res?.data?.content || (Array.isArray(res?.data) ? res.data : null);
+
+          if (allProds && allProds.length > 0) {
+            setProducts(allProds);
+          } else {
+            setProducts(isDeal ? FALLBACK_PRODUCTS.filter((p) => p.isDeal) : FALLBACK_PRODUCTS);
           }
         }
       } catch (err) {
-        logger.warn('CategoryPage', 'Error fetching category products', err);
+        logger.warn('CategoryPage', 'Error fetching category products, using fallback', err);
+        setProducts(FALLBACK_PRODUCTS);
       } finally {
         setLoading(false);
       }

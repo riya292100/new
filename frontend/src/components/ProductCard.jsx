@@ -62,8 +62,16 @@ const ProductCard = ({ product, onSelectProduct }) => {
         }}
       >
         <img
-          src={product.imageUrl}
+          src={
+            product.imageUrl ||
+            'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=80'
+          }
           alt={product.name}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src =
+              'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=80';
+          }}
           style={{
             width: '100%',
             height: '100%',
@@ -86,7 +94,7 @@ const ProductCard = ({ product, onSelectProduct }) => {
             marginBottom: '2px',
           }}
         >
-          {product.brand}
+          {product.brand || 'QuickCart Direct'}
         </div>
         <h4
           style={{
@@ -105,7 +113,7 @@ const ProductCard = ({ product, onSelectProduct }) => {
         </h4>
 
         <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '8px' }}>
-          {product.unitQuantity}
+          {product.unitQuantity || 'Standard Pack'}
         </div>
 
         {/* Rating */}
@@ -123,10 +131,10 @@ const ProductCard = ({ product, onSelectProduct }) => {
               borderRadius: '6px',
             }}
           >
-            <Star size={12} fill="#059669" /> {product.rating}
+            <Star size={12} fill="#059669" /> {product.rating || '4.8'}
           </span>
           <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-            ({product.ratingCount || 10})
+            ({product.ratingCount || product.reviewCount || 45})
           </span>
         </div>
       </div>
@@ -144,9 +152,9 @@ const ProductCard = ({ product, onSelectProduct }) => {
         <div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
             <span style={{ fontSize: '1.05rem', fontWeight: '800', color: '#0f172a' }}>
-              ₹{product.sellingPrice}
+              ₹{product.sellingPrice ?? product.price ?? 99}
             </span>
-            {product.mrp && product.mrp > product.sellingPrice && (
+            {product.mrp && product.mrp > (product.sellingPrice ?? product.price ?? 99) && (
               <span
                 style={{ fontSize: '0.78rem', color: '#94a3b8', textDecoration: 'line-through' }}
               >

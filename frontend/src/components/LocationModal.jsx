@@ -45,15 +45,7 @@ const LocationModal = () => {
 
     const code = pincodeInput.trim();
     // Simulate serviceability check
-    if (
-      code.length === 6 &&
-      (code.startsWith('11') ||
-        code.startsWith('12') ||
-        code.startsWith('40') ||
-        code.startsWith('56') ||
-        code.startsWith('70') ||
-        code.startsWith('60'))
-    ) {
+    if (code.length === 6 && /^\d{6}$/.test(code)) {
       setPincodeStatus({
         serviceable: true,
         message: '🎉 Superfast 12-min delivery is available in your area!',
@@ -67,8 +59,14 @@ const LocationModal = () => {
             ? 'Gurugram'
             : code.startsWith('40')
               ? 'Mumbai'
-              : 'Bengaluru',
-        streetAddress: `Area Pincode ${code}`,
+              : code.startsWith('56')
+                ? 'Bengaluru'
+                : code.startsWith('70')
+                  ? 'Kolkata'
+                  : code.startsWith('60')
+                    ? 'Chennai'
+                    : 'Metro City',
+        streetAddress: `Sector / Area ${code}`,
       });
     } else {
       setPincodeStatus({

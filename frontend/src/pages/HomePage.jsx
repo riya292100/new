@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Zap, Clock, ShieldCheck, Tag, ArrowRight, Sparkles, Flame, ThumbsUp } from 'lucide-react';
 import logger from '../utils/logger';
 import { catalogApi, categoryApi } from '../services/api';
+import { FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../utils/demoConfig';
 import CategoryCarousel from '../components/CategoryCarousel';
 import ProductCard from '../components/ProductCard';
 import ProductDetailModal from '../components/ProductDetailModal';
@@ -55,29 +56,27 @@ const HomePage = () => {
     const fetchData = async () => {
       try {
         const [catRes, featRes, dealsRes] = await Promise.all([
-          catalogApi.getCategories(),
-          catalogApi.getFeaturedProducts(),
-          catalogApi.getDailyDeals(),
+          catalogApi.getCategories().catch(() => null),
+          catalogApi.getFeaturedProducts().catch(() => null),
+          catalogApi.getDailyDeals().catch(() => null),
         ]);
-        if (catRes?.data) {
-          setCategories(catRes.data);
-        } else if (Array.isArray(catRes)) {
-          setCategories(catRes);
-        }
 
-        if (featRes?.data) {
-          setFeaturedProducts(featRes.data);
-        } else if (Array.isArray(featRes)) {
-          setFeaturedProducts(featRes);
-        }
+        const loadedCats = catRes?.data || (Array.isArray(catRes) ? catRes : null) || [];
+        const loadedFeat = featRes?.data || (Array.isArray(featRes) ? featRes : null) || [];
+        const loadedDeals = dealsRes?.data || (Array.isArray(dealsRes) ? dealsRes : null) || [];
 
-        if (dealsRes?.data) {
-          setDailyDeals(dealsRes.data);
-        } else if (Array.isArray(dealsRes)) {
-          setDailyDeals(dealsRes);
-        }
+        setCategories(loadedCats.length > 0 ? loadedCats : FALLBACK_CATEGORIES);
+        setFeaturedProducts(
+          loadedFeat.length > 0 ? loadedFeat : FALLBACK_PRODUCTS.filter((p) => p.isFeatured)
+        );
+        setDailyDeals(
+          loadedDeals.length > 0 ? loadedDeals : FALLBACK_PRODUCTS.filter((p) => p.isDeal)
+        );
       } catch (err) {
-        logger.warn('HomePage', 'Failed to load homepage data', err);
+        logger.warn('HomePage', 'Failed to load homepage data, using demo fallback', err);
+        setCategories(FALLBACK_CATEGORIES);
+        setFeaturedProducts(FALLBACK_PRODUCTS.filter((p) => p.isFeatured));
+        setDailyDeals(FALLBACK_PRODUCTS.filter((p) => p.isDeal));
       } finally {
         setLoading(false);
       }
