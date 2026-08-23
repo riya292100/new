@@ -21,3 +21,12 @@ quickcart:
     baseDeliveryFee: 25.0
     platformFee: 5.0
     taxRate: 0.05
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

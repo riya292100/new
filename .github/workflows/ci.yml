@@ -2,9 +2,10 @@ name: QuickCart CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   lint-and-format:
@@ -77,6 +78,7 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
           cache: 'maven'
+          cache-dependency-path: './backend/pom.xml'
 
       - name: Compile and Run Isolated JUnit 5 Tests
         working-directory: ./backend
