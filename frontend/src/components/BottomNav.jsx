@@ -74,4 +74,8 @@ const BottomNav = () => {
   );
 };
 
+import PropTypes from 'prop-types';
+
+BottomNav.propTypes = {};
+
 export default BottomNav;

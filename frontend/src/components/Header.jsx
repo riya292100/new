@@ -348,4 +348,8 @@ const Header = () => {
   );
 };
 
+import PropTypes from 'prop-types';
+
+Header.propTypes = {};
+
 export default Header;

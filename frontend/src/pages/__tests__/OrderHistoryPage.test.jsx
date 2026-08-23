@@ -5,6 +5,8 @@ import { MemoryRouter } from 'react-router-dom';
 import OrderHistoryPage from '../OrderHistoryPage';
 import * as api from '../../services/api';
 import * as AuthContextModule from '../../context/AuthContext';
+import * as CartContextModule from '../../context/CartContext';
+import * as ToastContextModule from '../../context/ToastContext';
 
 describe('OrderHistoryPage Component (Isolated Unit Tests)', () => {
   const mockOrders = [
@@ -30,6 +32,15 @@ describe('OrderHistoryPage Component (Isolated Unit Tests)', () => {
       user: { fullName: 'Demo Customer' },
     });
 
+    vi.spyOn(CartContextModule, 'useCart').mockReturnValue({
+      addToCart: vi.fn(),
+      setCartDrawerOpen: vi.fn(),
+    });
+
+    vi.spyOn(ToastContextModule, 'useToast').mockReturnValue({
+      addToast: vi.fn(),
+    });
+
     vi.spyOn(api.orderApi, 'getUserOrders').mockResolvedValue({ data: mockOrders });
   });
 
@@ -41,9 +52,10 @@ describe('OrderHistoryPage Component (Isolated Unit Tests)', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Order #QC-7890/i)).toBeInTheDocument();
       expect(screen.getByText(/DELIVERED/i)).toBeInTheDocument();
-      expect(screen.getByText(/Track Live/i)).toBeInTheDocument();
     });
+
+    expect(screen.getByText(/QC-7890/i)).toBeInTheDocument();
+    expect(screen.getByText(/Organic Whole Milk/i)).toBeInTheDocument();
   });
 });

@@ -204,4 +204,35 @@ const CheckoutOrderSummary = ({
   );
 };
 
+import PropTypes from 'prop-types';
+
+CheckoutOrderSummary.propTypes = {
+  cart: PropTypes.shape({
+    totalItems: PropTypes.number,
+    totalPrice: PropTypes.number,
+    discountAmount: PropTypes.number,
+    deliveryFee: PropTypes.number,
+    finalPrice: PropTypes.number,
+    items: PropTypes.array,
+  }),
+  appliedCoupon: PropTypes.shape({
+    code: PropTypes.string,
+    discountAmount: PropTypes.number,
+  }),
+  removeCoupon: PropTypes.func.isRequired,
+  setCouponModalOpen: PropTypes.func.isRequired,
+  selectedTip: PropTypes.number.isRequired,
+  setSelectedTip: PropTypes.func.isRequired,
+  finalPayableAmount: PropTypes.number,
+  placingOrder: PropTypes.bool,
+  onPlaceOrder: PropTypes.func.isRequired,
+};
+
+CheckoutOrderSummary.defaultProps = {
+  cart: null,
+  appliedCoupon: null,
+  finalPayableAmount: 0,
+  placingOrder: false,
+};
+
 export default CheckoutOrderSummary;

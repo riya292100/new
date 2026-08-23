@@ -323,4 +323,20 @@ const AdminProductModal = ({
   );
 };
 
+import PropTypes from 'prop-types';
+
+AdminProductModal.propTypes = {
+  show: PropTypes.bool.isRequired,
+  editingProduct: PropTypes.object,
+  productForm: PropTypes.object.isRequired,
+  setProductForm: PropTypes.func.isRequired,
+  categories: PropTypes.array.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
+AdminProductModal.defaultProps = {
+  editingProduct: null,
+};
+
 export default AdminProductModal;

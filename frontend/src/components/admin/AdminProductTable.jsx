@@ -1,7 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 
-const AdminProductTable = ({ products, onAddProduct, onEditProduct, onDeleteProduct }) => {
+const AdminProductTable = ({
+  products = [],
+  onAddProduct = () => {},
+  onEditProduct = () => {},
+  onDeleteProduct = () => {},
+}) => {
   return (
     <div
       style={{
@@ -58,76 +64,71 @@ const AdminProductTable = ({ products, onAddProduct, onEditProduct, onDeleteProd
                     src={product.imageUrl}
                     alt=""
                     style={{
-                      width: '36px',
-                      height: '36px',
+                      width: '40px',
+                      height: '40px',
                       borderRadius: '8px',
                       objectFit: 'cover',
                     }}
                   />
                   <div>
-                    <div style={{ fontWeight: '700', color: '#0f172a' }}>{product.name}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                      {product.unitQuantity}
+                    <div style={{ fontWeight: '600', color: '#0f172a' }}>{product.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                      {product.brand} • {product.unitQuantity}
                     </div>
                   </div>
                 </td>
-                <td style={{ padding: '12px 8px', color: '#64748b' }}>{product.categoryName}</td>
+                <td style={{ padding: '12px 8px', color: '#475569' }}>
+                  {product.categoryName || 'General'}
+                </td>
                 <td style={{ padding: '12px 8px', fontWeight: '700', color: '#0f172a' }}>
-                  ₹{product.sellingPrice}
+                  ₹{product.price || product.sellingPrice}
                 </td>
                 <td style={{ padding: '12px 8px' }}>
                   <span
-                    style={{
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      fontSize: '0.75rem',
-                      fontWeight: '700',
-                      background:
-                        product.stockQuantity <= product.lowStockThreshold ? '#fef2f2' : '#ecfdf5',
-                      color:
-                        product.stockQuantity <= product.lowStockThreshold ? '#ef4444' : '#059669',
-                    }}
+                    className={`badge ${
+                      (product.stockQuantity || 0) <= 10 ? 'badge-danger' : 'badge-success'
+                    }`}
                   >
                     {product.stockQuantity} in stock
                   </span>
                 </td>
                 <td style={{ padding: '12px 8px' }}>
-                  {product.isFeatured && (
-                    <span className="badge badge-featured" style={{ marginRight: '4px' }}>
-                      Featured
-                    </span>
-                  )}
-                  {product.isDailyDeal && <span className="badge badge-discount">Deal</span>}
+                  <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                    {product.isFeatured && (
+                      <span
+                        className="badge badge-featured"
+                        style={{ fontSize: '0.68rem', padding: '2px 6px' }}
+                      >
+                        Featured
+                      </span>
+                    )}
+                    {product.isDailyDeal && (
+                      <span
+                        className="badge badge-deal"
+                        style={{ fontSize: '0.68rem', padding: '2px 6px' }}
+                      >
+                        Deal
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td style={{ padding: '12px 8px', textAlign: 'right' }}>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                     <button
                       onClick={() => onEditProduct(product)}
-                      style={{
-                        background: '#f1f5f9',
-                        border: 'none',
-                        borderRadius: '6px',
-                        padding: '6px',
-                        cursor: 'pointer',
-                        color: '#2563eb',
-                      }}
-                      title="Edit"
+                      className="btn btn-outline btn-sm"
+                      style={{ padding: '6px' }}
+                      title="Edit Product"
                     >
-                      <Edit size={15} />
+                      <Edit size={14} />
                     </button>
                     <button
                       onClick={() => onDeleteProduct(product.id)}
-                      style={{
-                        background: '#fef2f2',
-                        border: 'none',
-                        borderRadius: '6px',
-                        padding: '6px',
-                        cursor: 'pointer',
-                        color: '#ef4444',
-                      }}
-                      title="Delete"
+                      className="btn btn-danger btn-sm"
+                      style={{ padding: '6px' }}
+                      title="Delete Product"
                     >
-                      <Trash2 size={15} />
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </td>
@@ -138,6 +139,13 @@ const AdminProductTable = ({ products, onAddProduct, onEditProduct, onDeleteProd
       </div>
     </div>
   );
+};
+
+AdminProductTable.propTypes = {
+  products: PropTypes.arrayOf(PropTypes.object),
+  onAddProduct: PropTypes.func,
+  onEditProduct: PropTypes.func,
+  onDeleteProduct: PropTypes.func,
 };
 
 export default AdminProductTable;

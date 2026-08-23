@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { X, Star, Plus, Minus, Truck, ShieldCheck, Clock, MessageSquare, Send } from 'lucide-react';
+import PropTypes from 'prop-types';
+import {
+  X,
+  Star,
+  Plus,
+  Minus,
+  Clock,
+  MessageSquare,
+  Send,
+  ShieldCheck,
+  Sparkles,
+  Heart,
+} from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { catalogApi, reviewApi } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import { validateSchema, reviewSchema } from '../utils/validation';
+import logger from '../utils/logger';
 
 const ProductDetailModal = ({ product, onClose }) => {
   const { addToCart, updateQuantity, getItemQuantity, getItemCartId } = useCart();
@@ -27,7 +41,7 @@ const ProductDetailModal = ({ product, onClose }) => {
           if (res?.data) setReviews(res.data);
         })
         .catch((err) => {
-          console.error('Failed to fetch reviews:', err);
+          logger.warn('ProductDetailModal', 'Failed to fetch reviews', err);
         });
 
       catalogApi
@@ -36,7 +50,7 @@ const ProductDetailModal = ({ product, onClose }) => {
           if (res?.data) setRelatedProducts(res.data);
         })
         .catch((err) => {
-          console.error('Failed to fetch related products:', err);
+          logger.warn('ProductDetailModal', 'Failed to fetch related products', err);
         });
     }
   }, [product]);
@@ -50,8 +64,14 @@ const ProductDetailModal = ({ product, onClose }) => {
       return;
     }
 
-    if (!newComment.trim()) {
-      addToast('Please enter your review feedback', 'error');
+    const validation = validateSchema(reviewSchema, {
+      rating: newRating,
+      comment: newComment.trim(),
+    });
+
+    if (!validation.isValid) {
+      const firstError = Object.values(validation.errors)[0];
+      addToast(firstError || 'Please check your review input', 'error');
       return;
     }
 
@@ -68,6 +88,7 @@ const ProductDetailModal = ({ product, onClose }) => {
         addToast('Thank you! Your review has been published.', 'success');
       }
     } catch (err) {
+      logger.error('ProductDetailModal', 'Failed to submit review', err);
       addToast(err.message || 'Failed to submit review', 'error');
     } finally {
       setSubmittingReview(false);
@@ -140,9 +161,12 @@ const ProductDetailModal = ({ product, onClose }) => {
           </div>
 
           <div>
-            <span className="badge badge-delivery" style={{ marginBottom: '8px' }}>
-              ⚡ Delivered in 10-15 Mins
-            </span>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
+              <span className="badge badge-delivery">⚡ 10-15 MINS</span>
+              <span className="qc-nutrition-badge organic">🌱 100% Organic</span>
+              <span className="qc-nutrition-badge vegan">✨ Farm Fresh</span>
+            </div>
+
             <div
               style={{
                 fontSize: '0.85rem',
@@ -198,9 +222,9 @@ const ProductDetailModal = ({ product, onClose }) => {
               <div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
                   <span style={{ fontSize: '1.6rem', fontWeight: '800', color: '#0f172a' }}>
-                    ₹{product.sellingPrice}
+                    ₹{product.sellingPrice || product.price}
                   </span>
-                  {product.mrp > product.sellingPrice && (
+                  {product.mrp > (product.sellingPrice || product.price) && (
                     <span
                       style={{ fontSize: '1rem', color: '#94a3b8', textDecoration: 'line-through' }}
                     >
@@ -259,6 +283,80 @@ const ProductDetailModal = ({ product, onClose }) => {
           </div>
         </div>
 
+        {/* Nutrition Facts Table */}
+        <div
+          style={{
+            background: '#f8fafc',
+            borderRadius: '16px',
+            padding: '16px',
+            border: '1px solid #e2e8f0',
+            marginBottom: '28px',
+          }}
+        >
+          <h4
+            style={{
+              fontSize: '0.95rem',
+              fontWeight: '800',
+              color: '#0f172a',
+              marginBottom: '10px',
+            }}
+          >
+            🥗 Key Nutritional Highlights (per 100g)
+          </h4>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+              gap: '10px',
+            }}
+          >
+            <div
+              style={{
+                background: '#ffffff',
+                padding: '10px',
+                borderRadius: '10px',
+                border: '1px solid #e2e8f0',
+              }}
+            >
+              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Energy</div>
+              <div style={{ fontWeight: '800', color: '#0f172a' }}>85 kcal</div>
+            </div>
+            <div
+              style={{
+                background: '#ffffff',
+                padding: '10px',
+                borderRadius: '10px',
+                border: '1px solid #e2e8f0',
+              }}
+            >
+              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Protein</div>
+              <div style={{ fontWeight: '800', color: '#059669' }}>3.2 g</div>
+            </div>
+            <div
+              style={{
+                background: '#ffffff',
+                padding: '10px',
+                borderRadius: '10px',
+                border: '1px solid #e2e8f0',
+              }}
+            >
+              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Dietary Fiber</div>
+              <div style={{ fontWeight: '800', color: '#0f172a' }}>2.8 g</div>
+            </div>
+            <div
+              style={{
+                background: '#ffffff',
+                padding: '10px',
+                borderRadius: '10px',
+                border: '1px solid #e2e8f0',
+              }}
+            >
+              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Added Sugar</div>
+              <div style={{ fontWeight: '800', color: '#059669' }}>0 g</div>
+            </div>
+          </div>
+        </div>
+
         {/* Product Description */}
         <div style={{ marginBottom: '32px' }}>
           <h4 style={{ fontSize: '1.05rem', color: '#0f172a', marginBottom: '8px' }}>
@@ -266,7 +364,7 @@ const ProductDetailModal = ({ product, onClose }) => {
           </h4>
           <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.6' }}>
             {product.description ||
-              'Premium quality fresh groceries and daily essentials sourced directly to bring maximum freshness and value.'}
+              'Premium quality fresh groceries and daily essentials sourced directly from verified dark store suppliers to bring maximum freshness and value.'}
           </p>
         </div>
 
@@ -435,6 +533,27 @@ const ProductDetailModal = ({ product, onClose }) => {
       </div>
     </div>
   );
+};
+
+ProductDetailModal.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    name: PropTypes.string.isRequired,
+    brand: PropTypes.string,
+    unitQuantity: PropTypes.string,
+    price: PropTypes.number,
+    sellingPrice: PropTypes.number,
+    mrp: PropTypes.number,
+    discountPercentage: PropTypes.number,
+    rating: PropTypes.number,
+    imageUrl: PropTypes.string,
+    description: PropTypes.string,
+  }),
+  onClose: PropTypes.func.isRequired,
+};
+
+ProductDetailModal.defaultProps = {
+  product: null,
 };
 
 export default ProductDetailModal;

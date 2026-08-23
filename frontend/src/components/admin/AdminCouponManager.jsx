@@ -299,4 +299,15 @@ const AdminCouponManager = ({
   );
 };
 
+import PropTypes from 'prop-types';
+
+AdminCouponManager.propTypes = {
+  coupons: PropTypes.array.isRequired,
+  showCouponModal: PropTypes.bool.isRequired,
+  setShowCouponModal: PropTypes.func.isRequired,
+  couponForm: PropTypes.object.isRequired,
+  setCouponForm: PropTypes.func.isRequired,
+  onCreateCoupon: PropTypes.func.isRequired,
+};
+
 export default AdminCouponManager;

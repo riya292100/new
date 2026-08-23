@@ -90,3 +90,101 @@ export const sanitizeInput = (input) => {
     .replace(/'/g, '&#039;')
     .trim();
 };
+
+/**
+ * Validate a string is non-empty with minimum length
+ * @param {string} val
+ * @param {string} fieldName
+ * @param {number} min
+ * @returns {{ isValid: boolean, error: string|null }}
+ */
+export const validateRequired = (val, fieldName = 'Field', min = 1) => {
+  if (!val || typeof val !== 'string' || val.trim().length < min) {
+    return { isValid: false, error: `${fieldName} is required` };
+  }
+  return { isValid: true, error: null };
+};
+
+/**
+ * Validate numeric rating (1-5)
+ * @param {number|string} rating
+ * @returns {{ isValid: boolean, error: string|null }}
+ */
+export const validateRating = (rating) => {
+  const num = Number(rating);
+  if (isNaN(num) || num < 1 || num > 5) {
+    return { isValid: false, error: 'Rating must be between 1 and 5 stars' };
+  }
+  return { isValid: true, error: null };
+};
+
+/**
+ * Declarative Schema Validation Engine
+ * Runs field-level validator chains against payload object.
+ * @param {Object} schema
+ * @param {Object} data
+ * @returns {{ isValid: boolean, errors: Object }}
+ */
+export const validateSchema = (schema, data = {}) => {
+  const errors = {};
+  let isValid = true;
+
+  for (const [field, rules] of Object.entries(schema)) {
+    const value = data[field];
+    for (const rule of rules) {
+      const result = rule(value, data);
+      if (!result.isValid) {
+        errors[field] = result.error;
+        isValid = false;
+        break; // Stop at first rule error for this field
+      }
+    }
+  }
+
+  return { isValid, errors };
+};
+
+// Standard Form Schemas
+export const loginSchema = {
+  email: [(v) => validateEmail(v)],
+  password: [(v) => validatePassword(v)],
+};
+
+export const registerSchema = {
+  fullName: [(v) => validateRequired(v, 'Full name', 2)],
+  email: [(v) => validateEmail(v)],
+  phone: [(v) => validatePhone(v)],
+  password: [(v) => validatePassword(v)],
+};
+
+export const addressSchema = {
+  label: [(v) => validateRequired(v, 'Address label (e.g. Home, Work)', 2)],
+  streetAddress: [(v) => validateRequired(v, 'Street address', 5)],
+  city: [(v) => validateRequired(v, 'City', 2)],
+  state: [(v) => validateRequired(v, 'State', 2)],
+  pincode: [(v) => validatePincode(v)],
+};
+
+export const reviewSchema = {
+  rating: [(v) => validateRating(v)],
+  comment: [(v) => validateRequired(v, 'Review comment', 3)],
+};
+
+export const couponSchema = {
+  code: [(v) => validateRequired(v, 'Coupon code', 3)],
+};
+
+export const checkoutSchema = {
+  addressId: [
+    (v) =>
+      v
+        ? { isValid: true, error: null }
+        : { isValid: false, error: 'Delivery address is required' },
+  ],
+  paymentMethod: [
+    (v) =>
+      ['COD', 'UPI', 'CARD', 'WALLET'].includes(v)
+        ? { isValid: true, error: null }
+        : { isValid: false, error: 'Valid payment method required' },
+  ],
+};

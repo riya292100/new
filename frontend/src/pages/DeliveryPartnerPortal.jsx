@@ -1,90 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { deliveryApi } from '../services/api';
-import { useToast } from '../context/ToastContext';
-import logger from '../utils/logger';
-import {
-  Bike,
-  CheckCircle2,
-  XCircle,
-  MapPin,
-  Phone,
-  Clock,
-  Package,
-  Navigation,
-  ShieldCheck,
-  RefreshCw,
-  Zap,
-} from 'lucide-react';
+import { useDeliveryPartner } from '../hooks/useDeliveryPartner';
+import { Bike, CheckCircle2, XCircle, MapPin, Phone, Package, RefreshCw, Zap } from 'lucide-react';
 
 const DeliveryPartnerPortal = () => {
   const { user } = useAuth();
-  const { addToast } = useToast();
+  const {
+    profile,
+    assignedOrders,
+    loading,
+    actionLoading,
+    refresh,
+    acceptOrder,
+    rejectOrder,
+    updateOrderStatus,
+    updateLocation,
+  } = useDeliveryPartner();
 
-  const [profile, setProfile] = useState(null);
-  const [assignedOrders, setAssignedOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState(false);
-
-  const fetchDriverData = async () => {
-    try {
-      const [profRes, ordersRes] = await Promise.all([
-        deliveryApi.getProfile(),
-        deliveryApi.getAssignedOrders(),
-      ]);
-      if (profRes?.data) setProfile(profRes.data);
-      if (ordersRes?.data) setAssignedOrders(ordersRes.data);
-    } catch (err) {
-      logger.warn('DeliveryPartnerPortal', 'Driver fetch failed', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchDriverData();
-    const interval = setInterval(fetchDriverData, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleAcceptOrder = async (orderId) => {
-    setActionLoading(true);
-    try {
-      await deliveryApi.acceptOrder(orderId);
-      addToast('Order accepted! Proceed to Dark Store for pickup.', 'success');
-      fetchDriverData();
-    } catch (err) {
-      addToast(err.message || 'Failed to accept order', 'error');
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleRejectOrder = async (orderId) => {
-    if (!window.confirm('Reject this delivery assignment?')) return;
-    setActionLoading(true);
-    try {
-      await deliveryApi.rejectOrder(orderId);
-      addToast('Order rejected', 'info');
-      fetchDriverData();
-    } catch (err) {
-      addToast(err.message || 'Failed to reject order', 'error');
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleUpdateStatus = async (orderId, newStatus) => {
-    setActionLoading(true);
-    try {
-      await deliveryApi.updateStatus(orderId, newStatus);
-      addToast(`Delivery status updated to: ${newStatus}`, 'success');
-      fetchDriverData();
-    } catch (err) {
-      addToast(err.message || 'Failed to update status', 'error');
-    } finally {
-      setActionLoading(false);
-    }
+  const handleSimulateGPS = () => {
+    // Simulated GPS pulse towards Koramangala
+    const lat = 12.9352 + (Math.random() - 0.5) * 0.01;
+    const lng = 77.6245 + (Math.random() - 0.5) * 0.01;
+    updateLocation(lat, lng);
   };
 
   return (
@@ -120,99 +57,95 @@ const DeliveryPartnerPortal = () => {
           </p>
         </div>
 
-        <button
-          onClick={fetchDriverData}
-          className="btn btn-outline btn-sm"
-          style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-        >
-          <RefreshCw size={14} /> Refresh Live Feed
-        </button>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <button
+            onClick={handleSimulateGPS}
+            className="btn btn-accent btn-sm"
+            style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+          >
+            <Zap size={14} /> Broadcast GPS Pulse
+          </button>
+          <button
+            onClick={refresh}
+            className="btn btn-outline btn-sm"
+            style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+          >
+            <RefreshCw size={14} /> Refresh Live Feed
+          </button>
+        </div>
       </div>
 
       {/* Driver Stats Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '16px',
-          marginBottom: '32px',
-        }}
-      >
-        <div
-          style={{
-            background: '#ffffff',
-            borderRadius: '18px',
-            padding: '20px',
-            border: '1px solid #e2e8f0',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '0.75rem',
-              fontWeight: '700',
-              color: '#64748b',
-              textTransform: 'uppercase',
-            }}
-          >
-            Total Deliveries
-          </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', margin: '4px 0' }}>
-            {profile?.totalDeliveries || 142}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: '600' }}>
-            ⚡ 100% on-time rate
+      <div className="qc-stat-grid">
+        <div className="qc-stat-tile">
+          <div>
+            <div
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: '700',
+                color: '#64748b',
+                textTransform: 'uppercase',
+              }}
+            >
+              Total Deliveries
+            </div>
+            <div
+              style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', margin: '4px 0' }}
+            >
+              {profile?.totalDeliveries || 142}
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: '600' }}>
+              ⚡ 100% on-time rate
+            </div>
           </div>
         </div>
 
-        <div
-          style={{
-            background: '#ffffff',
-            borderRadius: '18px',
-            padding: '20px',
-            border: '1px solid #e2e8f0',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '0.75rem',
-              fontWeight: '700',
-              color: '#64748b',
-              textTransform: 'uppercase',
-            }}
-          >
-            Partner Rating
+        <div className="qc-stat-tile">
+          <div>
+            <div
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: '700',
+                color: '#64748b',
+                textTransform: 'uppercase',
+              }}
+            >
+              Partner Rating
+            </div>
+            <div
+              style={{ fontSize: '1.8rem', fontWeight: '800', color: '#f59e0b', margin: '4px 0' }}
+            >
+              ⭐ {profile?.rating || '4.9'}
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Top Tier Express Driver</div>
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#f59e0b', margin: '4px 0' }}>
-            ⭐ {profile?.rating || '4.9'}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Top Tier Express Driver</div>
         </div>
 
-        <div
-          style={{
-            background: '#ffffff',
-            borderRadius: '18px',
-            padding: '20px',
-            border: '1px solid #e2e8f0',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '0.75rem',
-              fontWeight: '700',
-              color: '#64748b',
-              textTransform: 'uppercase',
-            }}
-          >
-            Vehicle & License
-          </div>
-          <div
-            style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: '8px 0 4px' }}
-          >
-            {profile?.vehicleNumber || 'DL-01-QC-8821'}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
-            {profile?.vehicleType || 'HERO_ELECTRIC_NYX'}
+        <div className="qc-stat-tile">
+          <div>
+            <div
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: '700',
+                color: '#64748b',
+                textTransform: 'uppercase',
+              }}
+            >
+              Vehicle & License
+            </div>
+            <div
+              style={{
+                fontSize: '1.1rem',
+                fontWeight: '800',
+                color: '#0f172a',
+                margin: '8px 0 4px',
+              }}
+            >
+              {profile?.vehicleNumber || 'DL-01-QC-8821'}
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
+              {profile?.vehicleType || 'HERO_ELECTRIC_NYX'}
+            </div>
           </div>
         </div>
       </div>
@@ -231,27 +164,9 @@ const DeliveryPartnerPortal = () => {
               const isDelivered = order.status === 'DELIVERED';
               const isCancelled = order.status === 'CANCELLED';
               return (
-                <div
-                  key={order.id}
-                  style={{
-                    background: '#ffffff',
-                    borderRadius: '20px',
-                    padding: '24px',
-                    border: '1px solid #e2e8f0',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.03)',
-                  }}
-                >
+                <div key={order.id} className="qc-order-card">
                   {/* Order Banner */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: '16px',
-                      flexWrap: 'wrap',
-                      gap: '8px',
-                    }}
-                  >
+                  <div className="qc-order-header">
                     <div>
                       <span style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a' }}>
                         Order #{order.orderNumber}
@@ -367,7 +282,7 @@ const DeliveryPartnerPortal = () => {
                       {order.status === 'ORDER_PLACED' || order.status === 'CONFIRMED' ? (
                         <>
                           <button
-                            onClick={() => handleAcceptOrder(order.id)}
+                            onClick={() => acceptOrder(order.id)}
                             disabled={actionLoading}
                             className="btn btn-primary"
                             style={{ flex: 1 }}
@@ -375,7 +290,7 @@ const DeliveryPartnerPortal = () => {
                             <CheckCircle2 size={18} /> Accept Delivery
                           </button>
                           <button
-                            onClick={() => handleRejectOrder(order.id)}
+                            onClick={() => rejectOrder(order.id)}
                             disabled={actionLoading}
                             className="btn btn-danger"
                           >
@@ -384,7 +299,7 @@ const DeliveryPartnerPortal = () => {
                         </>
                       ) : order.status === 'PREPARING' ? (
                         <button
-                          onClick={() => handleUpdateStatus(order.id, 'PACKED')}
+                          onClick={() => updateOrderStatus(order.id, 'PACKED')}
                           disabled={actionLoading}
                           className="btn btn-primary btn-block"
                         >
@@ -392,7 +307,7 @@ const DeliveryPartnerPortal = () => {
                         </button>
                       ) : order.status === 'PACKED' ? (
                         <button
-                          onClick={() => handleUpdateStatus(order.id, 'OUT_FOR_DELIVERY')}
+                          onClick={() => updateOrderStatus(order.id, 'OUT_FOR_DELIVERY')}
                           disabled={actionLoading}
                           className="btn btn-accent btn-block"
                           style={{ fontWeight: '800' }}
@@ -401,7 +316,7 @@ const DeliveryPartnerPortal = () => {
                         </button>
                       ) : order.status === 'OUT_FOR_DELIVERY' ? (
                         <button
-                          onClick={() => handleUpdateStatus(order.id, 'DELIVERED')}
+                          onClick={() => updateOrderStatus(order.id, 'DELIVERED')}
                           disabled={actionLoading}
                           className="btn btn-primary btn-block btn-lg"
                           style={{ fontWeight: '800' }}

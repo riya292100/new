@@ -106,4 +106,14 @@ const TimelineStages = ({ status }) => {
   );
 };
 
+import PropTypes from 'prop-types';
+
+TimelineStages.propTypes = {
+  status: PropTypes.string,
+};
+
+TimelineStages.defaultProps = {
+  status: 'ORDER_PLACED',
+};
+
 export default TimelineStages;

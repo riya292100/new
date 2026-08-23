@@ -388,4 +388,8 @@ const CartDrawer = () => {
   );
 };
 
+import PropTypes from 'prop-types';
+
+CartDrawer.propTypes = {};
+
 export default CartDrawer;

@@ -198,4 +198,27 @@ const ProductCard = ({ product, onSelectProduct }) => {
   );
 };
 
+import PropTypes from 'prop-types';
+
+ProductCard.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    name: PropTypes.string.isRequired,
+    unitQuantity: PropTypes.string,
+    price: PropTypes.number.isRequired,
+    mrp: PropTypes.number,
+    discountPercentage: PropTypes.number,
+    rating: PropTypes.number,
+    reviewCount: PropTypes.number,
+    imageUrl: PropTypes.string,
+    inStock: PropTypes.bool,
+    stockQuantity: PropTypes.number,
+  }).isRequired,
+  onSelectProduct: PropTypes.func,
+};
+
+ProductCard.defaultProps = {
+  onSelectProduct: undefined,
+};
+
 export default ProductCard;

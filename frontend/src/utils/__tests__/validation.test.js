@@ -5,6 +5,12 @@ import {
   validatePhone,
   validatePincode,
   sanitizeInput,
+  validateSchema,
+  loginSchema,
+  registerSchema,
+  addressSchema,
+  reviewSchema,
+  checkoutSchema,
 } from '../validation';
 
 describe('Validation Utility Suite', () => {
@@ -67,6 +73,67 @@ describe('Validation Utility Suite', () => {
       const clean = sanitizeInput(dirty);
       expect(clean).not.toContain('<script>');
       expect(clean).toContain('&lt;script&gt;');
+    });
+  });
+
+  describe('validateSchema Engine', () => {
+    it('validates login schema correctly', () => {
+      const valid = { email: 'user@quickcart.com', password: 'password123' };
+      expect(validateSchema(loginSchema, valid).isValid).toBe(true);
+
+      const invalid = { email: 'bad-email', password: '123' };
+      const res = validateSchema(loginSchema, invalid);
+      expect(res.isValid).toBe(false);
+      expect(res.errors.email).toBeDefined();
+      expect(res.errors.password).toBeDefined();
+    });
+
+    it('validates register schema correctly', () => {
+      const valid = {
+        fullName: 'John Doe',
+        email: 'john@example.com',
+        phone: '9876543210',
+        password: 'securePassword1',
+      };
+      expect(validateSchema(registerSchema, valid).isValid).toBe(true);
+
+      const invalid = { fullName: '', email: '', phone: '', password: '' };
+      const res = validateSchema(registerSchema, invalid);
+      expect(res.isValid).toBe(false);
+      expect(res.errors.fullName).toBeDefined();
+    });
+
+    it('validates address schema correctly', () => {
+      const valid = {
+        label: 'Home',
+        streetAddress: '123 MG Road, Apt 4B',
+        city: 'Bengaluru',
+        state: 'Karnataka',
+        pincode: '560001',
+      };
+      expect(validateSchema(addressSchema, valid).isValid).toBe(true);
+
+      const invalid = { label: '', streetAddress: '12', city: '', state: '', pincode: 'abc' };
+      const res = validateSchema(addressSchema, invalid);
+      expect(res.isValid).toBe(false);
+      expect(res.errors.label).toBeDefined();
+      expect(res.errors.streetAddress).toBeDefined();
+    });
+
+    it('validates review schema correctly', () => {
+      expect(validateSchema(reviewSchema, { rating: 5, comment: 'Great product!' }).isValid).toBe(
+        true
+      );
+      expect(validateSchema(reviewSchema, { rating: 0, comment: '' }).isValid).toBe(false);
+    });
+
+    it('validates checkout schema correctly', () => {
+      expect(validateSchema(checkoutSchema, { addressId: 1, paymentMethod: 'UPI' }).isValid).toBe(
+        true
+      );
+      expect(
+        validateSchema(checkoutSchema, { addressId: null, paymentMethod: 'INVALID' }).isValid
+      ).toBe(false);
     });
   });
 });

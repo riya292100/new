@@ -156,4 +156,19 @@ const AdminStatsCards = ({ stats }) => {
   );
 };
 
+import PropTypes from 'prop-types';
+
+AdminStatsCards.propTypes = {
+  stats: PropTypes.shape({
+    totalRevenue: PropTypes.number,
+    totalOrders: PropTypes.number,
+    lowStockProductsCount: PropTypes.number,
+    totalUsers: PropTypes.number,
+  }),
+};
+
+AdminStatsCards.defaultProps = {
+  stats: null,
+};
+
 export default AdminStatsCards;

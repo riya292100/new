@@ -264,4 +264,36 @@ const CheckoutAddressSelector = ({
   );
 };
 
+import PropTypes from 'prop-types';
+
+CheckoutAddressSelector.propTypes = {
+  addresses: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      label: PropTypes.string,
+      receiverName: PropTypes.string,
+      receiverPhone: PropTypes.string,
+      streetAddress: PropTypes.string,
+      apartmentUnit: PropTypes.string,
+      landmark: PropTypes.string,
+      city: PropTypes.string,
+      state: PropTypes.string,
+      pincode: PropTypes.string,
+      isDefault: PropTypes.bool,
+    })
+  ),
+  selectedAddressId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  setSelectedAddressId: PropTypes.func.isRequired,
+  showNewAddressForm: PropTypes.bool.isRequired,
+  setShowNewAddressForm: PropTypes.func.isRequired,
+  newAddress: PropTypes.object.isRequired,
+  setNewAddress: PropTypes.func.isRequired,
+  onCreateAddress: PropTypes.func.isRequired,
+};
+
+CheckoutAddressSelector.defaultProps = {
+  addresses: [],
+  selectedAddressId: null,
+};
+
 export default CheckoutAddressSelector;

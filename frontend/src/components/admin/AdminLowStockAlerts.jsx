@@ -82,4 +82,23 @@ const AdminLowStockAlerts = ({ lowStockProducts, onRestock }) => {
   );
 };
 
+import PropTypes from 'prop-types';
+
+AdminLowStockAlerts.propTypes = {
+  lowStockProducts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      name: PropTypes.string.isRequired,
+      stockQuantity: PropTypes.number,
+      lowStockThreshold: PropTypes.number,
+      imageUrl: PropTypes.string,
+    })
+  ),
+  onRestock: PropTypes.func.isRequired,
+};
+
+AdminLowStockAlerts.defaultProps = {
+  lowStockProducts: [],
+};
+
 export default AdminLowStockAlerts;

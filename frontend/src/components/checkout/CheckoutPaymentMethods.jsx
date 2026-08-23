@@ -102,4 +102,11 @@ const CheckoutPaymentMethods = ({ paymentMethod, setPaymentMethod }) => {
   );
 };
 
+import PropTypes from 'prop-types';
+
+CheckoutPaymentMethods.propTypes = {
+  paymentMethod: PropTypes.string.isRequired,
+  setPaymentMethod: PropTypes.func.isRequired,
+};
+
 export default CheckoutPaymentMethods;

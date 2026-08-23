@@ -74,9 +74,8 @@ describe('OrderTrackingPage', () => {
       expect(screen.getByText(/Live Order #/i)).toBeInTheDocument();
       expect(screen.getByText(/Ramesh Kumar/i)).toBeInTheDocument();
       expect(screen.getByText(/Delivery Progress Timeline/i)).toBeInTheDocument();
+      expect(wsService.subscribeToOrder).toHaveBeenCalledWith(42, expect.any(Function));
     });
-
-    expect(wsService.subscribeToOrder).toHaveBeenCalledWith(42, expect.any(Function));
   });
 
   it('displays not found message when order does not exist', async () => {

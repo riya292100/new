@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { orderApi } from '../services/api';
-import wsService from '../services/websocket';
+import { useOrderTracking } from '../hooks/useOrderTracking';
 import LiveRadarMap from '../components/LiveRadarMap';
 import TimelineStages from '../components/TimelineStages';
 import {
@@ -18,66 +17,17 @@ import {
   RefreshCw,
   XCircle,
 } from 'lucide-react';
-import { useToast } from '../context/ToastContext';
 
 const OrderTrackingPage = () => {
   const { orderNumber } = useParams();
-  const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [cancelling, setCancelling] = useState(false);
-  const { addToast } = useToast();
-
-  const [fetchError, setFetchError] = useState(null);
-
-  const fetchOrder = async () => {
-    try {
-      setFetchError(null);
-      const res = await orderApi.trackOrder(orderNumber);
-      if (res?.data) {
-        setOrder(res.data);
-      }
-    } catch (err) {
-      setFetchError(err.message || 'Unable to retrieve order details. Retrying...');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchOrder();
-
-    // Polling fallback every 6 seconds
-    const interval = setInterval(fetchOrder, 6000);
-    return () => clearInterval(interval);
-  }, [orderNumber]);
-
-  // STOMP WebSocket Live Updates
-  useEffect(() => {
-    if (order?.id) {
-      const unsubscribe = wsService.subscribeToOrder(order.id, (updatedOrder) => {
-        setOrder(updatedOrder);
-        addToast(`Order status updated: ${updatedOrder.status}`, 'info');
-      });
-      return () => unsubscribe && unsubscribe();
-    }
-  }, [order?.id, addToast]);
+  const { order, loading, cancelling, fetchError, refresh, cancelOrder } = useOrderTracking(
+    orderNumber,
+    { pollingInterval: 6000 }
+  );
 
   const handleCancelOrder = async () => {
-    if (!order) return;
     if (!window.confirm('Are you sure you want to cancel this order?')) return;
-
-    setCancelling(true);
-    try {
-      const res = await orderApi.cancelOrder(order.id);
-      if (res?.data) {
-        setOrder(res.data);
-        addToast('Order cancelled successfully', 'info');
-      }
-    } catch (err) {
-      addToast(err.message || 'Could not cancel order', 'error');
-    } finally {
-      setCancelling(false);
-    }
+    await cancelOrder();
   };
 
   if (loading) {
@@ -159,7 +109,7 @@ const OrderTrackingPage = () => {
         </div>
 
         <button
-          onClick={fetchOrder}
+          onClick={refresh}
           className="btn btn-outline btn-sm"
           style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
         >
