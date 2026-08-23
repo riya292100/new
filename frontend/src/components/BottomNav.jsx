@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Grid, Tag, ShoppingBag, User, Package } from 'lucide-react';
+import { Home, Grid, Tag, ShoppingBag, User, Package, Utensils } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -31,6 +31,16 @@ const BottomNav = () => {
       >
         <Grid size={22} />
         <span>Categories</span>
+      </NavLink>
+
+      <NavLink
+        to="/dining"
+        className={({ isActive }) =>
+          `bottom-nav-item ${isActive || location.pathname.startsWith('/restaurant') ? 'active' : ''}`
+        }
+      >
+        <Utensils size={22} />
+        <span>Dining</span>
       </NavLink>
 
       <NavLink

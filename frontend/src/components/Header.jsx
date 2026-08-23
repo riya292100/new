@@ -10,6 +10,7 @@ import {
   Package,
   Shield,
   Bike,
+  Utensils,
 } from 'lucide-react';
 import SearchAutocomplete from './SearchAutocomplete';
 import { useLocation } from '../context/LocationContext';
@@ -130,8 +131,36 @@ const Header = () => {
         </div>
 
         {/* Center: Search Autocomplete */}
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+        <div
+          style={{
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '16px',
+          }}
+        >
           <SearchAutocomplete />
+          <Link
+            to="/dining"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              textDecoration: 'none',
+              color: '#065f46',
+              fontWeight: '700',
+              fontSize: '0.86rem',
+              padding: '8px 14px',
+              borderRadius: '12px',
+              background: '#ecfdf5',
+              border: '1px solid #a7f3d0',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <Utensils size={15} color="#059669" /> Dining & Tables
+          </Link>
         </div>
 
         {/* Right Actions: User Profile & Cart Button */}
@@ -216,6 +245,24 @@ const Header = () => {
                     }}
                   >
                     <Package size={16} /> My Orders
+                  </Link>
+
+                  <Link
+                    to="/bookings"
+                    onClick={() => setUserDropdownOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 12px',
+                      color: '#334155',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                      fontWeight: '500',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <Utensils size={16} /> Table Bookings
                   </Link>
 
                   <Link

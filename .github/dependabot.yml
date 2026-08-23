@@ -1,22 +1,21 @@
 version: 2
 updates:
-  # Maintain dependencies for npm (Frontend)
+  # Maintain dependencies for npm (frontend)
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
 
-  # Maintain dependencies for Maven (Backend)
+  # Maintain dependencies for Maven (backend)
   - package-ecosystem: "maven"
     directory: "/backend"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
 
-  # Maintain GitHub Actions dependencies
+  # Maintain GitHub Actions workflows
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10

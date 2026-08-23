@@ -30,6 +30,7 @@ public class DataSeeder implements CommandLineRunner {
     private final CartRepository cartRepository;
     private final CouponRepository couponRepository;
     private final DeliveryPartnerRepository deliveryPartnerRepository;
+    private final RestaurantRepository restaurantRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -39,6 +40,7 @@ public class DataSeeder implements CommandLineRunner {
         seedUsers();
         seedCategoriesAndProducts();
         seedCoupons();
+        seedRestaurants();
         logger.info("QuickCart sample data seeded successfully.");
     }
 
@@ -292,5 +294,193 @@ public class DataSeeder implements CommandLineRunner {
         c4.setIsActive(true);
 
         couponRepository.saveAll(List.of(c1, c2, c3, c4));
+    }
+
+    private void seedRestaurants() {
+        if (restaurantRepository.count() > 0) return;
+
+        Restaurant r1 = Restaurant.builder()
+                .name("Trattoria da Enzo al 29")
+                .slug("trattoria-da-enzo-rome")
+                .description("Authentic Roman trattoria renowned for signature Carbonara, Cacio e Pepe, and fresh burrata.")
+                .cuisine("Italian")
+                .country("Italy")
+                .city("Rome")
+                .address("Via dei Vascellari, 29, 00153 Roma RM")
+                .latitude(41.8885)
+                .longitude(12.4764)
+                .rating(4.9)
+                .reviewCount(340)
+                .priceLevel("$$")
+                .imageUrl("https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1551183053-bf91a1d81141,https://images.unsplash.com/photo-1579684947550-22e945225d9a")
+                .openingHours("12:30 PM - 11:00 PM")
+                .phone("+39 06 581 2260")
+                .website("https://trattoriadaenzo.it")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(false)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(true)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        Restaurant r2 = Restaurant.builder()
+                .name("Sukiyabashi Jiro Roppongi")
+                .slug("sukiyabashi-jiro-tokyo")
+                .description("World-class Edomae sushi experience crafted with meticulously selected seasonal seafood.")
+                .cuisine("Japanese")
+                .country("Japan")
+                .city("Tokyo")
+                .address("Roppongi Hills Keyakizaka Dori 3F, Minato-ku, Tokyo")
+                .latitude(35.6596)
+                .longitude(139.7297)
+                .rating(4.95)
+                .reviewCount(520)
+                .priceLevel("$$$$")
+                .imageUrl("https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1611143669185-af224c5e3252,https://images.unsplash.com/photo-1553621042-f6e147245754")
+                .openingHours("11:30 AM - 9:30 PM")
+                .phone("+81 3-5413-6626")
+                .website("https://sushi-jiro.jp")
+                .isVegetarianFriendly(false)
+                .isVeganFriendly(false)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(false)
+                .isTakeawayAvailable(false)
+                .active(true)
+                .build();
+
+        Restaurant r3 = Restaurant.builder()
+                .name("Gramercy Tavern")
+                .slug("gramercy-tavern-new-york")
+                .description("Contemporary American culinary staple featuring wood-fired seasonal dining and farm-to-table menus.")
+                .cuisine("American")
+                .country("USA")
+                .city("New York")
+                .address("42 E 20th St, New York, NY 10003")
+                .latitude(40.7384)
+                .longitude(-73.9884)
+                .rating(4.8)
+                .reviewCount(410)
+                .priceLevel("$$$")
+                .imageUrl("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1544025162-d76694265947,https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c")
+                .openingHours("12:00 PM - 10:00 PM")
+                .phone("+1 212-477-0777")
+                .website("https://gramercytavern.com")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(true)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(true)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        Restaurant r4 = Restaurant.builder()
+                .name("Le Comptoir du Relais")
+                .slug("le-comptoir-du-relais-paris")
+                .description("Classic Parisian bistro serving elevated French gastronomy and artisanal charcuterie.")
+                .cuisine("French")
+                .country("France")
+                .city("Paris")
+                .address("9 Carr de l'Odéon, 75006 Paris")
+                .latitude(48.8517)
+                .longitude(2.3387)
+                .rating(4.75)
+                .reviewCount(280)
+                .priceLevel("$$$")
+                .imageUrl("https://images.unsplash.com/photo-1502301103665-0b95cc738daf?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c,https://images.unsplash.com/photo-1555396273-367ea4eb4db5")
+                .openingHours("12:00 PM - 11:00 PM")
+                .phone("+33 1 44 27 07 97")
+                .website("https://hotel-paris-relais-saint-germain.com")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(false)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(false)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        Restaurant r5 = Restaurant.builder()
+                .name("Dishoom Shoreditch")
+                .slug("dishoom-shoreditch-london")
+                .description("Paying homage to the heritage Irani cafes of Bombay with signature black daal and gunpowder potatoes.")
+                .cuisine("Indian")
+                .country("UK")
+                .city("London")
+                .address("7 Boundary St, London E2 7JE")
+                .latitude(51.5244)
+                .longitude(-0.0772)
+                .rating(4.85)
+                .reviewCount(680)
+                .priceLevel("$$")
+                .imageUrl("https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4,https://images.unsplash.com/photo-1565557623262-b51c2513a641")
+                .openingHours("8:00 AM - 11:00 PM")
+                .phone("+44 20 7420 9324")
+                .website("https://dishoom.com")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(true)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(true)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        Restaurant r6 = Restaurant.builder()
+                .name("6 Ballygunge Place")
+                .slug("6-ballygunge-place-kolkata")
+                .description("Heritage Bengali fine dining celebrating Daab Chingri, Kosha Mangsho, and authentic Kolkata flavors.")
+                .cuisine("Indian")
+                .country("India")
+                .city("Kolkata")
+                .address("6, Ballygunge Place, Kolkata, West Bengal 700019")
+                .latitude(22.5280)
+                .longitude(88.3659)
+                .rating(4.8)
+                .reviewCount(450)
+                .priceLevel("$$")
+                .imageUrl("https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1585937421612-70a008356fbe,https://images.unsplash.com/photo-1555396273-367ea4eb4db5")
+                .openingHours("12:00 PM - 10:30 PM")
+                .phone("+91 33 2460 3922")
+                .website("https://6ballygungeplace.in")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(false)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(true)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        Restaurant r7 = Restaurant.builder()
+                .name("Toscano Italian Bistro & Wine Bar")
+                .slug("toscano-ub-city-bengaluru")
+                .description("Charming open-air Italian restaurant and wine bar overlooking UB City amphitheatre.")
+                .cuisine("Italian")
+                .country("India")
+                .city("Bengaluru")
+                .address("UB City, Vittal Mallya Rd, Bengaluru, Karnataka 560001")
+                .latitude(12.9719)
+                .longitude(77.5960)
+                .rating(4.75)
+                .reviewCount(380)
+                .priceLevel("$$$")
+                .imageUrl("https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1555396273-367ea4eb4db5,https://images.unsplash.com/photo-1517248135467-4c7edcad34c4")
+                .openingHours("11:00 AM - 11:00 PM")
+                .phone("+91 80 4173 8800")
+                .website("https://toscano.co.in")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(true)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(true)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        restaurantRepository.saveAll(List.of(r1, r2, r3, r4, r5, r6, r7));
     }
 }

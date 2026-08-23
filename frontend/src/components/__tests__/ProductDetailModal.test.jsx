@@ -43,7 +43,7 @@ describe('ProductDetailModal Component', () => {
     expect(screen.getByText('Organic Avocados')).toBeInTheDocument();
     expect(screen.getByText('FreshFarm')).toBeInTheDocument();
     expect(screen.getByText('₹160')).toBeInTheDocument();
-    expect(screen.getByText('+ Add to Cart')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Add to Cart/i })).toBeInTheDocument();
     expect(screen.getByText(/Fresh organic hass avocados/i)).toBeInTheDocument();
   });
 

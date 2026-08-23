@@ -26,6 +26,9 @@ import OrderHistoryPage from './pages/OrderHistoryPage';
 import ProfilePage from './pages/ProfilePage';
 import DeliveryPartnerPortal from './pages/DeliveryPartnerPortal';
 import AdminDashboard from './pages/AdminDashboard';
+import DiningDiscoveryPage from './pages/DiningDiscoveryPage';
+import RestaurantDetailsPage from './pages/RestaurantDetailsPage';
+import BookingsPage from './pages/BookingsPage';
 
 // Protected route guard
 const ProtectedRoute = ({ children, requiredRole }) => {
@@ -88,6 +91,17 @@ const AppContent = () => {
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/category" element={<CategoryPage />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
+          <Route path="/dining" element={<DiningDiscoveryPage />} />
+          <Route path="/restaurants" element={<DiningDiscoveryPage />} />
+          <Route path="/restaurant/:id" element={<RestaurantDetailsPage />} />
+          <Route
+            path="/bookings"
+            element={
+              <ProtectedRoute>
+                <BookingsPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/checkout"
             element={

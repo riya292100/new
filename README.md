@@ -22,18 +22,25 @@
 - **Multi-Address Book**: Saved delivery addresses with GPS location detection and 6-digit metro pincode serviceability checks.
 - **Real-Time Order Tracking**: 6-stage delivery progression timeline with real-time WebSocket rider GPS map simulation.
 
-### 🚴 2. Delivery Partner (Driver) Portal
+### 🍽️ 2. QuickCart Dining & Global Table Reservations
+- **Global Discovery**: Search & filter curated fine-dining restaurants, trattorias, and bistros across Rome, Tokyo, New York, London, Paris, and Bengaluru.
+- **Multi-Faceted Search**: Filter dynamically by cuisine, city, price level (`$` to `$$$$`), dietary preferences (Vegetarian, 100% Vegan), and dine-in availability.
+- **Table Reservation Engine**: Instant reservations with guest count (1-20), seating area preference, special requests, and collision-free booking reference generation (`QC-DINE-XXXX`).
+- **Verified Diner Reviews**: Submit and read community diner reviews and 5-star ratings with rolling average aggregation.
+- **Saved Favorites**: Save and organize favorite dining spots across the world with 1-click bookmarks.
+
+### 🚴 3. Delivery Partner (Driver) Portal
 - **Real-Time Job Queue**: Accept or reject live orders in your delivery radius.
 - **Order Progression Workflow**: Seamlessly advance order stages (`ACCEPTED` ➔ `PACKED` ➔ `OUT_FOR_DELIVERY` ➔ `DELIVERED`).
 - **One-Click Navigation & Customer Calling**: In-app links to customer address and contact number.
 
-### 🛡️ 3. Admin Control Center
+### 🛡️ 4. Admin Control Center
 - **Executive KPI Dashboard**: Live metrics for total sales, completed orders, active delivery partners, and inventory alerts.
 - **Dark Store Catalog Management**: Add, update, delete, and restock products with instant threshold alerts.
 - **Order Dispatcher**: Real-time order monitor with manual/automatic delivery partner assignment.
 - **Promotions Manager**: Create and manage promo coupons and discount rules.
 
-### 📱 4. Mobile & Google Play Store Ready
+### 📱 5. Mobile & Google Play Store Ready
 - **Progressive Web App (PWA)**: Web App Manifest, Service Worker offline caching, and 1-click home screen installation.
 - **Native Android Project**: Capacitor Gradle project with release Keystore pre-configured for `.aab` / `.apk` generation.
 - **Privacy Policy**: Google Play Store compliant privacy policy at [`privacy-policy.html`](file:///c:/Users/HP/Desktop/new/frontend/public/privacy-policy.html).

@@ -192,3 +192,71 @@
   color: #2563eb;
   border-color: #bfdbfe;
 }
+
+/* ==========================================================================
+   QuickCart Dining & Restaurant Discovery Styles
+   ========================================================================== */
+.qc-dining-hero {
+  background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%);
+  border-radius: 28px;
+  padding: 40px 32px;
+  color: #ffffff;
+  margin-bottom: 32px;
+  box-shadow: 0 10px 25px -5px rgba(6, 78, 59, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.qc-dining-card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.qc-dining-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+.qc-cuisine-pill {
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+}
+
+.qc-cuisine-pill:hover {
+  border-color: #059669;
+  color: #059669;
+  background: #f0fdf4;
+}
+
+.qc-cuisine-pill.active {
+  background: #059669;
+  color: #ffffff;
+  border-color: #059669;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+}
+
+.qc-booking-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

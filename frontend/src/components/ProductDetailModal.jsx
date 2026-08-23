@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {
-  X,
-  Star,
-  Plus,
-  Minus,
-  Clock,
-  MessageSquare,
-  Send,
-  ShieldCheck,
-  Sparkles,
-  Heart,
-} from 'lucide-react';
+import { X, Star, Plus, Minus, Clock } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { catalogApi, reviewApi } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { validateSchema, reviewSchema } from '../utils/validation';
 import logger from '../utils/logger';
+import ProductNutritionalTable from './product/ProductNutritionalTable';
+import RelatedProductsRow from './product/RelatedProductsRow';
+import ProductReviewList from './product/ProductReviewList';
 
 const ProductDetailModal = ({ product, onClose }) => {
   const { addToCart, updateQuantity, getItemQuantity, getItemCartId } = useCart();
@@ -60,36 +52,36 @@ const ProductDetailModal = ({ product, onClose }) => {
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      openAuthModal('login');
+      openAuthModal('LOGIN');
       return;
     }
 
-    const validation = validateSchema(reviewSchema, {
+    const valResult = validateSchema(reviewSchema, {
       rating: newRating,
-      comment: newComment.trim(),
+      comment: newComment,
     });
 
-    if (!validation.isValid) {
-      const firstError = Object.values(validation.errors)[0];
-      addToast(firstError || 'Please check your review input', 'error');
+    if (!valResult.isValid) {
+      addToast(Object.values(valResult.errors)[0], 'error');
       return;
     }
 
     setSubmittingReview(true);
     try {
-      const res = await reviewApi.addReview({
+      const res = await reviewApi.createReview({
         productId: product.id,
         rating: newRating,
-        comment: newComment.trim(),
+        comment: newComment,
       });
       if (res?.data) {
         setReviews([res.data, ...reviews]);
         setNewComment('');
-        addToast('Thank you! Your review has been published.', 'success');
+        setNewRating(5);
+        addToast('Review submitted successfully!', 'success');
       }
     } catch (err) {
       logger.error('ProductDetailModal', 'Failed to submit review', err);
-      addToast(err.message || 'Failed to submit review', 'error');
+      addToast('Failed to post review. You may have already reviewed this product.', 'error');
     } finally {
       setSubmittingReview(false);
     }
@@ -101,13 +93,13 @@ const ProductDetailModal = ({ product, onClose }) => {
         className="glass-card"
         style={{
           width: '100%',
-          maxWidth: '780px',
+          maxWidth: '680px',
           maxHeight: '90vh',
-          borderRadius: '24px',
-          background: '#ffffff',
           overflowY: 'auto',
-          position: 'relative',
+          borderRadius: '24px',
           padding: '28px',
+          background: '#ffffff',
+          position: 'relative',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -132,404 +124,186 @@ const ProductDetailModal = ({ product, onClose }) => {
           <X size={20} color="#64748b" />
         </button>
 
-        {/* Top Product Summary */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '28px',
-            marginBottom: '32px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: '24px',
           }}
         >
           <div
             style={{
               background: '#f8fafc',
               borderRadius: '20px',
-              overflow: 'hidden',
-              height: '300px',
+              padding: '24px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              border: '1px solid #e2e8f0',
+              minHeight: '260px',
             }}
           >
             <img
               src={product.imageUrl}
               alt={product.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ maxHeight: '220px', maxWidth: '100%', objectFit: 'contain' }}
             />
           </div>
 
-          <div>
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
-              <span className="badge badge-delivery">⚡ 10-15 MINS</span>
-              <span className="qc-nutrition-badge organic">🌱 100% Organic</span>
-              <span className="qc-nutrition-badge vegan">✨ Farm Fresh</span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '600' }}>
+              {product.brand || 'QuickCart Direct'}
             </div>
-
-            <div
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: '700',
-                color: '#64748b',
-                textTransform: 'uppercase',
-              }}
-            >
-              {product.brand}
-            </div>
-            <h2
-              style={{
-                fontSize: '1.4rem',
-                color: '#0f172a',
-                margin: '4px 0 8px',
-                lineHeight: '1.3',
-              }}
-            >
+            <h2 style={{ fontSize: '1.4rem', color: '#0f172a', margin: '4px 0 8px' }}>
               {product.name}
             </h2>
+            <div style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '16px' }}>
+              {product.unitQuantity}
+            </div>
 
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}
             >
-              <span
+              <div
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '4px',
-                  background: '#ecfdf5',
-                  color: '#059669',
+                  background: '#fef3c7',
+                  color: '#d97706',
+                  padding: '4px 8px',
+                  borderRadius: '6px',
                   fontSize: '0.85rem',
                   fontWeight: '700',
-                  padding: '3px 8px',
-                  borderRadius: '6px',
                 }}
               >
-                <Star size={14} fill="#059669" /> {product.rating}
-              </span>
-              <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                {reviews.length} Verified Customer Reviews
-              </span>
-            </div>
-
-            <div style={{ fontSize: '0.9rem', color: '#475569', marginBottom: '16px' }}>
-              Unit: <strong>{product.unitQuantity}</strong>
-            </div>
-
-            {/* Price & Action */}
-            <div
-              style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}
-            >
-              <div>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                  <span style={{ fontSize: '1.6rem', fontWeight: '800', color: '#0f172a' }}>
-                    ₹{product.sellingPrice || product.price}
-                  </span>
-                  {product.mrp > (product.sellingPrice || product.price) && (
-                    <span
-                      style={{ fontSize: '1rem', color: '#94a3b8', textDecoration: 'line-through' }}
-                    >
-                      MRP ₹{product.mrp}
-                    </span>
-                  )}
-                  {product.discountPercentage > 0 && (
-                    <span className="badge badge-discount">{product.discountPercentage}% OFF</span>
-                  )}
-                </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
-                  (Inclusive of all taxes)
-                </div>
+                <Star size={14} fill="#d97706" /> {product.rating || '4.8'}
               </div>
+              <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                ({reviews.length} verified ratings)
+              </span>
+            </div>
 
+            <div
+              style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginBottom: '20px' }}
+            >
+              <span style={{ fontSize: '1.6rem', fontWeight: '800', color: '#0f172a' }}>
+                ₹{product.price || product.sellingPrice}
+              </span>
+              {product.mrp && product.mrp > (product.price || product.sellingPrice) && (
+                <>
+                  <span
+                    style={{ fontSize: '1rem', color: '#94a3b8', textDecoration: 'line-through' }}
+                  >
+                    ₹{product.mrp}
+                  </span>
+                  <span
+                    className="badge badge-discount"
+                    style={{ fontSize: '0.8rem', padding: '3px 8px' }}
+                  >
+                    {product.discountPercentage ||
+                      Math.round(
+                        ((product.mrp - (product.price || product.sellingPrice)) / product.mrp) *
+                          100
+                      )}
+                    % OFF
+                  </span>
+                </>
+              )}
+            </div>
+
+            <div style={{ marginTop: 'auto' }}>
               {quantity > 0 ? (
-                <div className="qty-stepper" style={{ padding: '6px 10px' }}>
-                  <button onClick={() => cartItemId && updateQuantity(cartItemId, quantity - 1)}>
-                    <Minus size={16} />
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: '#059669',
+                    borderRadius: '12px',
+                    padding: '8px 16px',
+                    color: '#ffffff',
+                    width: '160px',
+                  }}
+                >
+                  <button
+                    onClick={() => updateQuantity(cartItemId, quantity - 1)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#ffffff',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Minus size={18} />
                   </button>
-                  <span style={{ fontSize: '1.1rem', padding: '0 14px' }}>{quantity}</span>
-                  <button onClick={() => cartItemId && updateQuantity(cartItemId, quantity + 1)}>
-                    <Plus size={16} />
+                  <span style={{ fontWeight: '800', fontSize: '1.1rem' }}>{quantity}</span>
+                  <button
+                    onClick={() => updateQuantity(cartItemId, quantity + 1)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#ffffff',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Plus size={18} />
                   </button>
                 </div>
               ) : (
                 <button
-                  onClick={() => addToCart(product, 1)}
-                  className="btn btn-primary btn-lg"
-                  style={{ padding: '10px 28px' }}
+                  onClick={() => addToCart(product.id, 1)}
+                  className="btn btn-primary"
+                  style={{ width: '100%', padding: '14px' }}
                 >
-                  + Add to Cart
+                  Add to Cart
                 </button>
               )}
             </div>
-
-            {/* Guarantees */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '10px',
-                fontSize: '0.8rem',
-                color: '#475569',
-                borderTop: '1px solid #f1f5f9',
-                paddingTop: '16px',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Clock size={16} color="#059669" /> 10-15 Min Express fulfillment
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <ShieldCheck size={16} color="#059669" /> 100% Quality handpicked
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Nutrition Facts Table */}
-        <div
-          style={{
-            background: '#f8fafc',
-            borderRadius: '16px',
-            padding: '16px',
-            border: '1px solid #e2e8f0',
-            marginBottom: '28px',
-          }}
-        >
-          <h4
-            style={{
-              fontSize: '0.95rem',
-              fontWeight: '800',
-              color: '#0f172a',
-              marginBottom: '10px',
-            }}
-          >
-            🥗 Key Nutritional Highlights (per 100g)
+        <div style={{ marginTop: '24px', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
+          <h4 style={{ fontSize: '0.95rem', color: '#0f172a', marginBottom: '8px' }}>
+            Description
           </h4>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: '10px',
-            }}
-          >
-            <div
-              style={{
-                background: '#ffffff',
-                padding: '10px',
-                borderRadius: '10px',
-                border: '1px solid #e2e8f0',
-              }}
-            >
-              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Energy</div>
-              <div style={{ fontWeight: '800', color: '#0f172a' }}>85 kcal</div>
-            </div>
-            <div
-              style={{
-                background: '#ffffff',
-                padding: '10px',
-                borderRadius: '10px',
-                border: '1px solid #e2e8f0',
-              }}
-            >
-              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Protein</div>
-              <div style={{ fontWeight: '800', color: '#059669' }}>3.2 g</div>
-            </div>
-            <div
-              style={{
-                background: '#ffffff',
-                padding: '10px',
-                borderRadius: '10px',
-                border: '1px solid #e2e8f0',
-              }}
-            >
-              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Dietary Fiber</div>
-              <div style={{ fontWeight: '800', color: '#0f172a' }}>2.8 g</div>
-            </div>
-            <div
-              style={{
-                background: '#ffffff',
-                padding: '10px',
-                borderRadius: '10px',
-                border: '1px solid #e2e8f0',
-              }}
-            >
-              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Added Sugar</div>
-              <div style={{ fontWeight: '800', color: '#059669' }}>0 g</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Product Description */}
-        <div style={{ marginBottom: '32px' }}>
-          <h4 style={{ fontSize: '1.05rem', color: '#0f172a', marginBottom: '8px' }}>
-            Product Details & Description
-          </h4>
-          <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.6' }}>
+          <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: '1.6' }}>
             {product.description ||
-              'Premium quality fresh groceries and daily essentials sourced directly from verified dark store suppliers to bring maximum freshness and value.'}
+              'Freshly procured premium quality items packaged under strict hygienic standards.'}
           </p>
         </div>
 
-        {/* Reviews Section */}
-        <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '24px' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '16px',
-            }}
-          >
-            <h4
-              style={{
-                fontSize: '1.1rem',
-                color: '#0f172a',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <MessageSquare size={18} color="#059669" /> Customer Reviews & Ratings (
-              {reviews.length})
-            </h4>
-          </div>
+        <ProductNutritionalTable highlights={product.nutritionalHighlights} />
 
-          {/* Add Review Form */}
-          <form
-            onSubmit={handleReviewSubmit}
-            style={{
-              background: '#f8fafc',
-              borderRadius: '16px',
-              padding: '16px',
-              marginBottom: '20px',
-              border: '1px solid #e2e8f0',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '0.88rem',
-                fontWeight: '700',
-                color: '#0f172a',
-                marginBottom: '8px',
-              }}
-            >
-              Rate & Review this product
-            </div>
-            <div
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}
-            >
-              <span style={{ fontSize: '0.82rem', color: '#64748b' }}>Rating:</span>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  type="button"
-                  key={star}
-                  onClick={() => setNewRating(star)}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: 0,
-                  }}
-                >
-                  <Star
-                    size={22}
-                    fill={star <= newRating ? '#f59e0b' : 'none'}
-                    color={star <= newRating ? '#f59e0b' : '#cbd5e1'}
-                  />
-                </button>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input
-                type="text"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Share your feedback (freshness, packaging, taste)..."
-                className="input-control"
-                style={{ flex: 1 }}
-              />
-              <button
-                type="submit"
-                disabled={submittingReview}
-                className="btn btn-primary"
-                style={{ padding: '0 20px' }}
-              >
-                <Send size={16} /> {submittingReview ? 'Posting...' : 'Post'}
-              </button>
-            </div>
-          </form>
-
-          {/* Existing Reviews List */}
-          {reviews.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {reviews.map((r) => (
-                <div
-                  key={r.id}
-                  style={{
-                    padding: '12px 16px',
-                    borderRadius: '12px',
-                    background: '#f8fafc',
-                    border: '1px solid #f1f5f9',
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div
-                        style={{
-                          width: '28px',
-                          height: '28px',
-                          borderRadius: '50%',
-                          background: '#059669',
-                          color: 'white',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '0.75rem',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        {r.userName?.charAt(0) || 'U'}
-                      </div>
-                      <span style={{ fontSize: '0.88rem', fontWeight: '700', color: '#0f172a' }}>
-                        {r.userName}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', gap: '2px' }}>
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star
-                          key={s}
-                          size={13}
-                          fill={s <= r.rating ? '#f59e0b' : 'none'}
-                          color={s <= r.rating ? '#f59e0b' : '#cbd5e1'}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <p style={{ fontSize: '0.84rem', color: '#475569', lineHeight: '1.4' }}>
-                    {r.comment}
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p
-              style={{
-                fontSize: '0.84rem',
-                color: '#94a3b8',
-                textAlign: 'center',
-                padding: '16px',
-              }}
-            >
-              No reviews yet. Be the first to review this product!
-            </p>
-          )}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginTop: '16px',
+            background: '#ecfdf5',
+            padding: '10px 14px',
+            borderRadius: '12px',
+            color: '#065f46',
+            fontSize: '0.85rem',
+            fontWeight: '600',
+          }}
+        >
+          <Clock size={16} /> Delivery in 10-15 mins from your nearest dark store.
         </div>
+
+        <RelatedProductsRow relatedProducts={relatedProducts} />
+
+        <ProductReviewList
+          reviews={reviews}
+          user={user}
+          newRating={newRating}
+          setNewRating={setNewRating}
+          newComment={newComment}
+          setNewComment={setNewComment}
+          submittingReview={submittingReview}
+          onReviewSubmit={handleReviewSubmit}
+          onOpenAuthModal={() => openAuthModal('LOGIN')}
+        />
       </div>
     </div>
   );
@@ -537,7 +311,7 @@ const ProductDetailModal = ({ product, onClose }) => {
 
 ProductDetailModal.propTypes = {
   product: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     brand: PropTypes.string,
     unitQuantity: PropTypes.string,
@@ -545,15 +319,12 @@ ProductDetailModal.propTypes = {
     sellingPrice: PropTypes.number,
     mrp: PropTypes.number,
     discountPercentage: PropTypes.number,
-    rating: PropTypes.number,
+    rating: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     imageUrl: PropTypes.string,
     description: PropTypes.string,
+    nutritionalHighlights: PropTypes.array,
   }),
   onClose: PropTypes.func.isRequired,
-};
-
-ProductDetailModal.defaultProps = {
-  product: null,
 };
 
 export default ProductDetailModal;
