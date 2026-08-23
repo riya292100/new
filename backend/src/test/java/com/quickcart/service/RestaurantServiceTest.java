@@ -55,6 +55,7 @@ class RestaurantServiceTest {
     void searchRestaurants_ShouldReturnMatchingRestaurants() {
         when(restaurantRepository.searchRestaurants(any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(List.of(mockRestaurant));
+        when(favoriteRepository.existsByUserIdAndRestaurantId(1L, 1L)).thenReturn(false);
 
         List<RestaurantDto> results = restaurantService.searchRestaurants(
                 "Enzo", "Rome", "Italy", "Italian", "$$", true, null, true, 1L
