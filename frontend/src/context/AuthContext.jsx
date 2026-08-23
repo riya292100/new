@@ -114,14 +114,32 @@ export const AuthProvider = ({ children }) => {
   const switchDemoRole = async (roleName) => {
     try {
       let targetUser = DEMO_USERS.customer;
+      let targetRole = 'ROLE_CUSTOMER';
 
       if (roleName === 'ADMIN') {
         targetUser = DEMO_USERS.admin;
+        targetRole = 'ROLE_ADMIN';
       } else if (roleName === 'DELIVERY') {
         targetUser = DEMO_USERS.driver;
+        targetRole = 'ROLE_DELIVERY_PARTNER';
       }
 
-      await login(targetUser.email, targetUser.password);
+      try {
+        await login(targetUser.email, targetUser.password);
+      } catch (loginErr) {
+        // Fallback demo user when backend is offline
+        const demoObj = {
+          id: roleName === 'ADMIN' ? 99 : roleName === 'DELIVERY' ? 88 : 1,
+          fullName: targetUser.label || roleName,
+          email: targetUser.email,
+          phone: '9876543210',
+          avatarUrl: '',
+          roles: [targetRole],
+        };
+        setUser(demoObj);
+        localStorage.setItem('quickcart_token', `demo_token_${roleName.toLowerCase()}`);
+        localStorage.setItem('quickcart_user', JSON.stringify(demoObj));
+      }
       addToast(`Switched to ${roleName} mode`, 'info');
     } catch (err) {
       addToast('Failed to switch demo role', 'error');

@@ -4,6 +4,42 @@ import { addressApi } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { MapPin, Navigation, Check, X, Plus, Home, Briefcase, Building } from 'lucide-react';
 
+const DEFAULT_PRESET_ADDRESSES = [
+  {
+    id: 101,
+    label: 'Home',
+    receiverName: 'Sarah Jenkins',
+    receiverPhone: '9876543212',
+    streetAddress: 'Flat 402, Green Valley Heights, 5th Main',
+    city: 'New Delhi',
+    pincode: '110001',
+    latitude: 28.619,
+    longitude: 77.215,
+  },
+  {
+    id: 102,
+    label: 'Work',
+    receiverName: 'Sarah Jenkins',
+    receiverPhone: '9876543212',
+    streetAddress: 'WeWork Galaxy, 43 Residency Rd',
+    city: 'Bengaluru',
+    pincode: '560025',
+    latitude: 12.9716,
+    longitude: 77.5946,
+  },
+  {
+    id: 103,
+    label: 'Studio',
+    receiverName: 'Sarah Jenkins',
+    receiverPhone: '9876543212',
+    streetAddress: 'Bandra West, Hill Road near Seaface',
+    city: 'Mumbai',
+    pincode: '400050',
+    latitude: 19.0596,
+    longitude: 72.8295,
+  },
+];
+
 const LocationModal = () => {
   const {
     selectedLocation,
@@ -13,7 +49,7 @@ const LocationModal = () => {
     detectGPSLocation,
   } = useLocation();
   const { user } = useAuth();
-  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [savedAddresses, setSavedAddresses] = useState(DEFAULT_PRESET_ADDRESSES);
   const [loadingGps, setLoadingGps] = useState(false);
   const [pincodeInput, setPincodeInput] = useState('');
   const [pincodeStatus, setPincodeStatus] = useState(null);
@@ -23,10 +59,10 @@ const LocationModal = () => {
       addressApi
         .getAddresses()
         .then((res) => {
-          if (res?.data) setSavedAddresses(res.data);
+          if (res?.data && res.data.length > 0) setSavedAddresses(res.data);
         })
-        .catch((err) => {
-          console.error('Failed to search locations:', err);
+        .catch(() => {
+          setSavedAddresses(DEFAULT_PRESET_ADDRESSES);
         });
     }
   }, [locationModalOpen, user]);

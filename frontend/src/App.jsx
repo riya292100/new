@@ -32,7 +32,7 @@ import BookingsPage from './pages/BookingsPage';
 
 // Protected route guard
 const ProtectedRoute = ({ children, requiredRole }) => {
-  const { user, loading } = useAuth();
+  const { user, loading, switchDemoRole, openAuthModal } = useAuth();
 
   if (loading) {
     return (
@@ -53,10 +53,80 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     );
   }
 
-  if (!user) return <Navigate to="/" replace />;
-  if (requiredRole && !user.roles?.includes(requiredRole)) {
-    return <Navigate to="/" replace />;
+  if (!user) {
+    return (
+      <div
+        className="container"
+        style={{ padding: '80px 20px', textAlign: 'center', maxWidth: '460px' }}
+      >
+        <div
+          className="glass-card"
+          style={{ padding: '32px', borderRadius: '24px', background: '#ffffff' }}
+        >
+          <h2 style={{ fontSize: '1.4rem', color: '#0f172a', marginBottom: '8px' }}>
+            Sign in to continue
+          </h2>
+          <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '24px' }}>
+            Please log in with your credentials or switch to a demo role to view this page.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <button
+              onClick={() =>
+                switchDemoRole(
+                  requiredRole === 'ROLE_ADMIN'
+                    ? 'ADMIN'
+                    : requiredRole === 'ROLE_DELIVERY_PARTNER'
+                      ? 'DELIVERY'
+                      : 'CUSTOMER'
+                )
+              }
+              className="btn btn-primary btn-block"
+            >
+              1-Click Demo Login as{' '}
+              {requiredRole === 'ROLE_ADMIN'
+                ? 'Admin'
+                : requiredRole === 'ROLE_DELIVERY_PARTNER'
+                  ? 'Delivery Partner'
+                  : 'Customer'}
+            </button>
+            <button onClick={() => openAuthModal('login')} className="btn btn-outline btn-block">
+              Open Regular Login Modal
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
+
+  if (requiredRole && !user.roles?.includes(requiredRole)) {
+    return (
+      <div
+        className="container"
+        style={{ padding: '80px 20px', textAlign: 'center', maxWidth: '480px' }}
+      >
+        <div
+          className="glass-card"
+          style={{ padding: '32px', borderRadius: '24px', background: '#ffffff' }}
+        >
+          <h2 style={{ fontSize: '1.35rem', color: '#0f172a', marginBottom: '8px' }}>
+            Role Authorization Required
+          </h2>
+          <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '24px' }}>
+            This portal requires{' '}
+            <strong>{requiredRole === 'ROLE_ADMIN' ? 'Administrator' : 'Delivery Partner'}</strong>{' '}
+            privileges.
+          </p>
+          <button
+            onClick={() => switchDemoRole(requiredRole === 'ROLE_ADMIN' ? 'ADMIN' : 'DELIVERY')}
+            className="btn btn-accent btn-block"
+          >
+            Switch to {requiredRole === 'ROLE_ADMIN' ? 'Admin' : 'Delivery Partner'} Demo View
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return children;
 };
 
@@ -151,7 +221,47 @@ const AppContent = () => {
             }
           />
           <Route
+            path="/partner"
+            element={
+              <ProtectedRoute requiredRole="ROLE_DELIVERY_PARTNER">
+                <DeliveryPartnerPortal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/partnerapp"
+            element={
+              <ProtectedRoute requiredRole="ROLE_DELIVERY_PARTNER">
+                <DeliveryPartnerPortal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/delivery"
+            element={
+              <ProtectedRoute requiredRole="ROLE_DELIVERY_PARTNER">
+                <DeliveryPartnerPortal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin"
+            element={
+              <ProtectedRoute requiredRole="ROLE_ADMIN">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adminportal"
+            element={
+              <ProtectedRoute requiredRole="ROLE_ADMIN">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute requiredRole="ROLE_ADMIN">
                 <AdminDashboard />
