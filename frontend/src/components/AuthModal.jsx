@@ -62,7 +62,9 @@ const AuthModal = () => {
           roles: [selectedRole],
         });
       }
-    } catch (err) { console.error('Error:', err); } finally {
+    } catch (err) {
+      console.error('Error:', err);
+    } finally {
       setLoading(false);
     }
   };

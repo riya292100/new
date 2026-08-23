@@ -56,7 +56,9 @@ const CheckoutPage = () => {
           setShowNewAddressForm(true);
         }
       })
-      .catch((err) => { console.error('Failed to fetch user addresses:', err); });
+      .catch((err) => {
+        console.error('Failed to fetch user addresses:', err);
+      });
   }, [user, navigate]);
 
   const handleCreateAddress = async (e) => {
@@ -106,7 +108,9 @@ const CheckoutPage = () => {
             spread: 70,
             origin: { y: 0.6 },
           });
-        } catch (_e) { console.error('Error:', _e); }
+        } catch (_e) {
+          console.error('Error:', _e);
+        }
 
         addToast('Order placed successfully!', 'success');
         navigate(`/track/${res.data.orderNumber}`);

@@ -28,10 +28,10 @@ vi.mock('axios', () => {
         patch: vi.fn(() => Promise.reject(new Error('Network request forbidden in tests'))),
         interceptors: {
           request: { use: vi.fn(), eject: vi.fn() },
-          response: { use: vi.fn(), eject: vi.fn() }
-        }
-      })
-    }
+          response: { use: vi.fn(), eject: vi.fn() },
+        },
+      }),
+    },
   };
 });
 
@@ -40,10 +40,10 @@ vi.mock('@stomp/stompjs', () => ({
     activate: vi.fn(),
     deactivate: vi.fn(),
     subscribe: vi.fn(() => ({ unsubscribe: vi.fn() })),
-    publish: vi.fn()
-  }))
+    publish: vi.fn(),
+  })),
 }));
 
 vi.mock('sockjs-client', () => ({
-  default: vi.fn()
+  default: vi.fn(),
 }));

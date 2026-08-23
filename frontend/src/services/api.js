@@ -53,6 +53,12 @@ export const catalogApi = {
   getSearchSuggestions: (q) => api.get('/products/search/suggestions', { params: { q } }),
 };
 
+// Category API alias
+export const categoryApi = {
+  getCategories: () => api.get('/categories'),
+  getCategoryBySlug: (slug) => api.get(`/categories/slug/${slug}`),
+};
+
 // Cart API
 export const cartApi = {
   getCart: () => api.get('/cart'),

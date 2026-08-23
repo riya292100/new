@@ -47,7 +47,9 @@ export const AuthProvider = ({ children }) => {
               roles: demoRes.data.roles,
             });
           }
-        } catch (e) { console.error('Error:', e); }
+        } catch (e) {
+          console.error('Error:', e);
+        }
       }
       setLoading(false);
     };
