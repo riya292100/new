@@ -10,6 +10,7 @@
     "test:coverage": "cd frontend && npm run coverage",
     "test:all": "cd frontend && npm run coverage",
     "lint": "cd frontend && npm run lint",
+    "typecheck": "cd frontend && npm run typecheck",
     "format": "cd frontend && npm run format",
     "format:check": "cd frontend && npm run format:check",
     "lint:all": "cd frontend && npm run lint && cd frontend && npm run format:check"

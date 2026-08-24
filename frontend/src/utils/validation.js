@@ -4,13 +4,16 @@
  */
 
 // Email regex pattern following RFC 5322 standards
-const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+export const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 // Phone number regex pattern (supports 10-digit formats with optional country codes)
-const PHONE_REGEX = /^(\+?\d{1,4}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+export const PHONE_REGEX = /^(\+?\d{1,4}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
 
 // PIN / Postal code regex (4 to 6 alphanumeric characters)
-const PINCODE_REGEX = /^[A-Za-z0-9\s-]{4,8}$/;
+export const PINCODE_REGEX = /^[A-Za-z0-9\s-]{4,8}$/;
+
+// Password validation regex (minimum 6 chars, alphanumeric)
+export const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
 
 /**
  * Validate an email address

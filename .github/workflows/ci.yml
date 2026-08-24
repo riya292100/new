@@ -30,9 +30,13 @@ jobs:
         working-directory: ./frontend
         run: npm run format:check
 
-      - name: Run ESLint
+      - name: Run Linter (ESLint)
         working-directory: ./frontend
         run: npm run lint
+
+      - name: Run Typecheck
+        working-directory: ./frontend
+        run: npm run typecheck
 
   frontend-ci:
     name: Frontend Tests & Coverage
@@ -53,11 +57,11 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
-      - name: Security Vulnerability Audit
+      - name: Run Security Audit
         working-directory: ./frontend
         run: npm audit --audit-level=critical
 
-      - name: Run Vitest Suite with V8 Coverage
+      - name: Run Tests (Vitest with V8 Coverage)
         working-directory: ./frontend
         run: npm run coverage
 
@@ -80,7 +84,7 @@ jobs:
           cache: 'maven'
           cache-dependency-path: './backend/pom.xml'
 
-      - name: Compile and Run Isolated JUnit 5 Tests
+      - name: Run Backend Tests (JUnit 5)
         working-directory: ./backend
         run: mvn clean test -Dspring.profiles.active=test
 

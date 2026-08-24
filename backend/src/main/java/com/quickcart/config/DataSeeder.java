@@ -5,6 +5,7 @@ import com.quickcart.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,18 @@ public class DataSeeder implements CommandLineRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(DataSeeder.class);
 
+    @Value("${quickcart.demo.admin-password:Admin@123}")
+    private String adminPassword;
+
+    @Value("${quickcart.demo.driver-password:Driver@123}")
+    private String driverPassword;
+
+    @Value("${quickcart.demo.customer-password:Customer@123}")
+    private String customerPassword;
+
+    @Value("${quickcart.demo.seeding-enabled:true}")
+    private boolean seedingEnabled;
+
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
@@ -36,6 +49,10 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
+        if (!seedingEnabled) {
+            logger.info("Demo data seeding is disabled by configuration.");
+            return;
+        }
         seedRoles();
         seedUsers();
         seedCategoriesAndProducts();
@@ -59,7 +76,7 @@ public class DataSeeder implements CommandLineRunner {
 
         // 1. Admin User
         if (userRepository.findByEmail("admin@quickcart.com").isEmpty()) {
-            User admin = new User("Alex Vance (Admin)", "admin@quickcart.com", "9876543210", passwordEncoder.encode("Admin@123"));
+            User admin = new User("Alex Vance (Admin)", "admin@quickcart.com", "9876543210", passwordEncoder.encode(adminPassword));
             admin.setAvatarUrl("https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80");
             admin.setRoles(Set.of(adminRole, customerRole));
             userRepository.save(admin);
@@ -68,7 +85,7 @@ public class DataSeeder implements CommandLineRunner {
         // 2. Delivery Partner User
         User driverUser = null;
         if (userRepository.findByEmail("driver@quickcart.com").isEmpty()) {
-            driverUser = new User("Ravi Kumar (Express Rider)", "driver@quickcart.com", "9876543211", passwordEncoder.encode("Driver@123"));
+            driverUser = new User("Ravi Kumar (Express Rider)", "driver@quickcart.com", "9876543211", passwordEncoder.encode(driverPassword));
             driverUser.setAvatarUrl("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80");
             driverUser.setRoles(Set.of(driverRole));
             driverUser = userRepository.save(driverUser);
@@ -85,7 +102,7 @@ public class DataSeeder implements CommandLineRunner {
 
         // 3. Customer User
         if (userRepository.findByEmail("customer@quickcart.com").isEmpty()) {
-            User customer = new User("Riya Gope", "customer@quickcart.com", "9876543212", passwordEncoder.encode("Customer@123"));
+            User customer = new User("Riya Gope", "customer@quickcart.com", "9876543212", passwordEncoder.encode(customerPassword));
             customer.setAvatarUrl("https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80");
             customer.setRoles(Set.of(customerRole));
             User savedCustomer = userRepository.save(customer);

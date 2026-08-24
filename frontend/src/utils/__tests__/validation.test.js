@@ -136,4 +136,15 @@ describe('Validation Utility Suite', () => {
       ).toBe(false);
     });
   });
+
+  describe('Regex Pattern Exports', () => {
+    it('matches valid patterns with exported regex constants', async () => {
+      const { EMAIL_REGEX, PHONE_REGEX, PINCODE_REGEX, PASSWORD_REGEX } =
+        await import('../validation');
+      expect(EMAIL_REGEX.test('test@example.com')).toBe(true);
+      expect(PHONE_REGEX.test('9876543210')).toBe(true);
+      expect(PINCODE_REGEX.test('110001')).toBe(true);
+      expect(PASSWORD_REGEX.test('Secret123')).toBe(true);
+    });
+  });
 });

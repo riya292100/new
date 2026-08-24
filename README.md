@@ -69,6 +69,22 @@ graph TD
 
 ---
 
+## 🩺 Observability, Health & Tracing
+
+QuickCart implements enterprise-grade observability and health telemetry:
+
+| Endpoint | Method | Purpose | Response Sample |
+| :--- | :--- | :--- | :--- |
+| `/health` or `/api/health` | `GET` | Overall service & database health | `{"success":true,"data":{"status":"UP","database":"UP","version":"1.2.0"}}` |
+| `/health/liveness` | `GET` | Kubernetes / Container liveness probe | `{"success":true,"data":{"status":"UP"}}` |
+| `/health/readiness` | `GET` | Deep readiness & database connectivity check | `{"success":true,"data":{"status":"UP","database":"UP"}}` |
+| `/actuator/health` | `GET` | Spring Boot actuator subsystems | `{"status":"UP","components":{"db":{"status":"UP"}}}` |
+
+### Request Tracing with Correlation IDs
+Every HTTP request is intercepted by `CorrelationIdFilter`. It extracts `X-Correlation-Id` or `X-Request-Id` from incoming headers (or automatically generates a UUID) and attaches it to SLF4J MDC context and HTTP response headers. Unhandled exceptions are logged with correlation context and sanitized so internal stack traces are never exposed to clients.
+
+---
+
 ## 🚀 Quick Start with Docker Compose
 
 Run the entire fullstack platform (MySQL 8.0, Spring Boot Backend, and Nginx React Frontend) in one command:
@@ -84,6 +100,7 @@ docker compose up --build
 
 - **Frontend App**: `http://localhost:5173` (or `http://localhost:80`)
 - **Backend REST API**: `http://localhost:8080`
+- **Health Check**: `http://localhost:8080/health`
 - **Swagger API Docs**: `http://localhost:8080/swagger-ui.html`
 
 ---
@@ -108,6 +125,9 @@ npm test
 
 # Run code style & static analysis linter
 npm run lint
+
+# Run type checking
+npm run typecheck
 
 # Check formatting
 npm run format:check
@@ -144,11 +164,12 @@ REST API & Actuator will be live at `http://localhost:8080` with sample dark-sto
 ## 🧪 Automated Testing & Continuous Integration
 
 Every commit is validated through GitHub Actions CI pipeline ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)):
-1. **Frontend Lint & Code Style**: Prettier verification + ESLint rules.
+1. **Frontend Lint & Code Style**: Prettier verification + ESLint rules + Typecheck.
 2. **Frontend Test Suite & Coverage**: Runs 102+ Vitest tests with V8 coverage thresholds.
 3. **Frontend Production Build**: Vite bundle compilation.
 4. **Backend Tests & Build**: JUnit 5 test execution against in-memory H2 database and `quickcart-backend-1.0.0.jar` packaging.
-5. **CodeQL Security Analysis**: Static application security testing (SAST) for Java & JavaScript.
+5. **Docker Stack Validation**: Multi-container build test.
+6. **CodeQL Security Analysis**: Static application security testing (SAST) for Java & JavaScript.
 
 ```bash
 # Run all root test scripts:
@@ -161,10 +182,10 @@ npm run test:all
 
 QuickCart includes instant role switching during local development:
 - **Instant Demo Mode**: Toggle between **Customer**, **Delivery Partner**, and **Admin Portal** with 1-click in the UI header without entering credentials.
-- **Default Seed Accounts**: Configured via application environment variables (`.env.example`) and seeded at first boot:
-  - Customer (`customer@quickcart.com` / `password123`)
-  - Delivery Partner (`driver@quickcart.com` / `password123`)
-  - Dark Store Administrator (`admin@quickcart.com` / `password123`)
+- **Environment-Driven Configuration**: Passwords and secrets are managed safely through `.env` or application properties:
+  - Customer (`customer@quickcart.com`)
+  - Delivery Partner (`driver@quickcart.com`)
+  - Dark Store Administrator (`admin@quickcart.com`)
 
 ---
 
