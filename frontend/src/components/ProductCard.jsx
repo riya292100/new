@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { Star, Plus, Minus, Clock, Eye } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
-const ProductCard = ({ product, onSelectProduct }) => {
+const ProductCard = ({ product = {}, onSelectProduct = null }) => {
   const { addToCart, updateQuantity, getItemQuantity, getItemCartId } = useCart();
-  const quantity = getItemQuantity(product.id);
-  const cartItemId = getItemCartId(product.id);
+  const quantity = getItemQuantity(product?.id);
+  const cartItemId = getItemCartId(product?.id);
 
   return (
     <div
@@ -209,23 +209,19 @@ const ProductCard = ({ product, onSelectProduct }) => {
 
 ProductCard.propTypes = {
   product: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-    name: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    name: PropTypes.string,
     unitQuantity: PropTypes.string,
-    price: PropTypes.number.isRequired,
-    mrp: PropTypes.number,
+    price: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    mrp: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     discountPercentage: PropTypes.number,
     rating: PropTypes.number,
     reviewCount: PropTypes.number,
     imageUrl: PropTypes.string,
     inStock: PropTypes.bool,
     stockQuantity: PropTypes.number,
-  }).isRequired,
+  }),
   onSelectProduct: PropTypes.func,
-};
-
-ProductCard.defaultProps = {
-  onSelectProduct: undefined,
 };
 
 export default ProductCard;

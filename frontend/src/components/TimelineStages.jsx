@@ -11,7 +11,7 @@ export const TIMELINE_STAGES = [
   { key: 'DELIVERED', label: 'Delivered', desc: 'Handed over at your door' },
 ];
 
-const TimelineStages = ({ status }) => {
+const TimelineStages = ({ status = 'ORDER_PLACED' }) => {
   const isCancelled = status === 'CANCELLED';
   const currentStageIndex = isCancelled ? -1 : TIMELINE_STAGES.findIndex((s) => s.key === status);
 
@@ -109,10 +109,6 @@ const TimelineStages = ({ status }) => {
 
 TimelineStages.propTypes = {
   status: PropTypes.string,
-};
-
-TimelineStages.defaultProps = {
-  status: 'ORDER_PLACED',
 };
 
 export default TimelineStages;

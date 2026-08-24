@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { Tag, Sparkles, ArrowRight } from 'lucide-react';
 
 const CheckoutOrderSummary = ({
-  cart,
-  appliedCoupon,
+  cart = null,
+  appliedCoupon = null,
   removeCoupon,
   setCouponModalOpen,
-  selectedTip,
+  selectedTip = 0,
   setSelectedTip,
-  finalPayableAmount,
-  placingOrder,
+  finalPayableAmount = 0,
+  placingOrder = false,
   onPlaceOrder,
 }) => {
   const TIP_OPTIONS = [0, 10, 20, 30, 50];
@@ -225,13 +225,6 @@ CheckoutOrderSummary.propTypes = {
   finalPayableAmount: PropTypes.number,
   placingOrder: PropTypes.bool,
   onPlaceOrder: PropTypes.func.isRequired,
-};
-
-CheckoutOrderSummary.defaultProps = {
-  cart: null,
-  appliedCoupon: null,
-  finalPayableAmount: 0,
-  placingOrder: false,
 };
 
 export default CheckoutOrderSummary;

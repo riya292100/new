@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { TrendingUp, ShoppingCart, AlertCircle, Users, Package } from 'lucide-react';
 
-const AdminStatsCards = ({ stats }) => {
+const AdminStatsCards = ({ stats = null }) => {
   if (!stats) return null;
 
   return (
@@ -164,10 +164,6 @@ AdminStatsCards.propTypes = {
     lowStockProductsCount: PropTypes.number,
     totalUsers: PropTypes.number,
   }),
-};
-
-AdminStatsCards.defaultProps = {
-  stats: null,
 };
 
 export default AdminStatsCards;

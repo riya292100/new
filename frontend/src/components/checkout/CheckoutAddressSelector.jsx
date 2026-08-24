@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { MapPin, Plus, CheckCircle2, Home, Briefcase, Building } from 'lucide-react';
 
 const CheckoutAddressSelector = ({
-  addresses,
-  selectedAddressId,
+  addresses = [],
+  selectedAddressId = null,
   setSelectedAddressId,
   showNewAddressForm,
   setShowNewAddressForm,
@@ -288,11 +288,6 @@ CheckoutAddressSelector.propTypes = {
   newAddress: PropTypes.object.isRequired,
   setNewAddress: PropTypes.func.isRequired,
   onCreateAddress: PropTypes.func.isRequired,
-};
-
-CheckoutAddressSelector.defaultProps = {
-  addresses: [],
-  selectedAddressId: null,
 };
 
 export default CheckoutAddressSelector;

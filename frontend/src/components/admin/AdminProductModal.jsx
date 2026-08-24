@@ -4,10 +4,10 @@ import { X } from 'lucide-react';
 
 const AdminProductModal = ({
   show,
-  editingProduct,
+  editingProduct = null,
   productForm,
   setProductForm,
-  categories,
+  categories = [],
   onSave,
   onClose,
 }) => {
@@ -332,10 +332,6 @@ AdminProductModal.propTypes = {
   categories: PropTypes.array.isRequired,
   onSave: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
-};
-
-AdminProductModal.defaultProps = {
-  editingProduct: null,
 };
 
 export default AdminProductModal;

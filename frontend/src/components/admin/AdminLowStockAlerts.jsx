@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { AlertCircle, Plus } from 'lucide-react';
 
-const AdminLowStockAlerts = ({ lowStockProducts, onRestock }) => {
+const AdminLowStockAlerts = ({ lowStockProducts = [], onRestock }) => {
   return (
     <div
       style={{
@@ -94,10 +94,6 @@ AdminLowStockAlerts.propTypes = {
     })
   ),
   onRestock: PropTypes.func.isRequired,
-};
-
-AdminLowStockAlerts.defaultProps = {
-  lowStockProducts: [],
 };
 
 export default AdminLowStockAlerts;
