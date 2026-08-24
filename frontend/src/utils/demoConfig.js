@@ -39,84 +39,96 @@ export const FALLBACK_CATEGORIES = [
     id: 1,
     name: 'Mobiles & Tablets',
     slug: 'mobiles-tablets',
-    imageUrl: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&auto=format&fit=crop&q=80',
     description: 'Smartphones, 5G Flagships, iPads & Tablets with 1-Hour Delivery',
   },
   {
     id: 2,
     name: 'Electronics & Audio',
     slug: 'electronics-audio',
-    imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&auto=format&fit=crop&q=80',
     description: 'Wireless ANC headphones, earbuds, smartwatches & party speakers',
   },
   {
     id: 3,
     name: 'Computers & Laptops',
     slug: 'computers-accessories',
-    imageUrl: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&auto=format&fit=crop&q=80',
     description: 'MacBooks, gaming rigs, mechanical keyboards & fast SSDs',
   },
   {
     id: 4,
     name: 'Fashion & Apparel',
     slug: 'fashion-apparel',
-    imageUrl: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400&auto=format&fit=crop&q=80',
     description: 'Trendy denim, unisex streetwear, premium sneakers & watches',
   },
   {
     id: 5,
     name: 'Home & Kitchen',
     slug: 'home-kitchen',
-    imageUrl: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=400&auto=format&fit=crop&q=80',
     description: 'Digital air fryers, mixer grinders, cookware & smart home decor',
   },
   {
     id: 6,
     name: 'Groceries & Essentials',
     slug: 'groceries-essentials',
-    imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&fit=crop&q=80',
     description: 'Farm-fresh dairy, organic atta, exotic fruits & daily staples',
   },
   {
     id: 7,
     name: 'Beauty & Grooming',
     slug: 'beauty-personal-care',
-    imageUrl: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&auto=format&fit=crop&q=80',
     description: 'Skincare serums, beard styling trimmers & luxury fragrances',
   },
   {
     id: 8,
     name: 'Sports & Fitness',
     slug: 'sports-fitness',
-    imageUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=400&auto=format&fit=crop&q=80',
     description: 'Cast iron dumbbells, yoga mats, sports shoes & badminton gear',
   },
   {
     id: 9,
     name: 'Books & Stationery',
     slug: 'books-stationery',
-    imageUrl: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&auto=format&fit=crop&q=80',
     description: 'Best-selling paperbacks, executive planners & fountain pens',
   },
   {
     id: 10,
     name: 'Toys & Baby Care',
     slug: 'toys-baby-care',
-    imageUrl: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&auto=format&fit=crop&q=80',
     description: 'STEM kits, LEGO sets, soft plush toys & premium baby care',
   },
   {
     id: 11,
     name: 'Home Appliances',
     slug: 'home-appliances',
-    imageUrl: 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=400&auto=format&fit=crop&q=80',
     description: '4K OLED Smart TVs, inverter refrigerators & washing machines',
   },
   {
     id: 12,
     name: 'QuickCart Dining',
     slug: 'dining-experiences',
-    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&auto=format&fit=crop&q=80',
     description: 'Instant VIP table reservations & chef-tasting menus',
   },
 ];
@@ -129,7 +141,8 @@ export const FALLBACK_PRODUCTS = [
     brand: 'Apple',
     category: { id: 1, name: 'Mobiles & Tablets', slug: 'mobiles-tablets' },
     categoryId: 1,
-    description: 'A17 Pro chip with 6-core GPU, titanium design with ceramic shield front, 48MP main camera with 3x telephoto, and Action button.',
+    description:
+      'A17 Pro chip with 6-core GPU, titanium design with ceramic shield front, 48MP main camera with 3x telephoto, and Action button.',
     mrp: 134900,
     sellingPrice: 127999,
     price: 127999,
@@ -138,14 +151,17 @@ export const FALLBACK_PRODUCTS = [
     stockQuantity: 25,
     rating: 4.8,
     ratingCount: 2450,
-    imageUrl: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80',
     isFeatured: true,
     isDailyDeal: true,
     isOneHourDelivery: true,
     sellerName: 'SuperComNet India',
     warranty: '1 Year Apple International Warranty',
-    specifications: 'Display: 6.1" Super Retina XDR OLED | Chip: A17 Pro | Camera: 48MP + 12MP + 12MP | Battery: 3274 mAh | Port: Type-C USB 3',
-    highlights: 'Aerospace-Grade Titanium Frame, 48MP Pro Camera, Action Button, All-day Battery Life',
+    specifications:
+      'Display: 6.1" Super Retina XDR OLED | Chip: A17 Pro | Camera: 48MP + 12MP + 12MP | Battery: 3274 mAh | Port: Type-C USB 3',
+    highlights:
+      'Aerospace-Grade Titanium Frame, 48MP Pro Camera, Action Button, All-day Battery Life',
   },
   {
     id: 102,
@@ -154,7 +170,8 @@ export const FALLBACK_PRODUCTS = [
     brand: 'Samsung',
     category: { id: 1, name: 'Mobiles & Tablets', slug: 'mobiles-tablets' },
     categoryId: 1,
-    description: 'Galaxy AI features like Circle to Search, Live Translate, 200MP camera with 5x optical zoom, Snapdragon 8 Gen 3 processor, and built-in S-Pen.',
+    description:
+      'Galaxy AI features like Circle to Search, Live Translate, 200MP camera with 5x optical zoom, Snapdragon 8 Gen 3 processor, and built-in S-Pen.',
     mrp: 134999,
     sellingPrice: 119999,
     price: 119999,
@@ -163,13 +180,15 @@ export const FALLBACK_PRODUCTS = [
     stockQuantity: 30,
     rating: 4.7,
     ratingCount: 1890,
-    imageUrl: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&auto=format&fit=crop&q=80',
     isFeatured: true,
     isDailyDeal: false,
     isOneHourDelivery: true,
     sellerName: 'RetailNet India',
     warranty: '1 Year Manufacturer Comprehensive Warranty',
-    specifications: 'Display: 6.8" Dynamic AMOLED 2X 120Hz | Processor: Snapdragon 8 Gen 3 | RAM: 12GB | Storage: 256GB | S-Pen: Built-in',
+    specifications:
+      'Display: 6.8" Dynamic AMOLED 2X 120Hz | Processor: Snapdragon 8 Gen 3 | RAM: 12GB | Storage: 256GB | S-Pen: Built-in',
     highlights: 'Galaxy AI Powered, 200MP Quad Camera, 5000 mAh Battery, Armor Aluminum Frame',
   },
   {
@@ -179,7 +198,8 @@ export const FALLBACK_PRODUCTS = [
     brand: 'boAt',
     category: { id: 2, name: 'Electronics & Audio', slug: 'electronics-audio' },
     categoryId: 2,
-    description: '50mm dynamic drivers with deep bass, 20 hours playback, physical noise isolation, plush ear cushions, and Bluetooth v5.0.',
+    description:
+      '50mm dynamic drivers with deep bass, 20 hours playback, physical noise isolation, plush ear cushions, and Bluetooth v5.0.',
     mrp: 4999,
     sellingPrice: 1799,
     price: 1799,
@@ -188,14 +208,17 @@ export const FALLBACK_PRODUCTS = [
     stockQuantity: 85,
     rating: 4.4,
     ratingCount: 4850,
-    imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80',
     isFeatured: true,
     isDailyDeal: true,
     isOneHourDelivery: true,
     sellerName: 'boAt Official Store',
     warranty: '1 Year Replacement Warranty',
-    specifications: 'Driver Size: 50mm | Battery Life: 20 Hours | Bluetooth: v5.0 | AUX Support: Yes | Mic: In-built',
-    highlights: '50mm Dynamic Drivers, Ergonomic Over-Ear Fit, 20-Hour Playtime, Dual Mode Connectivity',
+    specifications:
+      'Driver Size: 50mm | Battery Life: 20 Hours | Bluetooth: v5.0 | AUX Support: Yes | Mic: In-built',
+    highlights:
+      '50mm Dynamic Drivers, Ergonomic Over-Ear Fit, 20-Hour Playtime, Dual Mode Connectivity',
   },
   {
     id: 104,
@@ -204,7 +227,8 @@ export const FALLBACK_PRODUCTS = [
     brand: 'Sony',
     category: { id: 2, name: 'Electronics & Audio', slug: 'electronics-audio' },
     categoryId: 2,
-    description: 'Industry-leading noise cancellation with two processors and 8 microphones, Ultra-comfortable design, 30 hours battery life with quick charge.',
+    description:
+      'Industry-leading noise cancellation with two processors and 8 microphones, Ultra-comfortable design, 30 hours battery life with quick charge.',
     mrp: 34990,
     sellingPrice: 26990,
     price: 26990,
@@ -213,13 +237,15 @@ export const FALLBACK_PRODUCTS = [
     stockQuantity: 20,
     rating: 4.9,
     ratingCount: 3200,
-    imageUrl: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&auto=format&fit=crop&q=80',
     isFeatured: true,
     isDailyDeal: false,
     isOneHourDelivery: true,
     sellerName: 'Electronics Hub',
     warranty: '1 Year Sony India Warranty',
-    specifications: 'ANC: Dual HD V1 Processors | Battery: 30 Hours | Codecs: LDAC, AAC, SBC | Weight: 250 g',
+    specifications:
+      'ANC: Dual HD V1 Processors | Battery: 30 Hours | Codecs: LDAC, AAC, SBC | Weight: 250 g',
     highlights: 'Auto NC Optimizer, Multipoint Connection, Speak-to-Chat, 3-min Charge for 3h Play',
   },
   {
@@ -229,7 +255,8 @@ export const FALLBACK_PRODUCTS = [
     brand: 'Apple',
     category: { id: 3, name: 'Computers & Laptops', slug: 'computers-accessories' },
     categoryId: 3,
-    description: 'Supercharged by the M3 chip with 8-core CPU and 10-core GPU, up to 18 hours battery life, 1080p FaceTime HD camera, MagSafe 3 charging.',
+    description:
+      'Supercharged by the M3 chip with 8-core CPU and 10-core GPU, up to 18 hours battery life, 1080p FaceTime HD camera, MagSafe 3 charging.',
     mrp: 114900,
     sellingPrice: 104990,
     price: 104990,
@@ -238,14 +265,17 @@ export const FALLBACK_PRODUCTS = [
     stockQuantity: 15,
     rating: 4.9,
     ratingCount: 980,
-    imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80',
     isFeatured: true,
     isDailyDeal: false,
     isOneHourDelivery: true,
     sellerName: 'Apple Authorized Reseller',
     warranty: '1 Year Apple Warranty',
-    specifications: 'Display: 13.6" Liquid Retina (2560x1664) | Chip: Apple M3 8-Core | RAM: 8GB Unified | Storage: 256GB SSD',
-    highlights: 'M3 Powerhouse, Fanless Silent Design, 18-Hour Battery, MagSafe 3, Dual External Display Support',
+    specifications:
+      'Display: 13.6" Liquid Retina (2560x1664) | Chip: Apple M3 8-Core | RAM: 8GB Unified | Storage: 256GB SSD',
+    highlights:
+      'M3 Powerhouse, Fanless Silent Design, 18-Hour Battery, MagSafe 3, Dual External Display Support',
   },
   {
     id: 106,
@@ -254,7 +284,8 @@ export const FALLBACK_PRODUCTS = [
     brand: "Levi's",
     category: { id: 4, name: 'Fashion & Apparel', slug: 'fashion-apparel' },
     categoryId: 4,
-    description: 'Classic 511 slim fit cut with stretch denim for all-day comfort, zip fly with button closure, iconic back leather patch.',
+    description:
+      'Classic 511 slim fit cut with stretch denim for all-day comfort, zip fly with button closure, iconic back leather patch.',
     mrp: 3999,
     sellingPrice: 2199,
     price: 2199,
@@ -263,14 +294,17 @@ export const FALLBACK_PRODUCTS = [
     stockQuantity: 60,
     rating: 4.5,
     ratingCount: 1870,
-    imageUrl: 'https://images.unsplash.com/photo-1542272604-780c96856592?w=600&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1542272604-780c96856592?w=600&auto=format&fit=crop&q=80',
     isFeatured: false,
     isDailyDeal: true,
     isOneHourDelivery: true,
     sellerName: "Levi's Official Store",
     warranty: '30 Days Easy Return Policy',
-    specifications: 'Material: 99% Cotton, 1% Elastane | Fit: Slim Fit | Rise: Mid Rise | Wash Care: Machine Wash Cold',
-    highlights: 'Stretch Denim Fabric, Classic 5-Pocket Styling, Durable Stitching, Versatile Medium Indigo Wash',
+    specifications:
+      'Material: 99% Cotton, 1% Elastane | Fit: Slim Fit | Rise: Mid Rise | Wash Care: Machine Wash Cold',
+    highlights:
+      'Stretch Denim Fabric, Classic 5-Pocket Styling, Durable Stitching, Versatile Medium Indigo Wash',
   },
   {
     id: 107,
@@ -279,7 +313,8 @@ export const FALLBACK_PRODUCTS = [
     brand: 'Philips',
     category: { id: 5, name: 'Home & Kitchen', slug: 'home-kitchen' },
     categoryId: 5,
-    description: 'Air fry with up to 90% less fat, touch screen with 7 pre-set cooking programs, 4.1L capacity, keep warm function, dishwasher safe parts.',
+    description:
+      'Air fry with up to 90% less fat, touch screen with 7 pre-set cooking programs, 4.1L capacity, keep warm function, dishwasher safe parts.',
     mrp: 11995,
     sellingPrice: 6999,
     price: 6999,
@@ -288,14 +323,17 @@ export const FALLBACK_PRODUCTS = [
     stockQuantity: 35,
     rating: 4.7,
     ratingCount: 2900,
-    imageUrl: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80',
     isFeatured: true,
     isDailyDeal: true,
     isOneHourDelivery: true,
     sellerName: 'Philips Home Store',
     warranty: '2 Years Philips India Warranty',
-    specifications: 'Capacity: 4.1 Litres | Power: 1400 Watts | Presets: 7 Cooking Modes | Auto Shut-off: Yes',
-    highlights: 'Rapid Air 360 Technology, Digital Touch Screen, NutriU Recipe App Access, Easy Clean Non-stick Basket',
+    specifications:
+      'Capacity: 4.1 Litres | Power: 1400 Watts | Presets: 7 Cooking Modes | Auto Shut-off: Yes',
+    highlights:
+      'Rapid Air 360 Technology, Digital Touch Screen, NutriU Recipe App Access, Easy Clean Non-stick Basket',
   },
   {
     id: 108,
@@ -304,7 +342,8 @@ export const FALLBACK_PRODUCTS = [
     brand: 'Aashirvaad',
     category: { id: 6, name: 'Groceries & Essentials', slug: 'groceries-essentials' },
     categoryId: 6,
-    description: '100% whole wheat grains harvested from Madhya Pradesh Sehore fields, making rotis softer, fluffier and nutrient-rich.',
+    description:
+      '100% whole wheat grains harvested from Madhya Pradesh Sehore fields, making rotis softer, fluffier and nutrient-rich.',
     mrp: 540,
     sellingPrice: 465,
     price: 465,
@@ -313,13 +352,15 @@ export const FALLBACK_PRODUCTS = [
     stockQuantity: 150,
     rating: 4.8,
     ratingCount: 8400,
-    imageUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80',
     isFeatured: false,
     isDailyDeal: true,
     isOneHourDelivery: true,
     sellerName: 'QuickCart Dark Store #01',
     warranty: '100% Quality & Freshness Assured',
-    specifications: 'Grain: 100% MP Sharbati Wheat | Shelf Life: 6 Months | Dietary: High Dietary Fibre, No Added Maida',
+    specifications:
+      'Grain: 100% MP Sharbati Wheat | Shelf Life: 6 Months | Dietary: High Dietary Fibre, No Added Maida',
     highlights: '0% Maida, Retains Natural Moisture for Softer Rotis, Packed with Iron and Fibre',
   },
   {
@@ -329,7 +370,8 @@ export const FALLBACK_PRODUCTS = [
     brand: 'Amul',
     category: { id: 6, name: 'Groceries & Essentials', slug: 'groceries-essentials' },
     categoryId: 6,
-    description: 'Utterly Butterly Delicious iconic Indian salted butter churned from pure fresh cow and buffalo milk cream.',
+    description:
+      'Utterly Butterly Delicious iconic Indian salted butter churned from pure fresh cow and buffalo milk cream.',
     mrp: 570,
     sellingPrice: 525,
     price: 525,
@@ -338,13 +380,15 @@ export const FALLBACK_PRODUCTS = [
     stockQuantity: 200,
     rating: 4.9,
     ratingCount: 12000,
-    imageUrl: 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=600&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=600&auto=format&fit=crop&q=80',
     isFeatured: true,
     isDailyDeal: true,
     isOneHourDelivery: true,
     sellerName: 'Amul Fresh Dairy Hub',
     warranty: 'Keep Refrigerated at 4°C',
-    specifications: 'Ingredients: Milk Fat 80%, Moisture 16%, Salt 3% | Brand: Amul (The Taste of India)',
+    specifications:
+      'Ingredients: Milk Fat 80%, Moisture 16%, Salt 3% | Brand: Amul (The Taste of India)',
     highlights: 'Rich Creamy Texture, Classic Savory Flavor, Churned from Pure Milk Cream',
   },
   {
@@ -354,7 +398,8 @@ export const FALLBACK_PRODUCTS = [
     brand: 'Penguin Random House',
     category: { id: 9, name: 'Books & Stationery', slug: 'books-stationery' },
     categoryId: 9,
-    description: 'An Easy & Proven Way to Build Good Habits & Break Bad Ones. Over 15 million copies sold globally.',
+    description:
+      'An Easy & Proven Way to Build Good Habits & Break Bad Ones. Over 15 million copies sold globally.',
     mrp: 899,
     sellingPrice: 499,
     price: 499,
@@ -363,13 +408,15 @@ export const FALLBACK_PRODUCTS = [
     stockQuantity: 90,
     rating: 4.9,
     ratingCount: 18200,
-    imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+    imageUrl:
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
     isFeatured: true,
     isDailyDeal: true,
     isOneHourDelivery: true,
     sellerName: 'National Book Depository',
     warranty: '100% Genuine Original Print',
-    specifications: 'Author: James Clear | Language: English | Publisher: Penguin Life | Pages: 320 | Binding: Hardcover',
+    specifications:
+      'Author: James Clear | Language: English | Publisher: Penguin Life | Pages: 320 | Binding: Hardcover',
     highlights: '#1 New York Times Bestseller, Proven 4-Step Habit Framework, High Quality Paper',
   },
 ];
@@ -397,13 +444,15 @@ export const FALLBACK_RESTAURANTS = [
     hasValetParking: true,
     openingTime: '12:30 PM',
     closingTime: '11:45 PM',
-    featuredImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80',
+    featuredImage:
+      'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80',
     galleryImages: [
       'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80',
     ],
-    description: 'Iconic world-renowned North Indian restaurant famous for Dal Bukhara slow-cooked for 18 hours, jumbo Sikandari Raan, and tandoori naans.',
+    description:
+      'Iconic world-renowned North Indian restaurant famous for Dal Bukhara slow-cooked for 18 hours, jumbo Sikandari Raan, and tandoori naans.',
     phone: '+91 11 2611 2233',
   },
   {
@@ -428,12 +477,14 @@ export const FALLBACK_RESTAURANTS = [
     hasValetParking: true,
     openingTime: '12:00 PM',
     closingTime: '11:30 PM',
-    featuredImage: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&auto=format&fit=crop&q=80',
+    featuredImage:
+      'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&auto=format&fit=crop&q=80',
     galleryImages: [
       'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&auto=format&fit=crop&q=80',
     ],
-    description: 'Celebrated coastal dining showcasing heirloom recipes from Mangalore, Goa, and Kerala in a charming heritage courtyard.',
+    description:
+      'Celebrated coastal dining showcasing heirloom recipes from Mangalore, Goa, and Kerala in a charming heritage courtyard.',
     phone: '+91 80 6660 4545',
   },
   {
@@ -458,12 +509,14 @@ export const FALLBACK_RESTAURANTS = [
     hasValetParking: true,
     openingTime: '12:00 PM',
     closingTime: '11:30 PM',
-    featuredImage: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80',
+    featuredImage:
+      'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80',
     galleryImages: [
       'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80',
     ],
-    description: 'Gourmet North Indian dining featuring rich gravies, succulent tikkas, fragrant dum biryanis, and royal desserts.',
+    description:
+      'Gourmet North Indian dining featuring rich gravies, succulent tikkas, fragrant dum biryanis, and royal desserts.',
     phone: '+91 22 4976 1234',
   },
   {
@@ -488,13 +541,14 @@ export const FALLBACK_RESTAURANTS = [
     hasValetParking: true,
     openingTime: '12:00 PM',
     closingTime: '11:00 PM',
-    featuredImage: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80',
+    featuredImage:
+      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80',
     galleryImages: [
       'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&auto=format&fit=crop&q=80',
     ],
-    description: '100% vegetarian Burmese dining with authentic Khao Suey, tea leaf salads, lotus stem crisps, and artisan brews.',
+    description:
+      '100% vegetarian Burmese dining with authentic Khao Suey, tea leaf salads, lotus stem crisps, and artisan brews.',
     phone: '+91 124 437 2999',
   },
 ];
-

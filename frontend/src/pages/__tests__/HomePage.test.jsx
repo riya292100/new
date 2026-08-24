@@ -11,8 +11,18 @@ import { ToastProvider } from '../../context/ToastContext';
 
 describe('HomePage Component (Isolated Unit Tests)', () => {
   const mockCategories = [
-    { id: 1, name: 'Mobiles & Tablets', slug: 'mobiles-tablets', imageUrl: 'https://example.com/phone.jpg' },
-    { id: 2, name: 'Electronics & Audio', slug: 'electronics-audio', imageUrl: 'https://example.com/audio.jpg' },
+    {
+      id: 1,
+      name: 'Mobiles & Tablets',
+      slug: 'mobiles-tablets',
+      imageUrl: 'https://example.com/phone.jpg',
+    },
+    {
+      id: 2,
+      name: 'Electronics & Audio',
+      slug: 'electronics-audio',
+      imageUrl: 'https://example.com/audio.jpg',
+    },
   ];
 
   const mockProducts = [

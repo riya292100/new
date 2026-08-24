@@ -142,7 +142,10 @@ const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
   if (!product || !product.id) return null;
 
   return (
-    <div className="modal-overlay fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+    <div
+      className="modal-overlay fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
+    >
       <div
         className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-8 shadow-2xl border border-gray-200 relative"
         onClick={(e) => e.stopPropagation()}
@@ -192,7 +195,9 @@ const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
                   key={idx}
                   onClick={() => setActiveImage(img)}
                   className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
-                    activeImage === img ? 'border-emerald-600 scale-105' : 'border-gray-200 opacity-70 hover:opacity-100'
+                    activeImage === img
+                      ? 'border-emerald-600 scale-105'
+                      : 'border-gray-200 opacity-70 hover:opacity-100'
                   }`}
                 >
                   <img src={img} alt="" className="w-full h-full object-cover" />
@@ -211,7 +216,9 @@ const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-500 font-bold uppercase">Warranty</span>
-                <span className="font-semibold text-gray-900">{product.warranty || '1 Year Brand Warranty'}</span>
+                <span className="font-semibold text-gray-900">
+                  {product.warranty || '1 Year Brand Warranty'}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-500 font-bold uppercase">Returns</span>
@@ -253,9 +260,13 @@ const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
               {/* Price & EMI */}
               <div className="mt-4 pt-3 border-t border-gray-100">
                 <div className="flex items-baseline gap-3">
-                  <span className="text-3xl font-black text-gray-900">₹{price.toLocaleString('en-IN')}</span>
+                  <span className="text-3xl font-black text-gray-900">
+                    ₹{price.toLocaleString('en-IN')}
+                  </span>
                   {mrp > price && (
-                    <span className="text-base text-gray-400 line-through">₹{mrp.toLocaleString('en-IN')}</span>
+                    <span className="text-base text-gray-400 line-through">
+                      ₹{mrp.toLocaleString('en-IN')}
+                    </span>
                   )}
                   {discount > 0 && (
                     <span className="text-emerald-700 font-black text-sm bg-emerald-50 px-2 py-0.5 rounded">
@@ -269,9 +280,14 @@ const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
                 <div className="mt-3 bg-indigo-50/60 border border-indigo-100 rounded-xl p-3 text-xs text-indigo-900 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-indigo-600 flex-shrink-0" />
-                    <span>No Cost EMI from <strong>₹{Math.round(price / 6).toLocaleString('en-IN')}/month</strong></span>
+                    <span>
+                      No Cost EMI from{' '}
+                      <strong>₹{Math.round(price / 6).toLocaleString('en-IN')}/month</strong>
+                    </span>
                   </div>
-                  <span className="font-bold text-indigo-600 underline cursor-pointer">View Plans</span>
+                  <span className="font-bold text-indigo-600 underline cursor-pointer">
+                    View Plans
+                  </span>
                 </div>
               </div>
 
@@ -282,10 +298,13 @@ const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
                 </div>
                 <div className="space-y-1.5 text-xs text-gray-700">
                   <div className="p-2 bg-emerald-50/60 border border-emerald-200/60 rounded-xl flex items-center gap-2">
-                    <span className="font-bold text-emerald-700">Bank Offer:</span> Flat ₹100 instant discount with code <strong className="text-emerald-800">QUICK100</strong>
+                    <span className="font-bold text-emerald-700">Bank Offer:</span> Flat ₹100
+                    instant discount with code{' '}
+                    <strong className="text-emerald-800">QUICK100</strong>
                   </div>
                   <div className="p-2 bg-amber-50/60 border border-amber-200/60 rounded-xl flex items-center gap-2">
-                    <span className="font-bold text-amber-700">Express Delivery:</span> Free 1-Hour SuperFast Delivery on orders above ₹499
+                    <span className="font-bold text-amber-700">Express Delivery:</span> Free 1-Hour
+                    SuperFast Delivery on orders above ₹499
                   </div>
                 </div>
               </div>
@@ -293,7 +312,8 @@ const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
               {/* Pincode Speed Checker */}
               <div className="mt-4 pt-4 border-t border-gray-100">
                 <div className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-emerald-600" /> Check 1-Hour Delivery To Your Pincode
+                  <MapPin className="w-3.5 h-3.5 text-emerald-600" /> Check 1-Hour Delivery To Your
+                  Pincode
                 </div>
                 <form onSubmit={handleVerifyPincode} className="flex items-center gap-2">
                   <input
@@ -312,7 +332,8 @@ const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
                   </button>
                   {pinSpeed && (
                     <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> {pinSpeed.city}: <strong>{pinSpeed.estimatedEta}</strong>
+                      <CheckCircle2 className="w-3.5 h-3.5" /> {pinSpeed.city}:{' '}
+                      <strong>{pinSpeed.estimatedEta}</strong>
                     </span>
                   )}
                 </form>
@@ -366,7 +387,8 @@ const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
                   onClick={() => addToCart(product, 1)}
                   className="flex-1 py-3.5 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
                 >
-                  <Zap className="w-4 h-4 fill-current text-amber-300" /> Add to Cart (1-Hour Delivery)
+                  <Zap className="w-4 h-4 fill-current text-amber-300" /> Add to Cart (1-Hour
+                  Delivery)
                 </button>
               )}
             </div>

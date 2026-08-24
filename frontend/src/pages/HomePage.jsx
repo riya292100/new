@@ -27,12 +27,14 @@ const PROMO_BANNERS = [
   {
     id: 1,
     title: '⚡ 1-Hour SuperFast Pan-India Delivery',
-    subtitle: 'Flagship 5G Smartphones, Laptops, Wireless Audio & Essentials at your door in under 60 mins',
+    subtitle:
+      'Flagship 5G Smartphones, Laptops, Wireless Audio & Essentials at your door in under 60 mins',
     badge: '⚡ SUPERFAST EXPRESS',
     bg: 'linear-gradient(135deg, #064e3b 0%, #059669 50%, #0d9488 100%)',
     cta: 'Explore Flagship 5G',
     link: '/category/mobiles-tablets',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80',
+    image:
+      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80',
   },
   {
     id: 2,
@@ -42,17 +44,20 @@ const PROMO_BANNERS = [
     bg: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 50%, #6366f1 100%)',
     cta: 'Shop Electronics',
     link: '/category/electronics-audio',
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80',
+    image:
+      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80',
   },
   {
     id: 3,
     title: 'Smart Home & Kitchen Revolution',
-    subtitle: 'Philips Digital Air Fryers, Inverter Appliances & Cookware with instant dark-store dispatch',
+    subtitle:
+      'Philips Digital Air Fryers, Inverter Appliances & Cookware with instant dark-store dispatch',
     badge: '🍳 HOME ESSENTIALS',
     bg: 'linear-gradient(135deg, #78350f 0%, #d97706 50%, #f59e0b 100%)',
     cta: 'Upgrade Your Home',
     link: '/category/home-kitchen',
-    image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80',
+    image:
+      'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80',
   },
 ];
 
@@ -131,13 +136,24 @@ const HomePage = () => {
   const banner = PROMO_BANNERS[activeBanner];
 
   const mobiles = products.filter(
-    (p) => p.category?.slug === 'mobiles-tablets' || p.categoryId === 1 || p.brand === 'Apple' || p.brand === 'Samsung'
+    (p) =>
+      p.category?.slug === 'mobiles-tablets' ||
+      p.categoryId === 1 ||
+      p.brand === 'Apple' ||
+      p.brand === 'Samsung'
   );
   const electronics = products.filter(
-    (p) => p.category?.slug === 'electronics-audio' || p.category?.slug === 'computers-accessories' || p.brand === 'boAt' || p.brand === 'Sony'
+    (p) =>
+      p.category?.slug === 'electronics-audio' ||
+      p.category?.slug === 'computers-accessories' ||
+      p.brand === 'boAt' ||
+      p.brand === 'Sony'
   );
   const lifestyle = products.filter(
-    (p) => p.category?.slug === 'fashion-apparel' || p.category?.slug === 'home-kitchen' || p.category?.slug === 'groceries-essentials'
+    (p) =>
+      p.category?.slug === 'fashion-apparel' ||
+      p.category?.slug === 'home-kitchen' ||
+      p.category?.slug === 'groceries-essentials'
   );
 
   return (
@@ -243,7 +259,9 @@ const HomePage = () => {
               <span>
                 {pinResult.city}:{' '}
                 <strong className="text-emerald-700">
-                  {pinResult.isOneHourAvailable ? '⚡ 1-Hour Express Available' : '📦 2-3 Days Standard'}
+                  {pinResult.isOneHourAvailable
+                    ? '⚡ 1-Hour Express Available'
+                    : '📦 2-3 Days Standard'}
                 </strong>{' '}
                 ({pinResult.estimatedEta})
               </span>
@@ -361,7 +379,9 @@ const HomePage = () => {
             <ShieldCheck className="w-4 h-4" /> 100% Genuine Brand Assured
           </div>
           <h2 className="text-2xl font-black text-gray-900">Top Brands On QuickCart</h2>
-          <p className="text-xs text-gray-500 mt-1">Direct from official manufacturers and verified distributors</p>
+          <p className="text-xs text-gray-500 mt-1">
+            Direct from official manufacturers and verified distributors
+          </p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -427,10 +447,7 @@ const HomePage = () => {
 
       {/* Product Detail Modal */}
       {selectedProduct && (
-        <ProductDetailModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-        />
+        <ProductDetailModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
       )}
     </div>
   );

@@ -31,7 +31,12 @@ describe('Header Component (Isolated Unit Tests)', () => {
     });
 
     vi.spyOn(LocationContextModule, 'useLocation').mockReturnValue({
-      selectedLocation: { label: 'Home', streetAddress: 'Koramangala, Bengaluru', city: 'Bengaluru', pincode: '560001' },
+      selectedLocation: {
+        label: 'Home',
+        streetAddress: 'Koramangala, Bengaluru',
+        city: 'Bengaluru',
+        pincode: '560001',
+      },
       setLocationModalOpen: handleOpenLoc,
     });
 

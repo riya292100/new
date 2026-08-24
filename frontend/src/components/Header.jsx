@@ -36,7 +36,8 @@ const Header = () => {
       <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white text-xs font-semibold py-1.5 px-4 text-center flex items-center justify-center gap-2 tracking-wide">
         <Zap className="w-3.5 h-3.5 fill-current animate-pulse text-amber-300" />
         <span>
-          <strong>1-Hour SuperFast Express Delivery</strong> now live across Delhi NCR, Mumbai, Bengaluru, Hyderabad, Kolkata & 50+ Indian Cities!
+          <strong>1-Hour SuperFast Express Delivery</strong> now live across Delhi NCR, Mumbai,
+          Bengaluru, Hyderabad, Kolkata & 50+ Indian Cities!
         </span>
         <span className="hidden md:inline bg-amber-400/20 text-amber-200 px-2 py-0.5 rounded text-[11px] font-bold border border-amber-300/30">
           ⚡ Pan-India Assured
@@ -73,7 +74,9 @@ const Header = () => {
                   Deliver in 45-60m
                 </div>
                 <div className="text-xs font-bold text-gray-900 truncate mt-0.5">
-                  {selectedLocation?.pincode ? `${selectedLocation.pincode} - ${selectedLocation.city || 'Delhi NCR'}` : 'Select Pincode'}
+                  {selectedLocation?.pincode
+                    ? `${selectedLocation.pincode} - ${selectedLocation.city || 'Delhi NCR'}`
+                    : 'Select Pincode'}
                 </div>
               </div>
               <ChevronDown className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 ml-auto" />
@@ -127,7 +130,11 @@ const Header = () => {
                   className="flex items-center gap-2 p-1.5 sm:px-3 sm:py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 transition-colors"
                 >
                   {user.avatarUrl ? (
-                    <img src={user.avatarUrl} alt="" className="w-6 h-6 rounded-full object-cover border border-emerald-500" />
+                    <img
+                      src={user.avatarUrl}
+                      alt=""
+                      className="w-6 h-6 rounded-full object-cover border border-emerald-500"
+                    />
                   ) : (
                     <User className="w-4 h-4 text-emerald-600" />
                   )}
@@ -222,7 +229,9 @@ const Header = () => {
                 <span className="text-[10px] font-semibold opacity-90">
                   {cart?.totalItems || 0} {cart?.totalItems === 1 ? 'item' : 'items'}
                 </span>
-                <span className="text-xs font-extrabold">₹{(cart?.grandTotal || 0).toLocaleString('en-IN')}</span>
+                <span className="text-xs font-extrabold">
+                  ₹{(cart?.grandTotal || 0).toLocaleString('en-IN')}
+                </span>
               </div>
             </button>
           </div>

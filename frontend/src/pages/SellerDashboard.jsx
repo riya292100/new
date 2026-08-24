@@ -157,7 +157,8 @@ const SellerDashboard = () => {
               {stats.sellerName}
             </h1>
             <p className="text-indigo-200 mt-1 text-sm sm:text-base max-w-xl">
-              Pan-India 1-Hour SuperFast fulfillment enabled. Manage listings, live inventory across dark stores, and seller metrics.
+              Pan-India 1-Hour SuperFast fulfillment enabled. Manage listings, live inventory across
+              dark stores, and seller metrics.
             </p>
           </div>
 
@@ -177,7 +178,9 @@ const SellerDashboard = () => {
             <Package className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Listings</div>
+            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Active Listings
+            </div>
             <div className="text-2xl font-extrabold text-gray-900">{stats.totalListings}</div>
           </div>
         </div>
@@ -187,7 +190,9 @@ const SellerDashboard = () => {
             <Zap className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">1-Hour Express</div>
+            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              1-Hour Express
+            </div>
             <div className="text-2xl font-extrabold text-amber-600">Active (100%)</div>
           </div>
         </div>
@@ -197,7 +202,9 @@ const SellerDashboard = () => {
             <Star className="w-6 h-6 fill-current" />
           </div>
           <div>
-            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Seller Rating</div>
+            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Seller Rating
+            </div>
             <div className="text-2xl font-extrabold text-gray-900">{stats.rating} / 5.0</div>
           </div>
         </div>
@@ -207,7 +214,9 @@ const SellerDashboard = () => {
             <CheckCircle2 className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Fulfillment Accuracy</div>
+            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Fulfillment Accuracy
+            </div>
             <div className="text-2xl font-extrabold text-gray-900">{stats.fulfillmentAccuracy}</div>
           </div>
         </div>
@@ -254,13 +263,18 @@ const SellerDashboard = () => {
                   <tr key={p.id} className="hover:bg-gray-50/80 transition-colors">
                     <td className="px-6 py-4 flex items-center gap-3">
                       <img
-                        src={p.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'}
+                        src={
+                          p.imageUrl ||
+                          'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'
+                        }
                         alt={p.name}
                         className="w-12 h-12 rounded-lg object-cover border border-gray-200"
                       />
                       <div>
                         <div className="font-bold text-gray-900 line-clamp-1">{p.name}</div>
-                        <div className="text-xs text-gray-400 font-semibold">{p.brand || 'QuickCart'}</div>
+                        <div className="text-xs text-gray-400 font-semibold">
+                          {p.brand || 'QuickCart'}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -269,9 +283,13 @@ const SellerDashboard = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-bold text-gray-900">₹{price.toLocaleString('en-IN')}</div>
+                      <div className="font-bold text-gray-900">
+                        ₹{price.toLocaleString('en-IN')}
+                      </div>
                       {mrp > price && (
-                        <div className="text-xs text-gray-400 line-through">₹{mrp.toLocaleString('en-IN')}</div>
+                        <div className="text-xs text-gray-400 line-through">
+                          ₹{mrp.toLocaleString('en-IN')}
+                        </div>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -309,8 +327,12 @@ const SellerDashboard = () => {
           <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl border border-gray-200">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
               <div>
-                <h3 className="text-xl font-extrabold text-gray-900">List New Product on QuickCart</h3>
-                <p className="text-xs text-gray-500">Reach millions of shoppers with 1-hour fast delivery</p>
+                <h3 className="text-xl font-extrabold text-gray-900">
+                  List New Product on QuickCart
+                </h3>
+                <p className="text-xs text-gray-500">
+                  Reach millions of shoppers with 1-hour fast delivery
+                </p>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -322,7 +344,9 @@ const SellerDashboard = () => {
 
             <form onSubmit={handleCreateProduct} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Product Title *</label>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  Product Title *
+                </label>
                 <input
                   type="text"
                   required
@@ -335,7 +359,9 @@ const SellerDashboard = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Brand Name *</label>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                    Brand Name *
+                  </label>
                   <input
                     type="text"
                     placeholder="e.g. Apple / Samsung / boAt"
@@ -346,7 +372,9 @@ const SellerDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Category *</label>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                    Category *
+                  </label>
                   <select
                     value={newProduct.categoryId}
                     onChange={(e) => setNewProduct({ ...newProduct, categoryId: e.target.value })}
@@ -363,7 +391,9 @@ const SellerDashboard = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Selling Price (₹) *</label>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                    Selling Price (₹) *
+                  </label>
                   <input
                     type="number"
                     required
@@ -375,7 +405,9 @@ const SellerDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">MRP (₹)</label>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                    MRP (₹)
+                  </label>
                   <input
                     type="number"
                     placeholder="e.g. 134900"
@@ -386,18 +418,24 @@ const SellerDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Stock Units</label>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                    Stock Units
+                  </label>
                   <input
                     type="number"
                     value={newProduct.stockQuantity}
-                    onChange={(e) => setNewProduct({ ...newProduct, stockQuantity: e.target.value })}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, stockQuantity: e.target.value })
+                    }
                     className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Image URL</label>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  Image URL
+                </label>
                 <input
                   type="url"
                   placeholder="https://images.unsplash.com/..."
@@ -408,7 +446,9 @@ const SellerDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Product Highlights & Specs</label>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  Product Highlights & Specs
+                </label>
                 <textarea
                   rows="3"
                   placeholder="Key features, specifications, box contents..."

@@ -14,7 +14,8 @@ const WishlistPage = () => {
         </div>
         <h1 className="text-3xl font-extrabold text-gray-900 mb-3">Your Wishlist is Empty</h1>
         <p className="text-gray-600 max-w-md mx-auto mb-8 text-base">
-          Explore thousands of top-brand products with instant 1-Hour SuperFast delivery and save your favorites here.
+          Explore thousands of top-brand products with instant 1-Hour SuperFast delivery and save
+          your favorites here.
         </p>
         <Link
           to="/"
@@ -54,7 +55,8 @@ const WishlistPage = () => {
         {wishlist.map((item) => {
           const mrp = Number(item.mrp || item.sellingPrice || item.price || 0);
           const price = Number(item.sellingPrice || item.price || mrp);
-          const discount = item.discountPercentage || (mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0);
+          const discount =
+            item.discountPercentage || (mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0);
 
           return (
             <div
@@ -85,9 +87,15 @@ const WishlistPage = () => {
               </button>
 
               {/* Image */}
-              <Link to={`/products/${item.slug || item.id}`} className="aspect-square bg-gray-50 overflow-hidden relative block">
+              <Link
+                to={`/products/${item.slug || item.id}`}
+                className="aspect-square bg-gray-50 overflow-hidden relative block"
+              >
                 <img
-                  src={item.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'}
+                  src={
+                    item.imageUrl ||
+                    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80'
+                  }
                   alt={item.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -97,7 +105,9 @@ const WishlistPage = () => {
               <div className="p-4 flex-1 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                    <span className="font-semibold uppercase tracking-wider text-emerald-700">{item.brand || 'QuickCart'}</span>
+                    <span className="font-semibold uppercase tracking-wider text-emerald-700">
+                      {item.brand || 'QuickCart'}
+                    </span>
                     {item.rating && (
                       <span className="flex items-center gap-1 bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-bold">
                         <Star className="w-3 h-3 fill-current" /> {item.rating}
@@ -120,9 +130,13 @@ const WishlistPage = () => {
                 {/* Price & Action */}
                 <div className="mt-4 pt-3 border-t border-gray-100">
                   <div className="flex items-baseline gap-2 mb-3">
-                    <span className="text-lg font-extrabold text-gray-900">₹{price.toLocaleString('en-IN')}</span>
+                    <span className="text-lg font-extrabold text-gray-900">
+                      ₹{price.toLocaleString('en-IN')}
+                    </span>
                     {mrp > price && (
-                      <span className="text-xs text-gray-400 line-through">₹{mrp.toLocaleString('en-IN')}</span>
+                      <span className="text-xs text-gray-400 line-through">
+                        ₹{mrp.toLocaleString('en-IN')}
+                      </span>
                     )}
                   </div>
 

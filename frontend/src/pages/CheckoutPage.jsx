@@ -142,7 +142,8 @@ const CheckoutPage = () => {
               ⚡ 1-Hour SuperFast Pan-India Delivery Hub Active
             </h2>
             <p className="text-xs sm:text-sm text-emerald-100 mt-0.5">
-              Dark store fulfillment center is ready to pack and dispatch your order within 10 minutes.
+              Dark store fulfillment center is ready to pack and dispatch your order within 10
+              minutes.
             </p>
           </div>
         </div>
@@ -184,7 +185,9 @@ const CheckoutPage = () => {
                   )}
                 </div>
                 <div className="text-lg font-black text-gray-900 mt-2">45 - 60 Minutes</div>
-                <div className="text-xs text-gray-600 mt-1">Dispatched directly from nearest dark store hub</div>
+                <div className="text-xs text-gray-600 mt-1">
+                  Dispatched directly from nearest dark store hub
+                </div>
                 <div className="text-xs font-bold text-emerald-700 mt-2">₹49 (Free above ₹499)</div>
               </div>
 
@@ -206,7 +209,9 @@ const CheckoutPage = () => {
                   )}
                 </div>
                 <div className="text-lg font-black text-gray-900 mt-2">2 - 3 Business Days</div>
-                <div className="text-xs text-gray-600 mt-1">National surface network with live tracking</div>
+                <div className="text-xs text-gray-600 mt-1">
+                  National surface network with live tracking
+                </div>
                 <div className="text-xs font-bold text-emerald-700 mt-2">FREE Delivery</div>
               </div>
             </div>
