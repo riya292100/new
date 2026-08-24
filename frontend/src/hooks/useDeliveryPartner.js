@@ -36,7 +36,7 @@ const FALLBACK_DRIVER_ORDERS = [
       { id: 2, productName: 'Amul Taaza Homogenised Toned Milk', quantity: 1, price: 74 },
     ],
     address: {
-      fullName: 'Sarah Jenkins',
+      fullName: 'Riya Gope',
       phone: '9876543212',
       streetAddress: 'Flat 402, Green Valley Heights, 5th Main',
       city: 'New Delhi',

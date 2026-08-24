@@ -85,7 +85,7 @@ public class DataSeeder implements CommandLineRunner {
 
         // 3. Customer User
         if (userRepository.findByEmail("customer@quickcart.com").isEmpty()) {
-            User customer = new User("Sarah Jenkins", "customer@quickcart.com", "9876543212", passwordEncoder.encode("Customer@123"));
+            User customer = new User("Riya Gope", "customer@quickcart.com", "9876543212", passwordEncoder.encode("Customer@123"));
             customer.setAvatarUrl("https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80");
             customer.setRoles(Set.of(customerRole));
             User savedCustomer = userRepository.save(customer);
@@ -96,7 +96,7 @@ public class DataSeeder implements CommandLineRunner {
             Address address1 = new Address();
             address1.setUser(savedCustomer);
             address1.setLabel("Home");
-            address1.setReceiverName("Sarah Jenkins");
+            address1.setReceiverName("Riya Gope");
             address1.setReceiverPhone("9876543212");
             address1.setStreetAddress("Flat 402, Green Valley Heights, 5th Main");
             address1.setApartmentUnit("Tower B");
@@ -112,7 +112,7 @@ public class DataSeeder implements CommandLineRunner {
             Address address2 = new Address();
             address2.setUser(savedCustomer);
             address2.setLabel("Work");
-            address2.setReceiverName("Sarah Jenkins");
+            address2.setReceiverName("Riya Gope");
             address2.setReceiverPhone("9876543212");
             address2.setStreetAddress("Floor 7, Tech Boulevard, Cyber City Sector 24");
             address2.setApartmentUnit("Block C");

@@ -48,7 +48,7 @@ const RegisterForm = ({
               id="register-fullname"
               type="text"
               className="input-control"
-              placeholder="e.g. Sarah Jenkins"
+              placeholder="e.g. Riya Gope"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               style={{ paddingLeft: '40px' }}

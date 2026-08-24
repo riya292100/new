@@ -47,7 +47,7 @@ describe('AuthModal Component', () => {
     );
 
     expect(screen.getByText(/Create an Account/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Sarah Jenkins/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Riya Gope/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/9876543210/i)).toBeInTheDocument();
     expect(screen.getByText(/Create My Account/i)).toBeInTheDocument();
   });

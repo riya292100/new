@@ -8,7 +8,7 @@ const DEFAULT_PRESET_ADDRESSES = [
   {
     id: 101,
     label: 'Home',
-    receiverName: 'Sarah Jenkins',
+    receiverName: 'Riya Gope',
     receiverPhone: '9876543212',
     streetAddress: 'Flat 402, Green Valley Heights, 5th Main',
     city: 'New Delhi',
@@ -19,7 +19,7 @@ const DEFAULT_PRESET_ADDRESSES = [
   {
     id: 102,
     label: 'Work',
-    receiverName: 'Sarah Jenkins',
+    receiverName: 'Riya Gope',
     receiverPhone: '9876543212',
     streetAddress: 'WeWork Galaxy, 43 Residency Rd',
     city: 'Bengaluru',
@@ -30,7 +30,7 @@ const DEFAULT_PRESET_ADDRESSES = [
   {
     id: 103,
     label: 'Studio',
-    receiverName: 'Sarah Jenkins',
+    receiverName: 'Riya Gope',
     receiverPhone: '9876543212',
     streetAddress: 'Bandra West, Hill Road near Seaface',
     city: 'Mumbai',

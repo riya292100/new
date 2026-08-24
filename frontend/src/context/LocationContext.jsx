@@ -4,7 +4,7 @@ const LocationContext = createContext(null);
 
 const DEFAULT_LOCATION = {
   label: 'Home',
-  receiverName: 'Sarah Jenkins',
+  receiverName: 'Riya Gope',
   receiverPhone: '9876543212',
   streetAddress: 'Flat 402, Green Valley Heights, 5th Main',
   apartmentUnit: 'Tower B',
