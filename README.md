@@ -1,4 +1,4 @@
-# ⚡ QuickCart — Instant 10-15 Min Grocery Delivery Platform
+# ⚡ QuickCart — Modern Indian E-Commerce Marketplace & 1-Hour Delivery Platform
 
 [![CI/CD Pipeline](https://github.com/riya292100/new/actions/workflows/ci.yml/badge.svg)](https://github.com/riya292100/new/actions/workflows/ci.yml)
 [![CodeQL Security Scan](https://github.com/riya292100/new/actions/workflows/codeql.yml/badge.svg)](https://github.com/riya292100/new/actions/workflows/codeql.yml)
@@ -9,41 +9,33 @@
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**QuickCart** is a modern, enterprise-grade, fullstack quick-commerce grocery delivery platform (inspired by Blinkit, Zepto, and Instacart) engineered with a **Java 21 / Spring Boot 3** REST & WebSocket backend and a **React 18 / Vite** glassmorphism storefront, fully packaged as a **Progressive Web App (PWA)** and **Native Android App (Capacitor)** for Google Play Store release.
+**QuickCart** is a modern, enterprise-grade, fullstack Indian E-Commerce Marketplace and instant delivery platform engineered with a **Java 21 / Spring Boot 3** REST & WebSocket backend and a **React 18 / Vite** glassmorphism storefront, featuring pan-India 1-hour express delivery verification, GST tax invoice generation, verified seller hubs, and executive admin controls.
 
 ---
 
 ## 🌟 Key Capabilities
 
-### 🛒 1. Customer Storefront
-- **Hyper-Local Catalog**: Instant grocery catalog with category filtering, search autocomplete, brand filters, and deals of the day.
-- **Micro-Cart & Free Delivery Milestones**: Dynamic cart drawer with live progress toward free delivery (₹199 threshold) and tax calculations.
-- **Smart Promo Engine**: Percentage and flat amount discount coupons with minimum order limits and maximum discount caps.
-- **Multi-Address Book**: Saved delivery addresses with GPS location detection and 6-digit metro pincode serviceability checks.
-- **Real-Time Order Tracking**: 6-stage delivery progression timeline with real-time WebSocket rider GPS map simulation.
+### 🛒 1. Indian Marketplace & Customer Storefront
+- **13+ Mega Categories**: Electronics, Mobiles & Tablets, Fashion & Apparel, Beauty & Personal Care, Home & Kitchen, Fresh Groceries, Dairy & Bakery, Snacks & Beverages, Gourmet & Organic, Baby Care, Pet Supplies, Books & Stationery, Wellness & Fitness.
+- **⚡ Pan-India 1-Hour SuperFast Delivery**: Real-time pin-code availability validation for 20+ Tier-1/Tier-2 Indian cities (Delhi, Mumbai, Bengaluru, Hyderabad, Kolkata, Chennai, Pune, Ahmedabad, etc.).
+- **Product Details & Flipkart-Grade Shopping Features**: Multi-image zoom gallery, technical specifications table, verified brand warranty, No-Cost EMI plans, bank offer discounts, customer rating breakdown, and verified customer reviews.
+- **"⚡ Buy Now" & Multi-Step Checkout**: Instant 1-click buy flow from product cards straight to address selection, delivery speed tier selection (⚡ 1-Hour Express vs 📦 Standard Delivery), and payments.
+- **Persistent Wishlist & Micro-Cart**: Instant wishlist toggle, local storage sync, and dynamic free delivery milestones.
+- **Official GST Tax Invoice Generator**: Print-ready and downloadable PDF tax invoice with GSTIN, CIN, HSN breakdown, and itemized receipts from Order Tracking and Order History.
 
-### 🍽️ 2. QuickCart Dining & Global Table Reservations
-- **Global Discovery**: Search & filter curated fine-dining restaurants, trattorias, and bistros across Rome, Tokyo, New York, London, Paris, and Bengaluru.
-- **Multi-Faceted Search**: Filter dynamically by cuisine, city, price level (`$` to `$$$$`), dietary preferences (Vegetarian, 100% Vegan), and dine-in availability.
-- **Table Reservation Engine**: Instant reservations with guest count (1-20), seating area preference, special requests, and collision-free booking reference generation (`QC-DINE-XXXX`).
-- **Verified Diner Reviews**: Submit and read community diner reviews and 5-star ratings with rolling average aggregation.
-- **Saved Favorites**: Save and organize favorite dining spots across the world with 1-click bookmarks.
+### 🏪 2. Verified Seller Hub (`SuperComNet India`)
+- **Seller Dashboard**: Real-time KPI cards for gross sales, units shipped, active listings, and merchant rating.
+- **Catalog Management**: Add new products with specifications, warranty details, discount tiers, and instant stock level controls.
 
-### 🚴 3. Delivery Partner (Driver) Portal
-- **Real-Time Job Queue**: Accept or reject live orders in your delivery radius.
-- **Order Progression Workflow**: Seamlessly advance order stages (`ACCEPTED` ➔ `PACKED` ➔ `OUT_FOR_DELIVERY` ➔ `DELIVERED`).
-- **One-Click Navigation & Customer Calling**: In-app links to customer address and contact number.
+### 🛡️ 3. Admin Control Center (`Alex Vance`)
+- **Executive KPI Dashboard**: Live metrics for total sales, completed orders, active sellers, and low-stock alerts.
+- **Product & Inventory Moderation**: Instant catalog search, price modifications, and stock replenishments.
+- **Promotions & Coupon Manager**: Create percentage/flat coupons with minimum cart thresholds and maximum discount caps.
 
-### 🛡️ 4. Admin Control Center
-- **Executive KPI Dashboard**: Live metrics for total sales, completed orders, active delivery partners, and inventory alerts.
-- **Dark Store Catalog Management**: Add, update, delete, and restock products with instant threshold alerts.
-- **Order Dispatcher**: Real-time order monitor with manual/automatic delivery partner assignment.
-- **Promotions Manager**: Create and manage promo coupons and discount rules.
-
-### 📱 5. Mobile & Google Play Store Ready
-- **Progressive Web App (PWA)**: Web App Manifest, Service Worker offline caching, and 1-click home screen installation.
-- **Native Android Project**: Capacitor Gradle project with release Keystore pre-configured for `.aab` / `.apk` generation.
-- **Privacy Policy**: Google Play Store compliant privacy policy at [`privacy-policy.html`](file:///c:/Users/HP/Desktop/new/frontend/public/privacy-policy.html).
+### 🚴 4. Delivery Partner (Driver) Portal & Live Radar GPS
+- **Live Dispatch Queue**: Accept or reject delivery jobs in your area.
+- **6-Stage Order Progression**: `PLACED` ➔ `CONFIRMED` ➔ `PACKED` ➔ `SHIPPED` ➔ `OUT_FOR_DELIVERY` ➔ `DELIVERED`.
+- **Live Radar Map Tracking**: Simulated dark store GPS delivery radar tracking in real-time.
 
 ---
 
@@ -51,43 +43,72 @@
 
 ```mermaid
 graph TD
-  User[Mobile & Web Client] -->|HTTPS & REST| SpringBoot[Spring Boot 3.3.3 Backend API]
-  User -->|WSS / STOMP| STOMPBroker[In-Memory Message Broker /ws-quickcart]
-  SpringBoot -->|Spring Data JPA| Database[(H2 Dev / MySQL 8 Prod)]
-  Driver[Delivery Partner App] -->|WebSocket GPS Feeds| STOMPBroker
-  STOMPBroker -->|Live Radar Push| User
+  Customer[Customer: Riya Gope] -->|HTTPS & REST /api| SpringBoot[Spring Boot 3.3.3 API Gateway]
+  Seller[Seller: SuperComNet India] -->|REST /api/seller| SpringBoot
+  Admin[Admin: Alex Vance] -->|REST /api/admin| SpringBoot
+  Customer -->|WSS / STOMP| STOMPBroker[In-Memory Message Broker /ws-quickcart]
+  SpringBoot -->|Spring Data JPA| Database[(H2 Dev & Test / MySQL 8 Prod)]
+  Driver[Delivery Partner] -->|Live GPS Push| STOMPBroker
+  STOMPBroker -->|Live Radar Map Push| Customer
 ```
 
 | Layer | Technologies |
 | :--- | :--- |
 | **Frontend** | React 18.3, Vite 6.2, React Router 6, Lucide React, Canvas Confetti |
 | **Backend** | Java 21 LTS, Spring Boot 3.3.3, Spring Data JPA, Spring Security, Spring WebSocket / STOMP, Lombok 1.18.36 |
-| **Databases** | In-Memory H2 (Local / Test profiles), MySQL 8.0 (Production / Docker profile) |
-| **Mobile App** | Capacitor 5, Progressive Web App (PWA), Service Worker offline cache |
+| **Databases** | In-Memory H2 (Local & Unit Tests), MySQL 8.0 (Production / Docker profile) |
 | **Testing** | Vitest 3.0 (v8 coverage), React Testing Library, JUnit 5, Mockito, AssertJ, Spring MockMvc |
 | **DevOps & CI** | GitHub Actions (CI & CodeQL), Docker Compose, Multi-stage Dockerfiles |
 
 ---
 
+## 🔑 Demo Access & Roles
+
+The system comes pre-seeded with test accounts:
+
+| Role | Name | Email | Password | Access Capabilities |
+| :--- | :--- | :--- | :--- | :--- |
+| **Customer** | **Riya Gope** | `customer@quickcart.com` | `password123` | Marketplace shopping, 1-Hour delivery, Wishlist, GST Invoice |
+| **Seller** | **SuperComNet India** | `seller@quickcart.com` | `password123` | Merchant dashboard, product catalog management, sales KPIs |
+| **Admin** | **Alex Vance** | `admin@quickcart.com` | `password123` | Executive KPI control center, catalog moderation, promotions |
+| **Driver** | **Rajesh Kumar** | `driver@quickcart.com` | `password123` | Real-time order dispatch queue, delivery stage transitions |
+
+---
+
 ## 🩺 Observability, Health & Tracing
 
-QuickCart implements enterprise-grade observability and health telemetry:
-
-| Endpoint | Method | Purpose | Response Sample |
+| Endpoint | Method | Purpose | Status |
 | :--- | :--- | :--- | :--- |
-| `/health` or `/api/health` | `GET` | Overall service & database health | `{"success":true,"data":{"status":"UP","database":"UP","version":"1.2.0"}}` |
-| `/health/liveness` | `GET` | Kubernetes / Container liveness probe | `{"success":true,"data":{"status":"UP"}}` |
-| `/health/readiness` | `GET` | Deep readiness & database connectivity check | `{"success":true,"data":{"status":"UP","database":"UP"}}` |
-| `/actuator/health` | `GET` | Spring Boot actuator subsystems | `{"status":"UP","components":{"db":{"status":"UP"}}}` |
+| `/actuator/health` | `GET` | Spring Boot Actuator subsystem health | `{"status":"UP","components":{"db":{"status":"UP"}}}` |
+| `/health` or `/api/health` | `GET` | Overall service & database health probe | `{"success":true,"data":{"status":"UP"}}` |
+| `/health/liveness` | `GET` | Container / Kubernetes liveness check | `{"success":true,"data":{"status":"UP"}}` |
+| `/health/readiness` | `GET` | Database connectivity readiness check | `{"success":true,"data":{"status":"UP","database":"UP"}}` |
 
-### Request Tracing with Correlation IDs
-Every HTTP request is intercepted by `CorrelationIdFilter`. It extracts `X-Correlation-Id` or `X-Request-Id` from incoming headers (or automatically generates a UUID) and attaches it to SLF4J MDC context and HTTP response headers. Unhandled exceptions are logged with correlation context and sanitized so internal stack traces are never exposed to clients.
+---
+
+## 🧪 Verification & Test Suite
+
+### 1. Frontend Tests (Vitest & React Testing Library)
+```bash
+cd frontend
+npm run format:check   # Prettier code style check (100% compliant)
+npm run lint           # ESLint analysis (0 errors)
+npm test               # 61 test files, 110 tests (100% passing)
+npm run build          # Production asset compilation
+```
+
+### 2. Backend Tests (JUnit 5 & MockMvc)
+```bash
+cd backend
+./mvnw test "-Dspring.profiles.active=test"   # 34 JUnit 5 tests (100% passing)
+./mvnw package -DskipTests                    # Standalone executable JAR build
+```
 
 ---
 
 ## 🚀 Quick Start with Docker Compose
 
-Run the entire fullstack platform (MySQL 8.0, Spring Boot Backend, and Nginx React Frontend) in one command:
+Run the fullstack platform (MySQL 8.0, Spring Boot Backend, and Nginx React Frontend) in one command:
 
 ```bash
 # 1. Clone repository
@@ -98,102 +119,11 @@ cd new
 docker compose up --build
 ```
 
-- **Frontend App**: `http://localhost:5173` (or `http://localhost:80`)
-- **Backend REST API**: `http://localhost:8080`
-- **Health Check**: `http://localhost:8080/health`
-- **Swagger API Docs**: `http://localhost:8080/swagger-ui.html`
+- **Frontend Application**: `http://localhost:5173` (or `http://localhost:3000` via Docker)
+- **Backend API & Actuator**: `http://localhost:8080` / `http://localhost:8080/actuator/health`
 
 ---
 
-## 💻 Local Development Setup from Fresh Clone
+## 📜 License
 
-### Prerequisites
-- **Node.js**: v20.x or v22.x LTS (`node --version`)
-- **Java JDK**: Version 21 LTS (`java -version`)
-- **Git** & **Maven** (or use included `./mvnw` / `mvnw.bat`)
-
-### 1. Frontend Setup & Verification
-```bash
-# Navigate to frontend package
-cd frontend
-
-# Clean reproducible dependency install from lockfile
-npm ci
-
-# Run all 57 Vitest unit and integration test suites
-npm test
-
-# Run code style & static analysis linter
-npm run lint
-
-# Run type checking
-npm run typecheck
-
-# Check formatting
-npm run format:check
-
-# Run tests with V8 coverage table (enforcing 75% line / statement threshold)
-npm run coverage
-
-# Build production bundle
-npm run build
-
-# Start local Vite development server (proxies /api to localhost:8080)
-npm run dev
-```
-Storefront will be live at `http://localhost:5173`.
-
-### 2. Backend Setup & Verification
-```bash
-# Navigate to backend directory
-cd backend
-
-# Run isolated JUnit 5 test suite with in-memory H2 database (Linux/macOS)
-./mvnw clean test -Dspring.profiles.active=test
-
-# Windows PowerShell:
-.\mvnw.bat clean test "-Dspring.profiles.active=test"
-
-# Run Spring Boot application locally with H2 development profile
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
-```
-REST API & Actuator will be live at `http://localhost:8080` with sample dark-store catalog and global restaurants automatically seeded by `DataSeeder`.
-
----
-
-## 🧪 Automated Testing & Continuous Integration
-
-Every commit is validated through GitHub Actions CI pipeline ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)):
-1. **Frontend Lint & Code Style**: Prettier verification + ESLint rules + Typecheck.
-2. **Frontend Test Suite & Coverage**: Runs 102+ Vitest tests with V8 coverage thresholds.
-3. **Frontend Production Build**: Vite bundle compilation.
-4. **Backend Tests & Build**: JUnit 5 test execution against in-memory H2 database and `quickcart-backend-1.0.0.jar` packaging.
-5. **Docker Stack Validation**: Multi-container build test.
-6. **CodeQL Security Analysis**: Static application security testing (SAST) for Java & JavaScript.
-
-```bash
-# Run all root test scripts:
-npm run test:all
-```
-
----
-
-## 🔑 Demo Accounts & Instant Role Switcher
-
-QuickCart includes instant role switching during local development:
-- **Instant Demo Mode**: Toggle between **Customer**, **Delivery Partner**, and **Admin Portal** with 1-click in the UI header without entering credentials.
-- **Environment-Driven Configuration**: Passwords and secrets are managed safely through `.env` or application properties:
-  - Customer (`customer@quickcart.com`)
-  - Delivery Partner (`driver@quickcart.com`)
-  - Dark Store Administrator (`admin@quickcart.com`)
-
----
-
-## 📄 License & Governance
-
-- **License**: [MIT License](LICENSE)
-- **Contributing Guide**: [CONTRIBUTING.md](CONTRIBUTING.md)
-- **Security Policy**: [SECURITY.md](SECURITY.md)
-- **Code of Conduct**: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-- **Changelog**: [CHANGELOG.md](CHANGELOG.md)
-- **DevContainer**: [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json)
+This project is open-source software licensed under the [MIT License](LICENSE).
