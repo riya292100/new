@@ -5,7 +5,7 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.3-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb.svg)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-5.4-646cff.svg)](https://vitejs.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.2-646cff.svg)](https://vitejs.dev/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -58,6 +58,15 @@ graph TD
   STOMPBroker -->|Live Radar Push| User
 ```
 
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 18.3, Vite 6.2, React Router 6, Lucide React, Canvas Confetti |
+| **Backend** | Java 21 LTS, Spring Boot 3.3.3, Spring Data JPA, Spring Security, Spring WebSocket / STOMP, Lombok 1.18.36 |
+| **Databases** | In-Memory H2 (Local / Test profiles), MySQL 8.0 (Production / Docker profile) |
+| **Mobile App** | Capacitor 5, Progressive Web App (PWA), Service Worker offline cache |
+| **Testing** | Vitest 3.0 (v8 coverage), React Testing Library, JUnit 5, Mockito, AssertJ, Spring MockMvc |
+| **DevOps & CI** | GitHub Actions (CI & CodeQL), Docker Compose, Multi-stage Dockerfiles |
+
 ---
 
 ## 🚀 Quick Start with Docker Compose
@@ -79,64 +88,90 @@ docker compose up --build
 
 ---
 
-## 💻 Local Development Setup
+## 💻 Local Development Setup from Fresh Clone
 
-### Backend (Spring Boot 3.3.3 / Java 21)
-```bash
-cd backend
-mvn clean spring-boot:run
-```
+### Prerequisites
+- **Node.js**: v20.x or v22.x LTS (`node --version`)
+- **Java JDK**: Version 21 LTS (`java -version`)
+- **Git** & **Maven** (or use included `./mvnw` / `mvnw.bat`)
 
-### Frontend (React 18 / Vite 5)
+### 1. Frontend Setup & Verification
 ```bash
+# Navigate to frontend package
 cd frontend
-npm install
+
+# Clean reproducible dependency install from lockfile
+npm ci
+
+# Run all 57 Vitest unit and integration test suites
+npm test
+
+# Run code style & static analysis linter
+npm run lint
+
+# Check formatting
+npm run format:check
+
+# Run tests with V8 coverage table (enforcing 75% line / statement threshold)
+npm run coverage
+
+# Build production bundle
+npm run build
+
+# Start local Vite development server (proxies /api to localhost:8080)
 npm run dev
 ```
+Storefront will be live at `http://localhost:5173`.
+
+### 2. Backend Setup & Verification
+```bash
+# Navigate to backend directory
+cd backend
+
+# Run isolated JUnit 5 test suite with in-memory H2 database (Linux/macOS)
+./mvnw clean test -Dspring.profiles.active=test
+
+# Windows PowerShell:
+.\mvnw.bat clean test "-Dspring.profiles.active=test"
+
+# Run Spring Boot application locally with H2 development profile
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+```
+REST API & Actuator will be live at `http://localhost:8080` with sample dark-store catalog and global restaurants automatically seeded by `DataSeeder`.
 
 ---
 
-## 🧪 Automated Testing & Verification
+## 🧪 Automated Testing & Continuous Integration
 
-Run the entire fullstack test suite (Frontend Vitest with V8 coverage + Backend JUnit 5 isolated H2 tests) in one unified command:
+Every commit is validated through GitHub Actions CI pipeline ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)):
+1. **Frontend Lint & Code Style**: Prettier verification + ESLint rules.
+2. **Frontend Test Suite & Coverage**: Runs 102+ Vitest tests with V8 coverage thresholds.
+3. **Frontend Production Build**: Vite bundle compilation.
+4. **Backend Tests & Build**: JUnit 5 test execution against in-memory H2 database and `quickcart-backend-1.0.0.jar` packaging.
+5. **CodeQL Security Analysis**: Static application security testing (SAST) for Java & JavaScript.
 
 ```bash
-# Option 1: Root npm script
+# Run all root test scripts:
 npm run test:all
-
-# Option 2: Makefile
-make test-all
-```
-
-### Individual Test Commands
-```bash
-# Frontend Vitest Suite with V8 Coverage
-cd frontend && npm run coverage
-
-# Backend Isolated JUnit 5 Suite
-cd backend && mvn clean test -Dspring.profiles.active=test
-
-# Lint & Formatting Check
-npm run lint:all
 ```
 
 ---
 
-## 🔑 Demo Access
+## 🔑 Demo Accounts & Instant Role Switcher
 
-QuickCart includes instant role switching via the top navigation bar during local development:
+QuickCart includes instant role switching during local development:
 - **Instant Demo Mode**: Toggle between **Customer**, **Delivery Partner**, and **Admin Portal** with 1-click in the UI header without entering credentials.
 - **Default Seed Accounts**: Configured via application environment variables (`.env.example`) and seeded at first boot:
-  - Customer (`customer@quickcart.com`)
-  - Delivery Partner (`driver@quickcart.com`)
-  - Dark Store Administrator (`admin@quickcart.com`)
+  - Customer (`customer@quickcart.com` / `password123`)
+  - Delivery Partner (`driver@quickcart.com` / `password123`)
+  - Dark Store Administrator (`admin@quickcart.com` / `password123`)
 
 ---
 
 ## 📄 License & Governance
 
 - **License**: [MIT License](LICENSE)
-- **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Contributing Guide**: [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Security Policy**: [SECURITY.md](SECURITY.md)
 - **Code of Conduct**: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)

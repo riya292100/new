@@ -3,6 +3,9 @@
   "version": "1.2.0",
   "private": true,
   "description": "QuickCart - 10-Minute Hyperlocal Fullstack Grocery Delivery Application",
+  "workspaces": [
+    "frontend"
+  ],
   "scripts": {
     "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build",
