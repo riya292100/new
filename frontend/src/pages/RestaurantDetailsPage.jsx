@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import {
-  Star,
-  MapPin,
-  Clock,
-  Phone,
-  Globe,
-  Heart,
-  Utensils,
-  Share2,
-  ChevronLeft,
-  MessageSquare,
-  Send,
-} from 'lucide-react';
+import { Star, MapPin, Heart, Utensils, Share2, ChevronLeft, MessageSquare } from 'lucide-react';
 import { restaurantApi } from '../services/restaurantApi';
 import { FALLBACK_RESTAURANTS } from '../utils/demoConfig';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import DietaryBadge from '../components/dining/DietaryBadge';
 import TableBookingModal from '../components/dining/TableBookingModal';
-import logger from '../utils/logger';
+import RestaurantGallery from './restaurant-details/RestaurantGallery';
+import RestaurantReviewForm from './restaurant-details/RestaurantReviewForm';
+import RestaurantReviewList from './restaurant-details/RestaurantReviewList';
+import RestaurantInfoCards from './restaurant-details/RestaurantInfoCards';
 
 const RestaurantDetailsPage = () => {
   const { id } = useParams();
@@ -32,7 +23,7 @@ const RestaurantDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [showBookingModal, setShowBookingModal] = useState(false);
 
-  // Review form
+  // Review form state
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
@@ -78,7 +69,7 @@ const RestaurantDetailsPage = () => {
       const isFav = res?.data?.data;
       setRestaurant({ ...restaurant, isFavorite: isFav });
       addToast(isFav ? 'Added to favorites' : 'Removed from favorites', 'success');
-    } catch (err) {
+    } catch {
       addToast('Failed to update favorite', 'error');
     }
   };
@@ -148,7 +139,7 @@ const RestaurantDetailsPage = () => {
 
   return (
     <div className="container" style={{ paddingTop: '20px', paddingBottom: '60px' }}>
-      {/* Back button */}
+      {/* Navigation Breadcrumb */}
       <Link
         to="/dining"
         style={{
@@ -165,41 +156,14 @@ const RestaurantDetailsPage = () => {
         <ChevronLeft size={16} /> Back to Dining Discovery
       </Link>
 
-      {/* Hero Gallery Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '16px',
-          borderRadius: '24px',
-          overflow: 'hidden',
-          marginBottom: '28px',
-        }}
-      >
-        <div style={{ height: '360px', position: 'relative' }}>
-          <img
-            src={restaurant.imageUrl}
-            alt={restaurant.name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        </div>
-        {restaurant.galleryImages && restaurant.galleryImages.length > 0 && (
-          <div
-            style={{ display: 'grid', gridTemplateRows: '1fr 1fr', gap: '16px', height: '360px' }}
-          >
-            {restaurant.galleryImages.slice(0, 2).map((img, idx) => (
-              <img
-                key={idx}
-                src={img}
-                alt=""
-                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Hero Visual Gallery */}
+      <RestaurantGallery
+        imageUrl={restaurant.imageUrl}
+        name={restaurant.name}
+        galleryImages={restaurant.galleryImages}
+      />
 
-      {/* Main Details & Booking Action Bar */}
+      {/* Layout Columns */}
       <div
         style={{
           display: 'grid',
@@ -207,7 +171,7 @@ const RestaurantDetailsPage = () => {
           gap: '32px',
         }}
       >
-        {/* Left Column: Details, Highlights, Description, Reviews */}
+        {/* Left: Metadata, Description, Information & Verified Reviews */}
         <div>
           <div
             style={{
@@ -297,106 +261,29 @@ const RestaurantDetailsPage = () => {
             </div>
           </div>
 
+          {/* Dietary Badges */}
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', margin: '16px 0 24px' }}>
-            {restaurant.isVegetarianFriendly && <DietaryBadge type="VEGETARIAN" />}
-            {restaurant.isVeganFriendly && <DietaryBadge type="VEGAN" />}
+            {restaurant.isVegetarian && <DietaryBadge type="VEGETARIAN" />}
+            {restaurant.isVegan && <DietaryBadge type="VEGAN" />}
             {restaurant.isDineInAvailable && <DietaryBadge type="DINE_IN" />}
           </div>
 
-          <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '20px', marginBottom: '24px' }}>
-            <h3 style={{ fontSize: '1.15rem', color: '#0f172a', marginBottom: '10px' }}>
+          {/* Editorial Description */}
+          <div style={{ marginBottom: '28px' }}>
+            <h3 style={{ fontSize: '1.2rem', color: '#0f172a', marginBottom: '8px' }}>
               About the Restaurant
             </h3>
-            <p style={{ fontSize: '0.92rem', color: '#475569', lineHeight: '1.6' }}>
+            <p style={{ fontSize: '0.95rem', color: '#475569', lineHeight: '1.6' }}>
               {restaurant.description}
             </p>
           </div>
 
-          {/* Opening Hours & Contact Details */}
-          <div
-            style={{
-              background: '#f8fafc',
-              borderRadius: '16px',
-              padding: '20px',
-              border: '1px solid #e2e8f0',
-              marginBottom: '32px',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '16px',
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '0.82rem',
-                  fontWeight: '700',
-                  color: '#64748b',
-                  textTransform: 'uppercase',
-                  marginBottom: '4px',
-                }}
-              >
-                <Clock size={14} /> Opening Hours
-              </div>
-              <p style={{ fontSize: '0.9rem', fontWeight: '600', color: '#0f172a' }}>
-                {restaurant.openingHours || '11:00 AM - 11:00 PM Daily'}
-              </p>
-            </div>
-
-            <div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '0.82rem',
-                  fontWeight: '700',
-                  color: '#64748b',
-                  textTransform: 'uppercase',
-                  marginBottom: '4px',
-                }}
-              >
-                <Phone size={14} /> Telephone
-              </div>
-              <p style={{ fontSize: '0.9rem', fontWeight: '600', color: '#0f172a' }}>
-                {restaurant.phone || '+1 800-555-DINE'}
-              </p>
-            </div>
-
-            {restaurant.website && (
-              <div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    fontSize: '0.82rem',
-                    fontWeight: '700',
-                    color: '#64748b',
-                    textTransform: 'uppercase',
-                    marginBottom: '4px',
-                  }}
-                >
-                  <Globe size={14} /> Official Site
-                </div>
-                <a
-                  href={restaurant.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    fontSize: '0.9rem',
-                    color: '#059669',
-                    fontWeight: '600',
-                    textDecoration: 'none',
-                  }}
-                >
-                  Visit Website
-                </a>
-              </div>
-            )}
-          </div>
+          {/* Practical Info Grid */}
+          <RestaurantInfoCards
+            openingHours={restaurant.openingHours}
+            phone={restaurant.phone}
+            website={restaurant.website}
+          />
 
           {/* Verified Diner Reviews */}
           <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '24px' }}>
@@ -413,132 +300,22 @@ const RestaurantDetailsPage = () => {
               <MessageSquare size={20} color="#059669" /> Verified Diner Reviews ({reviews.length})
             </h3>
 
-            {/* Review Submission Form */}
-            <div
-              style={{
-                background: '#f8fafc',
-                borderRadius: '16px',
-                padding: '18px',
-                marginBottom: '20px',
-                border: '1px solid #f1f5f9',
-              }}
-            >
-              {user ? (
-                <form onSubmit={handleReviewSubmit}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      marginBottom: '10px',
-                    }}
-                  >
-                    <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#334155' }}>
-                      Your Rating:
-                    </span>
-                    <div style={{ display: 'flex', gap: '4px' }}>
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <button
-                          key={s}
-                          type="button"
-                          onClick={() => setNewRating(s)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            padding: '2px',
-                          }}
-                        >
-                          <Star
-                            size={20}
-                            fill={s <= newRating ? '#f59e0b' : 'none'}
-                            color={s <= newRating ? '#f59e0b' : '#cbd5e1'}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <input
-                      type="text"
-                      className="input-control"
-                      placeholder="Share details of your dining experience..."
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      style={{ flex: 1 }}
-                      required
-                    />
-                    <button
-                      type="submit"
-                      className="btn btn-primary btn-sm"
-                      disabled={submittingReview}
-                      style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-                    >
-                      <Send size={14} /> Post Review
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <div style={{ textAlign: 'center', padding: '8px' }}>
-                  <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '8px' }}>
-                    Sign in to leave a verified dining review.
-                  </p>
-                  <button onClick={() => openAuthModal('LOGIN')} className="btn btn-outline btn-sm">
-                    Sign In
-                  </button>
-                </div>
-              )}
-            </div>
+            <RestaurantReviewForm
+              user={user}
+              newRating={newRating}
+              setNewRating={setNewRating}
+              newComment={newComment}
+              setNewComment={setNewComment}
+              submittingReview={submittingReview}
+              onSubmit={handleReviewSubmit}
+              onOpenAuth={openAuthModal}
+            />
 
-            {/* Review List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {reviews.length === 0 ? (
-                <p
-                  style={{
-                    color: '#94a3b8',
-                    fontSize: '0.88rem',
-                    textAlign: 'center',
-                    padding: '16px',
-                  }}
-                >
-                  No reviews yet for this restaurant. Be the first to review!
-                </p>
-              ) : (
-                reviews.map((r) => (
-                  <div
-                    key={r.id}
-                    style={{
-                      padding: '14px',
-                      background: '#ffffff',
-                      borderRadius: '14px',
-                      border: '1px solid #f1f5f9',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginBottom: '4px',
-                      }}
-                    >
-                      <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>{r.userName}</strong>
-                      <div style={{ display: 'flex', gap: '2px' }}>
-                        {[...Array(r.rating || 5)].map((_, i) => (
-                          <Star key={i} size={13} fill="#f59e0b" color="#f59e0b" />
-                        ))}
-                      </div>
-                    </div>
-                    <p style={{ fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>
-                      {r.comment}
-                    </p>
-                  </div>
-                ))
-              )}
-            </div>
+            <RestaurantReviewList reviews={reviews} />
           </div>
         </div>
 
-        {/* Right Column: Sticky Table Reservation Card */}
+        {/* Right: Sticky Booking CTA Card */}
         <div>
           <div
             style={{
