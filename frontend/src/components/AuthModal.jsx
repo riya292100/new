@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { X, Zap, Lock, Mail, User, Phone, Shield, Bike, ShoppingBag } from 'lucide-react';
+import { X, Zap, UserPlus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { DEMO_USERS } from '../utils/demoConfig';
 import { validateEmail, validatePassword, validatePhone, sanitizeInput } from '../utils/validation';
+import logger from '../utils/logger';
+import LoginForm from './auth/LoginForm';
+import RegisterForm from './auth/RegisterForm';
 
 const AuthModal = () => {
   const { authModalOpen, authModalMode, closeAuthModal, openAuthModal, login, register } =
@@ -63,7 +66,9 @@ const AuthModal = () => {
         });
       }
     } catch (err) {
-      console.error('Error:', err);
+      logger.error('Authentication Error:', err);
+      const msg = err?.message || 'Authentication failed. Please check your credentials.';
+      addToast(msg, 'error');
     } finally {
       setLoading(false);
     }
@@ -100,8 +105,8 @@ const AuthModal = () => {
             background: '#f1f5f9',
             border: 'none',
             borderRadius: '50%',
-            width: '32px',
-            height: '32px',
+            width: '36px',
+            height: '36px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -111,329 +116,61 @@ const AuthModal = () => {
           <X size={18} color="#64748b" />
         </button>
 
-        {/* Brand Header */}
+        {/* Modal Header */}
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <div
             style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+              width: '52px',
+              height: '52px',
+              borderRadius: '16px',
+              background: '#ecfdf5',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#ffffff',
               margin: '0 auto 12px',
-              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
             }}
           >
-            <Zap size={24} fill="#ffffff" />
+            {isLogin ? <Zap size={26} color="#059669" /> : <UserPlus size={26} color="#059669" />}
           </div>
-          <h3 style={{ fontSize: '1.4rem', color: '#0f172a' }}>
+          <h2 style={{ fontSize: '1.45rem', color: '#0f172a', fontWeight: '800' }}>
             {isLogin ? 'Welcome to QuickCart' : 'Create an Account'}
-          </h3>
+          </h2>
           <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>
             {isLogin
-              ? 'Instant 10-30 min grocery delivery at your doorstep'
-              : 'Join thousands getting superfast deliveries every day'}
+              ? 'Access 10-minute grocery delivery & table reservations'
+              : 'Sign up to track deliveries in real time'}
           </p>
         </div>
 
-        {/* Mode Switch Tabs */}
-        <div
-          style={{
-            display: 'flex',
-            background: '#f1f5f9',
-            borderRadius: '12px',
-            padding: '4px',
-            marginBottom: '20px',
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => openAuthModal('login')}
-            style={{
-              flex: 1,
-              padding: '8px',
-              borderRadius: '8px',
-              border: 'none',
-              fontWeight: '700',
-              fontSize: '0.85rem',
-              cursor: 'pointer',
-              background: isLogin ? '#ffffff' : 'transparent',
-              color: isLogin ? '#059669' : '#64748b',
-              boxShadow: isLogin ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
-            }}
-          >
-            Login
-          </button>
-          <button
-            type="button"
-            onClick={() => openAuthModal('register')}
-            style={{
-              flex: 1,
-              padding: '8px',
-              borderRadius: '8px',
-              border: 'none',
-              fontWeight: '700',
-              fontSize: '0.85rem',
-              cursor: 'pointer',
-              background: !isLogin ? '#ffffff' : 'transparent',
-              color: !isLogin ? '#059669' : '#64748b',
-              boxShadow: !isLogin ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
-            }}
-          >
-            Register
-          </button>
-        </div>
-
-        {/* 1-Click Demo Quick Fill Buttons */}
-        {isLogin && (
-          <div
-            style={{
-              background: '#f8fafc',
-              border: '1px solid #e2e8f0',
-              borderRadius: '12px',
-              padding: '12px',
-              marginBottom: '20px',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: '700',
-                color: '#64748b',
-                textTransform: 'uppercase',
-                marginBottom: '8px',
-              }}
-            >
-              ⚡ 1-Click Demo Credentials
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-              <button
-                type="button"
-                onClick={() => handleQuickDemoFill('customer')}
-                style={{
-                  background: '#ffffff',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '6px',
-                  padding: '6px 4px',
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  color: '#059669',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                }}
-              >
-                <ShoppingBag size={12} /> Customer
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickDemoFill('driver')}
-                style={{
-                  background: '#ffffff',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '6px',
-                  padding: '6px 4px',
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  color: '#d97706',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                }}
-              >
-                <Bike size={12} /> Driver
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickDemoFill('admin')}
-                style={{
-                  background: '#ffffff',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '6px',
-                  padding: '6px 4px',
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  color: '#6366f1',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                }}
-              >
-                <Shield size={12} /> Admin
-              </button>
-            </div>
-          </div>
+        {/* Form Body */}
+        {isLogin ? (
+          <LoginForm
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            loading={loading}
+            onSubmit={handleSubmit}
+            onQuickFill={handleQuickDemoFill}
+            onSwitchToRegister={() => openAuthModal('register')}
+          />
+        ) : (
+          <RegisterForm
+            fullName={fullName}
+            setFullName={setFullName}
+            email={email}
+            setEmail={setEmail}
+            phone={phone}
+            setPhone={setPhone}
+            password={password}
+            setPassword={setPassword}
+            selectedRole={selectedRole}
+            setSelectedRole={setSelectedRole}
+            loading={loading}
+            onSubmit={handleSubmit}
+            onSwitchToLogin={() => openAuthModal('login')}
+          />
         )}
-
-        {/* Auth Form */}
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
-        >
-          {!isLogin && (
-            <>
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: '600',
-                    color: '#334155',
-                    marginBottom: '4px',
-                  }}
-                >
-                  Full Name
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <User
-                    size={16}
-                    color="#94a3b8"
-                    style={{ position: 'absolute', left: '14px', top: '13px' }}
-                  />
-                  <input
-                    type="text"
-                    required
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Sarah Jenkins"
-                    className="input-control"
-                    style={{ paddingLeft: '40px' }}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: '600',
-                    color: '#334155',
-                    marginBottom: '4px',
-                  }}
-                >
-                  Phone Number
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <Phone
-                    size={16}
-                    color="#94a3b8"
-                    style={{ position: 'absolute', left: '14px', top: '13px' }}
-                  />
-                  <input
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                    placeholder="9876543210"
-                    className="input-control"
-                    style={{ paddingLeft: '40px' }}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: '600',
-                    color: '#334155',
-                    marginBottom: '4px',
-                  }}
-                >
-                  Account Type
-                </label>
-                <select
-                  value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}
-                  className="input-control"
-                >
-                  <option value="customer">Customer (Order Groceries)</option>
-                  <option value="delivery_partner">Delivery Partner (Deliver Orders)</option>
-                </select>
-              </div>
-            </>
-          )}
-
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '0.8rem',
-                fontWeight: '600',
-                color: '#334155',
-                marginBottom: '4px',
-              }}
-            >
-              Email Address
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Mail
-                size={16}
-                color="#94a3b8"
-                style={{ position: 'absolute', left: '14px', top: '13px' }}
-              />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="customer@quickcart.com"
-                className="input-control"
-                style={{ paddingLeft: '40px' }}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '0.8rem',
-                fontWeight: '600',
-                color: '#334155',
-                marginBottom: '4px',
-              }}
-            >
-              Password
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Lock
-                size={16}
-                color="#94a3b8"
-                style={{ position: 'absolute', left: '14px', top: '13px' }}
-              />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="input-control"
-                style={{ paddingLeft: '40px' }}
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn btn-primary btn-block btn-lg"
-            style={{ marginTop: '8px' }}
-          >
-            {loading ? 'Authenticating...' : isLogin ? 'Sign In & Continue' : 'Create My Account'}
-          </button>
-        </form>
       </div>
     </div>
   );
