@@ -148,4 +148,25 @@ export const adminApi = {
   getDeliveryPartners: () => api.get('/admin/delivery-partners'),
 };
 
+// Wishlist API
+export const wishlistApi = {
+  getWishlist: () => api.get('/wishlist'),
+  toggleWishlist: (productId) => api.post(`/wishlist/toggle/${productId}`),
+  moveToCart: (productId) => api.post(`/wishlist/move-to-cart/${productId}`),
+  clearWishlist: () => api.delete('/wishlist/clear'),
+};
+
+// Seller Marketplace API
+export const sellerApi = {
+  getDashboard: () => api.get('/seller/dashboard'),
+  getProducts: () => api.get('/seller/products'),
+  addProduct: (productData) => api.post('/seller/products', productData),
+};
+
+// Pincode & Express Delivery API
+export const pincodeApi = {
+  check: (pincode) => api.get('/pincode/check', { params: { pincode } }),
+  getDetails: (pincode) => api.get(`/pincode/${pincode}`),
+};
+
 export default api;

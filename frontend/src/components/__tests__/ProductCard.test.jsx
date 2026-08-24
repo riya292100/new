@@ -4,8 +4,10 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import ProductCard from '../ProductCard';
 import { CartProvider } from '../../context/CartContext';
+import { WishlistProvider } from '../../context/WishlistContext';
 import { ToastProvider } from '../../context/ToastContext';
 import { AuthProvider } from '../../context/AuthContext';
+import { LocationProvider } from '../../context/LocationContext';
 
 const mockProduct = {
   id: 101,
@@ -30,9 +32,13 @@ describe('ProductCard Component', () => {
       <BrowserRouter>
         <ToastProvider>
           <AuthProvider>
-            <CartProvider>
-              <ProductCard product={mockProduct} onOpenDetails={vi.fn()} />
-            </CartProvider>
+            <LocationProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  <ProductCard product={mockProduct} onSelectProduct={vi.fn()} />
+                </WishlistProvider>
+              </CartProvider>
+            </LocationProvider>
           </AuthProvider>
         </ToastProvider>
       </BrowserRouter>

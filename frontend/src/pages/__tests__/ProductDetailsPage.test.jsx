@@ -3,10 +3,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import ProductDetailsPage from '../ProductDetailsPage';
-import { catalogApi, reviewApi } from '../../services/api';
+import { catalogApi, reviewApi, pincodeApi } from '../../services/api';
 import * as CartContextModule from '../../context/CartContext';
 import * as AuthContextModule from '../../context/AuthContext';
 import * as ToastContextModule from '../../context/ToastContext';
+import { WishlistProvider } from '../../context/WishlistContext';
 
 describe('ProductDetailsPage Component', () => {
   beforeEach(() => {
@@ -52,9 +53,11 @@ describe('ProductDetailsPage Component', () => {
     await act(async () => {
       render(
         <MemoryRouter initialEntries={['/product/99']}>
-          <Routes>
-            <Route path="/product/:id" element={<ProductDetailsPage />} />
-          </Routes>
+          <WishlistProvider>
+            <Routes>
+              <Route path="/product/:id" element={<ProductDetailsPage />} />
+            </Routes>
+          </WishlistProvider>
         </MemoryRouter>
       );
     });

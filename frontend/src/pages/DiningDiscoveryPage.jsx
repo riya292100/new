@@ -279,7 +279,7 @@ const DiningDiscoveryPage = () => {
         <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: '800' }}>
           {selectedCuisine ? `${selectedCuisine} Restaurants` : 'Featured Dining Partners'}{' '}
           <span style={{ fontSize: '0.95rem', color: '#64748b', fontWeight: '500' }}>
-            ({restaurants.length})
+            ({restaurants?.length || 0})
           </span>
         </h2>
       </div>

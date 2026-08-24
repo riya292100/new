@@ -48,7 +48,7 @@ public class Product {
     private Integer discountPercentage = 0;
 
     @Column(nullable = false, length = 50)
-    private String unitQuantity; // "500 g", "1 L", "1 pack (6 pcs)", etc.
+    private String unitQuantity; // "500 g", "1 L", "1 pack (6 pcs)", "1 Unit", etc.
 
     @Column(nullable = false)
     private Integer stockQuantity = 0;
@@ -71,6 +71,24 @@ public class Product {
     private Boolean isDailyDeal = false;
 
     private Boolean isActive = true;
+
+    // Marketplace & 1-Hour Pan-India Delivery fields
+    private Boolean isOneHourDelivery = true;
+
+    @Column(length = 150)
+    private String sellerName = "QuickCart Assured";
+
+    @Column(length = 150)
+    private String warranty = "1 Year Brand Warranty & 7 Days Replacement";
+
+    @Column(columnDefinition = "TEXT")
+    private String specifications;
+
+    @Column(columnDefinition = "TEXT")
+    private String galleryImages;
+
+    @Column(columnDefinition = "TEXT")
+    private String highlights;
 
     @CreationTimestamp
     @Column(updatable = false)
