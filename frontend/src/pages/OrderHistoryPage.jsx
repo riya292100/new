@@ -5,13 +5,15 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import logger from '../utils/logger';
-import { Package, Search, ChevronRight, RotateCcw } from 'lucide-react';
+import { Package, Search, ChevronRight, RotateCcw, FileText } from 'lucide-react';
+import InvoiceModal from '../components/InvoiceModal';
 
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState(null);
   const { user } = useAuth();
   const { addToCart, setCartDrawerOpen } = useCart();
   const { addToast } = useToast();
@@ -230,6 +232,13 @@ const OrderHistoryPage = () => {
 
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <button
+                      onClick={() => setSelectedInvoiceOrder(order)}
+                      className="btn btn-outline btn-sm"
+                      style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <FileText size={14} /> Invoice
+                    </button>
+                    <button
                       onClick={() => handleReorder(order)}
                       className="btn btn-outline btn-sm"
                       style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
@@ -267,9 +276,13 @@ const OrderHistoryPage = () => {
             Try resetting your search query or filter settings.
           </p>
           <Link to="/" className="btn btn-primary">
-            Browse Groceries
+            Browse Marketplace
           </Link>
         </div>
+      )}
+
+      {selectedInvoiceOrder && (
+        <InvoiceModal order={selectedInvoiceOrder} onClose={() => setSelectedInvoiceOrder(null)} />
       )}
     </div>
   );

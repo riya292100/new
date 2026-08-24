@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import ProductDetailModal from '../ProductDetailModal';
 import { CartProvider } from '../../context/CartContext';
 import { AuthProvider } from '../../context/AuthContext';
@@ -37,15 +38,17 @@ const mockProduct = {
 describe('ProductDetailModal Component', () => {
   it('renders product information properly', () => {
     render(
-      <ToastProvider>
-        <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <ProductDetailModal product={mockProduct} onClose={vi.fn()} />
-            </WishlistProvider>
-          </CartProvider>
-        </AuthProvider>
-      </ToastProvider>
+      <MemoryRouter>
+        <ToastProvider>
+          <AuthProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <ProductDetailModal product={mockProduct} onClose={vi.fn()} />
+              </WishlistProvider>
+            </CartProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </MemoryRouter>
     );
 
     expect(screen.getByText('Organic Avocados')).toBeInTheDocument();
@@ -57,15 +60,17 @@ describe('ProductDetailModal Component', () => {
 
   it('renders nothing if product prop is null', () => {
     render(
-      <ToastProvider>
-        <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <ProductDetailModal product={null} onClose={vi.fn()} />
-            </WishlistProvider>
-          </CartProvider>
-        </AuthProvider>
-      </ToastProvider>
+      <MemoryRouter>
+        <ToastProvider>
+          <AuthProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <ProductDetailModal product={null} onClose={vi.fn()} />
+              </WishlistProvider>
+            </CartProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </MemoryRouter>
     );
 
     expect(screen.queryByText('Organic Avocados')).not.toBeInTheDocument();

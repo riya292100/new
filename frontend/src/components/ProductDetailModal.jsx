@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import {
   X,
   Star,
@@ -27,6 +28,7 @@ import RelatedProductsRow from './product/RelatedProductsRow';
 import ProductReviewList from './product/ProductReviewList';
 
 const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
+  const navigate = useNavigate();
   const { addToCart, updateQuantity, getItemQuantity, getItemCartId } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { user, openAuthModal } = useAuth();
@@ -358,9 +360,9 @@ const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
             </div>
 
             {/* Bottom Add to Cart & Buy Buttons */}
-            <div className="pt-4 border-t border-gray-100 flex items-center gap-3">
+            <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center gap-3">
               {quantity > 0 ? (
-                <div className="flex items-center bg-emerald-600 text-white rounded-2xl shadow-lg p-1.5 flex-1 justify-between max-w-xs">
+                <div className="flex items-center bg-emerald-600 text-white rounded-2xl shadow-lg p-1.5 flex-1 justify-between w-full sm:max-w-xs">
                   <button
                     type="button"
                     onClick={() => {
@@ -385,12 +387,26 @@ const ProductDetailModal = ({ product = {}, onClose = () => {} }) => {
                 <button
                   type="button"
                   onClick={() => addToCart(product, 1)}
-                  className="flex-1 py-3.5 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
+                  className="flex-1 w-full py-3.5 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
                 >
                   <Zap className="w-4 h-4 fill-current text-amber-300" /> Add to Cart (1-Hour
                   Delivery)
                 </button>
               )}
+
+              <button
+                type="button"
+                onClick={async () => {
+                  if (quantity === 0) {
+                    await addToCart(product, 1);
+                  }
+                  onClose();
+                  navigate('/checkout');
+                }}
+                className="w-full sm:w-auto py-3.5 px-8 bg-amber-500 hover:bg-amber-600 text-gray-950 font-black text-sm rounded-2xl shadow-lg shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
+              >
+                ⚡ Buy Now
+              </button>
             </div>
           </div>
         </div>
