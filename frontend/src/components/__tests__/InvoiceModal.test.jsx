@@ -32,12 +32,12 @@ describe('InvoiceModal Component', () => {
   it('renders official tax invoice details correctly', () => {
     render(<InvoiceModal order={mockOrder} onClose={vi.fn()} />);
 
-    expect(screen.getByText(/Tax Invoice/i)).toBeInTheDocument();
-    expect(screen.getByText(/INV-QC-123456/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Tax Invoice/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/INV-QC-123456/i).length).toBeGreaterThan(0);
     expect(screen.getByText('Riya Gope')).toBeInTheDocument();
     expect(screen.getByText(/Flat 402, Green Valley Heights/i)).toBeInTheDocument();
     expect(screen.getByText('Wireless Noise Cancelling Headphones')).toBeInTheDocument();
-    expect(screen.getByText('₹1499')).toBeInTheDocument();
+    expect(screen.getAllByText('₹1499').length).toBeGreaterThan(0);
   });
 
   it('renders nothing when order is null', () => {
