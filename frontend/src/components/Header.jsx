@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Zap,
@@ -394,8 +395,6 @@ const Header = () => {
     </header>
   );
 };
-
-import PropTypes from 'prop-types';
 
 Header.propTypes = {};
 

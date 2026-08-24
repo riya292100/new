@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { CheckCircle2, XCircle } from 'lucide-react';
 
 export const TIMELINE_STAGES = [
@@ -105,8 +106,6 @@ const TimelineStages = ({ status }) => {
     </div>
   );
 };
-
-import PropTypes from 'prop-types';
 
 TimelineStages.propTypes = {
   status: PropTypes.string,

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Smartphone, CreditCard, Banknote, ShieldCheck } from 'lucide-react';
 
 const CheckoutPaymentMethods = ({ paymentMethod, setPaymentMethod }) => {
@@ -101,8 +102,6 @@ const CheckoutPaymentMethods = ({ paymentMethod, setPaymentMethod }) => {
     </div>
   );
 };
-
-import PropTypes from 'prop-types';
 
 CheckoutPaymentMethods.propTypes = {
   paymentMethod: PropTypes.string.isRequired,

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { TrendingUp, ShoppingCart, AlertCircle, Users, Package } from 'lucide-react';
 
 const AdminStatsCards = ({ stats }) => {
@@ -155,8 +156,6 @@ const AdminStatsCards = ({ stats }) => {
     </div>
   );
 };
-
-import PropTypes from 'prop-types';
 
 AdminStatsCards.propTypes = {
   stats: PropTypes.shape({

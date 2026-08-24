@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Plus, Tag, CheckCircle2, XCircle } from 'lucide-react';
 
 const AdminCouponManager = ({
@@ -298,8 +299,6 @@ const AdminCouponManager = ({
     </div>
   );
 };
-
-import PropTypes from 'prop-types';
 
 AdminCouponManager.propTypes = {
   coupons: PropTypes.array.isRequired,

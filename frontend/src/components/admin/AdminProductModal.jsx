@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { X } from 'lucide-react';
 
 const AdminProductModal = ({
@@ -322,8 +323,6 @@ const AdminProductModal = ({
     </div>
   );
 };
-
-import PropTypes from 'prop-types';
 
 AdminProductModal.propTypes = {
   show: PropTypes.bool.isRequired,

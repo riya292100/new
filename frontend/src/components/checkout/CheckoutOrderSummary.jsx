@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Tag, Sparkles, ArrowRight } from 'lucide-react';
 
 const CheckoutOrderSummary = ({
@@ -203,8 +204,6 @@ const CheckoutOrderSummary = ({
     </div>
   );
 };
-
-import PropTypes from 'prop-types';
 
 CheckoutOrderSummary.propTypes = {
   cart: PropTypes.shape({

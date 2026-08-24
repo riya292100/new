@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Home, Grid, Tag, ShoppingBag, User, Package, Utensils } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -83,8 +84,6 @@ const BottomNav = () => {
     </nav>
   );
 };
-
-import PropTypes from 'prop-types';
 
 BottomNav.propTypes = {};
 

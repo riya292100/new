@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { AlertCircle, Plus } from 'lucide-react';
 
 const AdminLowStockAlerts = ({ lowStockProducts, onRestock }) => {
@@ -81,8 +82,6 @@ const AdminLowStockAlerts = ({ lowStockProducts, onRestock }) => {
     </div>
   );
 };
-
-import PropTypes from 'prop-types';
 
 AdminLowStockAlerts.propTypes = {
   lowStockProducts: PropTypes.arrayOf(

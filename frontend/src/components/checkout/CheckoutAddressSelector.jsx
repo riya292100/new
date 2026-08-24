@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { MapPin, Plus, CheckCircle2, Home, Briefcase, Building } from 'lucide-react';
 
 const CheckoutAddressSelector = ({
@@ -263,8 +264,6 @@ const CheckoutAddressSelector = ({
     </div>
   );
 };
-
-import PropTypes from 'prop-types';
 
 CheckoutAddressSelector.propTypes = {
   addresses: PropTypes.arrayOf(

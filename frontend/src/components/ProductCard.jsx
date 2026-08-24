@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Star, Plus, Minus, Clock, Eye } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
@@ -205,8 +206,6 @@ const ProductCard = ({ product, onSelectProduct }) => {
     </div>
   );
 };
-
-import PropTypes from 'prop-types';
 
 ProductCard.propTypes = {
   product: PropTypes.shape({
