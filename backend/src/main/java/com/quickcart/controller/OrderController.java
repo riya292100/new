@@ -77,4 +77,13 @@ public class OrderController {
         OrderResponse order = orderService.updateOrderStatus(id, request.getStatus());
         return ResponseEntity.ok(ApiResponse.success("Order status updated", order));
     }
+
+    @GetMapping(value = "/{id}/live-stream", produces = org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Subscribe to live Server-Sent Events stream for order tracking")
+    public org.springframework.web.servlet.mvc.method.annotation.SseEmitter streamOrderUpdates(
+            @PathVariable Long id,
+            @org.springframework.beans.factory.annotation.Autowired com.quickcart.service.OrderTrackingSseService sseService) {
+        return sseService.subscribeToOrderUpdates(id);
+    }
 }
+
