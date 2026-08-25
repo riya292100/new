@@ -24,6 +24,9 @@ public class WalletResponse {
     private BigDecimal totalEarned;
     private BigDecimal totalSpent;
     private Double cashbackRatePercentage;
+    private String tierName;
+    private BigDecimal nextTierThreshold;
+    private Double tierProgressPercentage;
     private Boolean isActive;
     @Builder.Default
     private List<WalletTransactionDto> recentTransactions = new ArrayList<>();

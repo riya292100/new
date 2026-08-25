@@ -30,6 +30,7 @@ import DiningDiscoveryPage from './pages/DiningDiscoveryPage';
 import RestaurantDetailsPage from './pages/RestaurantDetailsPage';
 import BookingsPage from './pages/BookingsPage';
 import ClothesShoppingPage from './pages/ClothesShoppingPage';
+import QuickCashPage from './pages/QuickCashPage';
 
 // Protected route guard
 const ProtectedRoute = ({ children, requiredRole }) => {
@@ -163,6 +164,9 @@ const AppContent = () => {
           <Route path="/fashion" element={<ClothesShoppingPage />} />
           <Route path="/clothing" element={<ClothesShoppingPage />} />
           <Route path="/cloths" element={<ClothesShoppingPage />} />
+          <Route path="/quickcash" element={<QuickCashPage />} />
+          <Route path="/loyalty" element={<QuickCashPage />} />
+          <Route path="/wallet" element={<QuickCashPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/category" element={<CategoryPage />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />

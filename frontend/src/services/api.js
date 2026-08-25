@@ -159,6 +159,7 @@ export const walletApi = {
     api.post('/wallet/redeem-preview', { orderAmount, amountToRedeem }),
   addDemoFunds: (amount, description) =>
     api.post('/wallet/add-demo-funds', { amount, description }),
+  getLoyaltyPerks: () => api.get('/wallet/loyalty-perks'),
 };
 
 export default api;

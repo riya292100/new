@@ -90,6 +90,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/recommendations/**", "/api/recommendations/**", "/api/v1/recommendations/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/coupons/active", "/api/v1/coupons/active").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/product/**", "/api/v1/reviews/product/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/wallet/loyalty-perks", "/api/v1/wallet/loyalty-perks").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/dining/restaurants/**", "/api/dining/cuisines", "/api/dining/cities").permitAll()
                         .requestMatchers("/ws-quickcart/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()

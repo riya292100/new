@@ -199,6 +199,24 @@ public class WalletService {
     }
 
     private WalletResponse mapToResponse(Wallet wallet, List<WalletTransaction> transactions) {
+        BigDecimal totalEarned = wallet.getTotalEarned() != null ? wallet.getTotalEarned() : BigDecimal.ZERO;
+        String tierName = "Silver Member (5%)";
+        BigDecimal nextThreshold = BigDecimal.valueOf(500.00);
+        double progress = Math.min(100.0, totalEarned.doubleValue() / 500.0 * 100.0);
+        double cashbackRate = 5.0;
+
+        if (totalEarned.compareTo(BigDecimal.valueOf(2000.00)) >= 0) {
+            tierName = "Platinum Star (10%)";
+            nextThreshold = BigDecimal.valueOf(2000.00);
+            progress = 100.0;
+            cashbackRate = 10.0;
+        } else if (totalEarned.compareTo(BigDecimal.valueOf(500.00)) >= 0) {
+            tierName = "Gold VIP (7.5%)";
+            nextThreshold = BigDecimal.valueOf(2000.00);
+            progress = Math.min(100.0, ((totalEarned.doubleValue() - 500.0) / 1500.0) * 100.0);
+            cashbackRate = 7.5;
+        }
+
         return WalletResponse.builder()
                 .id(wallet.getId())
                 .userId(wallet.getUser().getId())
@@ -206,7 +224,10 @@ public class WalletService {
                 .balance(wallet.getBalance())
                 .totalEarned(wallet.getTotalEarned())
                 .totalSpent(wallet.getTotalSpent())
-                .cashbackRatePercentage(wallet.getCashbackRatePercentage())
+                .cashbackRatePercentage(cashbackRate)
+                .tierName(tierName)
+                .nextTierThreshold(nextThreshold)
+                .tierProgressPercentage(Math.max(0.0, progress))
                 .isActive(wallet.getIsActive())
                 .recentTransactions(transactions.stream().map(this::mapTransactionToDto).collect(Collectors.toList()))
                 .updatedAt(wallet.getUpdatedAt())

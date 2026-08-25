@@ -73,6 +73,24 @@ public class WalletController {
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
+    @GetMapping("/loyalty-perks")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getLoyaltyPerks() {
+        Map<String, Object> perks = new HashMap<>();
+        perks.put("cashbackPercentage", 5.0);
+        perks.put("welcomeBonusAmount", 100.0);
+        perks.put("conversionRate", "1 QuickCash = ₹1 INR");
+        perks.put("expiryPolicy", "Never expires");
+        perks.put("maxRedemptionRate", "100% at checkout");
+
+        Map<String, Object> tiers = new HashMap<>();
+        tiers.put("silver", Map.of("name", "Silver Member", "cashback", "5.0%", "minSpend", 0));
+        tiers.put("gold", Map.of("name", "Gold VIP", "cashback", "7.5%", "minSpend", 500));
+        tiers.put("platinum", Map.of("name", "Platinum Star", "cashback", "10.0%", "minSpend", 2000));
+        perks.put("tiers", tiers);
+
+        return ResponseEntity.ok(ApiResponse.success(perks));
+    }
+
     @PostMapping("/add-demo-funds")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<WalletResponse>> addDemoFunds(
