@@ -16,6 +16,7 @@ const CheckoutOrderSummary = ({
   walletBalance = 0,
   walletDiscount = 0,
   onToggleWallet,
+  onOpenWalletModal,
 }) => {
   const TIP_OPTIONS = [0, 10, 20, 30, 50];
   const preWalletTotal = (finalPayableAmount || cart?.finalPrice || 0) + selectedTip;
@@ -137,6 +138,24 @@ const CheckoutOrderSummary = ({
                 <strong style={{ color: '#059669' }}>
                   ₹{Number(walletBalance || 0).toFixed(2)}
                 </strong>
+                {onOpenWalletModal && (
+                  <button
+                    type="button"
+                    onClick={onOpenWalletModal}
+                    style={{
+                      marginLeft: '8px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#059669',
+                      fontWeight: '700',
+                      textDecoration: 'underline',
+                      fontSize: '0.72rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Manage
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -150,6 +169,39 @@ const CheckoutOrderSummary = ({
             />
           </label>
         </div>
+
+        {(!walletBalance || walletBalance <= 0) && onOpenWalletModal && (
+          <div
+            style={{
+              marginTop: '10px',
+              paddingTop: '8px',
+              borderTop: '1px dashed #cbd5e1',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Want instant discount?</span>
+            <button
+              type="button"
+              onClick={onOpenWalletModal}
+              style={{
+                background: '#10b981',
+                color: '#ffffff',
+                border: 'none',
+                padding: '4px 10px',
+                borderRadius: '8px',
+                fontSize: '0.72rem',
+                fontWeight: '700',
+                cursor: 'pointer',
+                boxShadow: '0 1px 4px rgba(16, 185, 129, 0.3)',
+              }}
+            >
+              ⚡ Get QuickCash Credits
+            </button>
+          </div>
+        )}
+
         {useWallet && walletDiscount > 0 && (
           <div
             style={{
@@ -342,6 +394,7 @@ CheckoutOrderSummary.propTypes = {
   walletBalance: PropTypes.number,
   walletDiscount: PropTypes.number,
   onToggleWallet: PropTypes.func,
+  onOpenWalletModal: PropTypes.func,
 };
 
 export default CheckoutOrderSummary;

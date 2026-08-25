@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { walletApi } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
-export default function WalletModal({ isOpen, onClose, user }) {
+export default function WalletModal({ isOpen, onClose, user: propUser }) {
+  let authUser = null;
+  let openAuthModal = null;
+  try {
+    const auth = useAuth();
+    if (auth) {
+      authUser = auth.user;
+      openAuthModal = auth.openAuthModal;
+    }
+  } catch (_e) {
+    // Graceful fallback for standalone tests or outside AuthProvider
+  }
+  const user = propUser || authUser;
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -14,49 +27,46 @@ export default function WalletModal({ isOpen, onClose, user }) {
     if (!isOpen) return;
     setLoading(true);
     setError(null);
+
+    // Check localStorage cached wallet first
+    let cached = null;
+    try {
+      const stored = localStorage.getItem('quickcart_demo_wallet');
+      if (stored) cached = JSON.parse(stored);
+    } catch (_e) {
+      console.error('Error parsing stored wallet:', _e);
+    }
+
     try {
       const res = await walletApi.getWallet();
       if (res.data?.success && res.data?.data) {
         setWallet(res.data.data);
         setTransactions(res.data.data.recentTransactions || []);
-      } else {
-        // Fallback demo state if offline
-        setWallet({
-          balance: 100.0,
-          totalEarned: 100.0,
-          totalSpent: 0.0,
-          cashbackRatePercentage: 5.0,
-        });
-        setTransactions([
-          {
-            id: 1,
-            amount: 100.0,
-            type: 'CREDIT_WELCOME_BONUS',
-            description: '🎉 Welcome to QuickCart! ₹100 QuickCash credited.',
-            createdAt: new Date().toISOString(),
-          },
-        ]);
+        localStorage.setItem('quickcart_demo_wallet', JSON.stringify(res.data.data));
+        setLoading(false);
+        return;
       }
-    } catch {
-      // Fallback demo state for testing/demo
-      setWallet({
-        balance: 100.0,
-        totalEarned: 100.0,
-        totalSpent: 0.0,
-        cashbackRatePercentage: 5.0,
-      });
-      setTransactions([
-        {
-          id: 1,
-          amount: 100.0,
-          type: 'CREDIT_WELCOME_BONUS',
-          description: '🎉 Welcome to QuickCart! ₹100 QuickCash credited.',
-          createdAt: new Date().toISOString(),
-        },
-      ]);
-    } finally {
-      setLoading(false);
+    } catch (_e) {
+      console.warn('Backend wallet fetch skipped or unauthenticated, using local state');
     }
+
+    const fallbackWallet = cached || {
+      balance: 100.0,
+      totalEarned: 100.0,
+      totalSpent: 0.0,
+      cashbackRatePercentage: 5.0,
+    };
+    setWallet(fallbackWallet);
+    setTransactions([
+      {
+        id: Date.now(),
+        amount: fallbackWallet.balance || 100.0,
+        type: 'CREDIT_WELCOME_BONUS',
+        description: '🎉 Welcome to QuickCart! ₹100 QuickCash credited.',
+        createdAt: new Date().toISOString(),
+      },
+    ]);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -67,31 +77,44 @@ export default function WalletModal({ isOpen, onClose, user }) {
     setAddingFunds(true);
     setSuccessMsg('');
     setError(null);
+
+    const newTx = {
+      id: Date.now(),
+      amount: Number(amount),
+      type: 'CREDIT_PROMO',
+      description: `🎁 QuickCash ₹${amount} Instant Demo Credit`,
+      createdAt: new Date().toISOString(),
+    };
+
     try {
       const res = await walletApi.addDemoFunds(amount, `QuickCash ₹${amount} Demo Reward`);
       if (res.data?.success && res.data?.data) {
         setWallet(res.data.data);
         setTransactions(res.data.data.recentTransactions || []);
+        localStorage.setItem('quickcart_demo_wallet', JSON.stringify(res.data.data));
+        window.dispatchEvent(new CustomEvent('quickcash-updated', { detail: { balance: res.data.data.balance } }));
         setSuccessMsg(`🎉 Added ₹${amount} QuickCash credits to your wallet!`);
-      } else {
-        setWallet((prev) => ({
-          ...prev,
-          balance: (prev?.balance || 0) + amount,
-          totalEarned: (prev?.totalEarned || 0) + amount,
-        }));
-        setSuccessMsg(`🎉 Added ₹${amount} QuickCash credits to your wallet!`);
+        return;
       }
-    } catch {
-      setWallet((prev) => ({
-        ...prev,
-        balance: (prev?.balance || 0) + amount,
-        totalEarned: (prev?.totalEarned || 0) + amount,
-      }));
-      setSuccessMsg(`🎉 Added ₹${amount} QuickCash credits to your wallet!`);
-    } finally {
-      setAddingFunds(false);
-      setTimeout(() => setSuccessMsg(''), 4000);
+    } catch (_e) {
+      console.warn('Backend addDemoFunds skipped, applying to local wallet');
     }
+
+    setWallet((prev) => {
+      const updatedBalance = (prev?.balance || 0) + Number(amount);
+      const updatedWallet = {
+        ...prev,
+        balance: updatedBalance,
+        totalEarned: (prev?.totalEarned || 0) + Number(amount),
+      };
+      localStorage.setItem('quickcart_demo_wallet', JSON.stringify(updatedWallet));
+      window.dispatchEvent(new CustomEvent('quickcash-updated', { detail: { balance: updatedBalance } }));
+      return updatedWallet;
+    });
+    setTransactions((prev) => [newTx, ...prev]);
+    setSuccessMsg(`🎉 Added ₹${amount} QuickCash credits to your wallet!`);
+    setAddingFunds(false);
+    setTimeout(() => setSuccessMsg(''), 4000);
   };
 
   if (!isOpen) return null;
