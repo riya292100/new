@@ -34,6 +34,7 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthEntryPointJwt unauthorizedHandler;
     private final JwtUtils jwtUtils;
+    private final CorrelationIdFilter correlationIdFilter;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -120,6 +121,7 @@ public class WebSecurityConfig {
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 
         http.authenticationProvider(authenticationProvider());
+        http.addFilterBefore(correlationIdFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

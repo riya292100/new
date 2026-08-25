@@ -14,35 +14,31 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * Correlation and Request Tracing Filter
- * Extracts or generates X-Correlation-Id / X-Request-Id for structured logging and attaches to MDC.
+ * Intercepts incoming HTTP requests to establish distributed correlation tracking.
+ * Injects correlation ID into SLF4J MDC context and HTTP response headers.
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorrelationIdFilter extends OncePerRequestFilter {
 
     public static final String CORRELATION_ID_HEADER = "X-Correlation-Id";
-    public static final String REQUEST_ID_HEADER = "X-Request-Id";
-    public static final String MDC_KEY = "correlationId";
+    public static final String MDC_CORRELATION_KEY = "correlationId";
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         String correlationId = request.getHeader(CORRELATION_ID_HEADER);
-        if (correlationId == null || correlationId.isBlank()) {
-            correlationId = request.getHeader(REQUEST_ID_HEADER);
-        }
         if (correlationId == null || correlationId.isBlank()) {
             correlationId = UUID.randomUUID().toString();
         }
 
-        MDC.put(MDC_KEY, correlationId);
-        response.setHeader(CORRELATION_ID_HEADER, correlationId);
-
         try {
+            MDC.put(MDC_CORRELATION_KEY, correlationId);
+            response.setHeader(CORRELATION_ID_HEADER, correlationId);
             filterChain.doFilter(request, response);
         } finally {
-            MDC.remove(MDC_KEY);
+            MDC.remove(MDC_CORRELATION_KEY);
         }
     }
 }

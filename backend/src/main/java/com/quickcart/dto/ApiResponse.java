@@ -15,11 +15,23 @@ public class ApiResponse<T> {
     private Boolean success;
     private String message;
     private T data;
+    private String correlationId;
+    private Long timestamp;
 
     public ApiResponse(Boolean success, String message) {
         this.success = success;
         this.message = message;
         this.data = null;
+        this.timestamp = System.currentTimeMillis();
+        this.correlationId = org.slf4j.MDC.get("correlationId");
+    }
+
+    public ApiResponse(Boolean success, String message, T data) {
+        this.success = success;
+        this.message = message;
+        this.data = data;
+        this.timestamp = System.currentTimeMillis();
+        this.correlationId = org.slf4j.MDC.get("correlationId");
     }
 
     public static <T> ApiResponse<T> success(String message, T data) {
