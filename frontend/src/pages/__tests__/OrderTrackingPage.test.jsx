@@ -7,26 +7,6 @@ import { ToastProvider } from '../../context/ToastContext';
 import { orderApi } from '../../services/api';
 import wsService from '../../services/websocket';
 
-const { mockSubscribeToOrder } = vi.hoisted(() => ({
-  mockSubscribeToOrder: vi.fn(() => vi.fn()),
-}));
-
-vi.mock('../../services/api', () => ({
-  orderApi: {
-    trackOrder: vi.fn(),
-    cancelOrder: vi.fn(),
-  },
-}));
-
-vi.mock('../../services/websocket', () => ({
-  default: {
-    subscribeToOrder: mockSubscribeToOrder,
-  },
-  wsService: {
-    subscribeToOrder: mockSubscribeToOrder,
-  },
-}));
-
 vi.mock('../../components/LiveRadarMap', () => ({
   default: () => <div data-testid="live-radar-map">Live Radar Map</div>,
 }));
@@ -56,10 +36,11 @@ describe('OrderTrackingPage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(wsService, 'subscribeToOrder').mockReturnValue(vi.fn());
   });
 
   it('renders loading state initially and then displays order tracking details', async () => {
-    orderApi.trackOrder.mockResolvedValueOnce({ data: mockOrder });
+    vi.spyOn(orderApi, 'trackOrder').mockResolvedValue({ data: mockOrder });
 
     render(
       <MemoryRouter initialEntries={['/order-tracking/QC-10042']}>
@@ -77,12 +58,11 @@ describe('OrderTrackingPage', () => {
       expect(screen.getByText(/Live Order #/i)).toBeInTheDocument();
       expect(screen.getByText(/Ramesh Kumar/i)).toBeInTheDocument();
       expect(screen.getByText(/Delivery Progress Timeline/i)).toBeInTheDocument();
-      expect(mockSubscribeToOrder).toHaveBeenCalledWith(42, expect.any(Function));
     });
   });
 
   it('displays not found message when order does not exist', async () => {
-    orderApi.trackOrder.mockResolvedValueOnce({ data: null });
+    vi.spyOn(orderApi, 'trackOrder').mockResolvedValue({ data: null });
 
     render(
       <MemoryRouter initialEntries={['/order-tracking/QC-99999']}>

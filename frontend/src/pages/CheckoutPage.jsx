@@ -10,8 +10,7 @@ import CheckoutPaymentMethods from '../components/checkout/CheckoutPaymentMethod
 import CheckoutOrderSummary from '../components/checkout/CheckoutOrderSummary';
 
 const CheckoutPage = () => {
-  const { cart, appliedCoupon, removeCoupon, setCouponModalOpen, finalPayableAmount } =
-    useCart();
+  const { cart, appliedCoupon, removeCoupon, setCouponModalOpen, finalPayableAmount } = useCart();
   const { user } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
