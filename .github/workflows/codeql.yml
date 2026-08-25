@@ -41,10 +41,19 @@ jobs:
         with:
           languages: ${{ matrix.language }}
 
+      - name: Make Maven Wrapper Executable
+        if: matrix.language == 'java-kotlin'
+        run: chmod +x ./backend/mvnw || true
+
       - name: Build Java Backend (CodeQL)
         if: matrix.language == 'java-kotlin'
         working-directory: ./backend
-        run: mvn clean compile -DskipTests
+        run: |
+          if [ -f "./mvnw" ]; then
+            ./mvnw -B clean compile -DskipTests
+          else
+            mvn -B clean compile -DskipTests
+          fi
 
       - name: Autobuild (JavaScript/TypeScript)
         if: matrix.language != 'java-kotlin'

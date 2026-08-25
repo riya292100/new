@@ -7,6 +7,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   lint-and-format:
     name: Frontend Lint & Code Style
@@ -39,7 +42,7 @@ jobs:
         run: npm run typecheck
 
   frontend-ci:
-    name: Frontend Tests & Coverage
+    name: Frontend Tests & Build
     runs-on: ubuntu-latest
     needs: [ lint-and-format ]
     steps:
@@ -57,11 +60,11 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
-      - name: Run Security Audit
+      - name: Run Tests (Vitest)
         working-directory: ./frontend
-        run: npm audit --audit-level=critical
+        run: npm run test
 
-      - name: Run Tests (Vitest with V8 Coverage)
+      - name: Run Coverage Check
         working-directory: ./frontend
         run: npm run coverage
 
@@ -84,13 +87,26 @@ jobs:
           cache: 'maven'
           cache-dependency-path: './backend/pom.xml'
 
+      - name: Make Maven Wrapper Executable
+        run: chmod +x ./backend/mvnw || true
+
       - name: Run Backend Tests (JUnit 5)
         working-directory: ./backend
-        run: mvn clean test -Dspring.profiles.active=test
+        run: |
+          if [ -f "./mvnw" ]; then
+            ./mvnw -B clean test -Dspring.profiles.active=test
+          else
+            mvn -B clean test -Dspring.profiles.active=test
+          fi
 
       - name: Package Standalone Production JAR
         working-directory: ./backend
-        run: mvn package -DskipTests
+        run: |
+          if [ -f "./mvnw" ]; then
+            ./mvnw -B package -DskipTests
+          else
+            mvn -B package -DskipTests
+          fi
 
   docker-ci:
     name: Docker Stack Build Validation

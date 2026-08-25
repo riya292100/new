@@ -92,7 +92,9 @@ export default function WalletModal({ isOpen, onClose, user: propUser }) {
         setWallet(res.data.data);
         setTransactions(res.data.data.recentTransactions || []);
         localStorage.setItem('quickcart_demo_wallet', JSON.stringify(res.data.data));
-        window.dispatchEvent(new CustomEvent('quickcash-updated', { detail: { balance: res.data.data.balance } }));
+        window.dispatchEvent(
+          new CustomEvent('quickcash-updated', { detail: { balance: res.data.data.balance } })
+        );
         setSuccessMsg(`🎉 Added ₹${amount} QuickCash credits to your wallet!`);
         return;
       }
@@ -108,7 +110,9 @@ export default function WalletModal({ isOpen, onClose, user: propUser }) {
         totalEarned: (prev?.totalEarned || 0) + Number(amount),
       };
       localStorage.setItem('quickcart_demo_wallet', JSON.stringify(updatedWallet));
-      window.dispatchEvent(new CustomEvent('quickcash-updated', { detail: { balance: updatedBalance } }));
+      window.dispatchEvent(
+        new CustomEvent('quickcash-updated', { detail: { balance: updatedBalance } })
+      );
       return updatedWallet;
     });
     setTransactions((prev) => [newTx, ...prev]);

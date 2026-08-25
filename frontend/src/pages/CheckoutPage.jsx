@@ -235,11 +235,7 @@ const CheckoutPage = () => {
       </div>
 
       {/* QuickCash Loyalty Wallet Modal */}
-      <WalletModal
-        isOpen={walletModalOpen}
-        onClose={() => setWalletModalOpen(false)}
-        user={user}
-      />
+      <WalletModal isOpen={walletModalOpen} onClose={() => setWalletModalOpen(false)} user={user} />
     </div>
   );
 };
