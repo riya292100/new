@@ -110,6 +110,12 @@ public class AuthService {
                                 .orElseThrow(() -> new ResourceNotFoundException("Error: Role ROLE_STORE_MANAGER is not found."));
                         roles.add(managerRole);
                         break;
+                    case "support":
+                    case "support_agent":
+                        Role supportRole = roleRepository.findByName(ERole.ROLE_SUPPORT_AGENT)
+                                .orElseThrow(() -> new ResourceNotFoundException("Error: Role ROLE_SUPPORT_AGENT is not found."));
+                        roles.add(supportRole);
+                        break;
                     default:
                         Role customerRole = roleRepository.findByName(ERole.ROLE_CUSTOMER)
                                 .orElseThrow(() -> new ResourceNotFoundException("Error: Role ROLE_CUSTOMER is not found."));

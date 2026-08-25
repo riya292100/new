@@ -73,6 +73,8 @@ public class DataSeeder implements CommandLineRunner {
         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN).orElseThrow();
         Role driverRole = roleRepository.findByName(ERole.ROLE_DELIVERY_PARTNER).orElseThrow();
         Role customerRole = roleRepository.findByName(ERole.ROLE_CUSTOMER).orElseThrow();
+        Role managerRole = roleRepository.findByName(ERole.ROLE_STORE_MANAGER).orElseThrow();
+        Role supportRole = roleRepository.findByName(ERole.ROLE_SUPPORT_AGENT).orElseThrow();
 
         // 1. Admin User
         if (userRepository.findByEmail("admin@quickcart.com").isEmpty()) {
@@ -80,6 +82,22 @@ public class DataSeeder implements CommandLineRunner {
             admin.setAvatarUrl("https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80");
             admin.setRoles(Set.of(adminRole, customerRole));
             userRepository.save(admin);
+        }
+
+        // Store Manager User
+        if (userRepository.findByEmail("manager@quickcart.com").isEmpty()) {
+            User manager = new User("Sam Carter (Store Manager)", "manager@quickcart.com", "9876543213", passwordEncoder.encode(adminPassword));
+            manager.setAvatarUrl("https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80");
+            manager.setRoles(Set.of(managerRole));
+            userRepository.save(manager);
+        }
+
+        // Support Agent User
+        if (userRepository.findByEmail("support@quickcart.com").isEmpty()) {
+            User support = new User("Elena Rostova (Support)", "support@quickcart.com", "9876543214", passwordEncoder.encode(adminPassword));
+            support.setAvatarUrl("https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80");
+            support.setRoles(Set.of(supportRole));
+            userRepository.save(support);
         }
 
         // 2. Delivery Partner User

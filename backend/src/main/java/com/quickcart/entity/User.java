@@ -51,6 +51,16 @@ public class User {
     @Column(nullable = false)
     private Boolean isVerified = true;
 
+    @Column(length = 255)
+    private String verificationToken;
+
+    private LocalDateTime verificationExpiresAt;
+
+    @Column(length = 255)
+    private String passwordResetToken;
+
+    private LocalDateTime passwordResetExpiresAt;
+
     @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

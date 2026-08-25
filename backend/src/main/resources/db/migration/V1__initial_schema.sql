@@ -16,6 +16,10 @@ CREATE TABLE IF NOT EXISTS users (
     avatar_url VARCHAR(500),
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     is_verified BOOLEAN NOT NULL DEFAULT TRUE,
+    verification_token VARCHAR(255),
+    verification_expires_at TIMESTAMP WITHOUT TIME ZONE,
+    password_reset_token VARCHAR(255),
+    password_reset_expires_at TIMESTAMP WITHOUT TIME ZONE,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -368,18 +372,46 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 10. Idempotency & Fraud Abuse Management
+CREATE TABLE IF NOT EXISTS idempotency_keys (
+    id BIGSERIAL PRIMARY KEY,
+    idempotency_key VARCHAR(255) NOT NULL UNIQUE,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+    request_hash VARCHAR(255) NOT NULL,
+    response_body TEXT,
+    status_code INT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS fraud_alerts (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+    risk_score INT NOT NULL,
+    risk_factor VARCHAR(100) NOT NULL,
+    details TEXT,
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING_REVIEW', -- PENDING_REVIEW, RESOLVED, DISMISSED
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Seed Initial Roles
 INSERT INTO roles (name) VALUES ('ROLE_CUSTOMER') ON CONFLICT (name) DO NOTHING;
 INSERT INTO roles (name) VALUES ('ROLE_DELIVERY_PARTNER') ON CONFLICT (name) DO NOTHING;
 INSERT INTO roles (name) VALUES ('ROLE_ADMIN') ON CONFLICT (name) DO NOTHING;
 INSERT INTO roles (name) VALUES ('ROLE_STORE_MANAGER') ON CONFLICT (name) DO NOTHING;
+INSERT INTO roles (name) VALUES ('ROLE_SUPPORT_AGENT') ON CONFLICT (name) DO NOTHING;
 
 -- Create Performance Indexes
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_brand ON products(brand_id);
 CREATE INDEX IF NOT EXISTS idx_products_available ON products(is_available);
+CREATE INDEX IF NOT EXISTS idx_products_name ON products(name);
 CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+CREATE INDEX IF NOT EXISTS idx_orders_order_number ON orders(order_number);
 CREATE INDEX IF NOT EXISTS idx_inventories_store_product ON inventories(store_id, product_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_read ON notifications(user_id, is_read);
+CREATE INDEX IF NOT EXISTS idx_idempotency_key ON idempotency_keys(idempotency_key);
+CREATE INDEX IF NOT EXISTS idx_fraud_alerts_user ON fraud_alerts(user_id, status);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action, entity_name);
