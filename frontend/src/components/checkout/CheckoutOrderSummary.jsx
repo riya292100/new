@@ -12,16 +12,9 @@ const CheckoutOrderSummary = ({
   finalPayableAmount = 0,
   placingOrder = false,
   onPlaceOrder,
-  useWallet = false,
-  walletBalance = 0,
-  walletDiscount = 0,
-  onToggleWallet,
-  onOpenWalletModal,
 }) => {
   const TIP_OPTIONS = [0, 10, 20, 30, 50];
-  const preWalletTotal = (finalPayableAmount || cart?.finalPrice || 0) + selectedTip;
-  const grandTotal = Math.max(0, preWalletTotal - (useWallet ? walletDiscount : 0));
-  const projectedCashback = ((cart?.totalPrice || 0) * 0.05).toFixed(2);
+  const grandTotal = (finalPayableAmount || cart?.finalPrice || 0) + selectedTip;
 
   return (
     <div
@@ -55,7 +48,7 @@ const CheckoutOrderSummary = ({
                 🎉 Code {appliedCoupon.code} Applied
               </div>
               <div style={{ fontSize: '0.75rem', color: '#059669' }}>
-                Saving ₹{cart.discountAmount} on this order
+                Saving ₹{cart?.discountAmount || 0} on this order
               </div>
             </div>
             <button
@@ -97,127 +90,6 @@ const CheckoutOrderSummary = ({
             </span>
             <Sparkles size={16} color="#fbbf24" />
           </button>
-        )}
-      </div>
-
-      {/* QuickCash Loyalty Wallet Toggle */}
-      <div
-        style={{
-          background: useWallet ? '#ecfdf5' : '#f8fafc',
-          border: useWallet ? '1.5px solid #10b981' : '1px solid #e2e8f0',
-          borderRadius: '14px',
-          padding: '14px',
-          transition: 'all 0.15s ease',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '10px',
-                background: 'linear-gradient(135deg, #059669, #10b981)',
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '1rem',
-                fontWeight: 'bold',
-                boxShadow: '0 2px 6px rgba(16, 185, 129, 0.25)',
-              }}
-            >
-              ⚡
-            </div>
-            <div>
-              <div style={{ fontWeight: '800', color: '#0f172a', fontSize: '0.88rem' }}>
-                Pay with QuickCash Wallet
-              </div>
-              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                Balance:{' '}
-                <strong style={{ color: '#059669' }}>
-                  ₹{Number(walletBalance || 0).toFixed(2)}
-                </strong>
-                {onOpenWalletModal && (
-                  <button
-                    type="button"
-                    onClick={onOpenWalletModal}
-                    style={{
-                      marginLeft: '8px',
-                      background: 'transparent',
-                      border: 'none',
-                      color: '#059669',
-                      fontWeight: '700',
-                      textDecoration: 'underline',
-                      fontSize: '0.72rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Manage
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={useWallet}
-              onChange={(e) => onToggleWallet && onToggleWallet(e.target.checked)}
-              disabled={!walletBalance || walletBalance <= 0}
-              style={{ accentColor: '#059669', width: '18px', height: '18px', cursor: 'pointer' }}
-            />
-          </label>
-        </div>
-
-        {(!walletBalance || walletBalance <= 0) && onOpenWalletModal && (
-          <div
-            style={{
-              marginTop: '10px',
-              paddingTop: '8px',
-              borderTop: '1px dashed #cbd5e1',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Want instant discount?</span>
-            <button
-              type="button"
-              onClick={onOpenWalletModal}
-              style={{
-                background: '#10b981',
-                color: '#ffffff',
-                border: 'none',
-                padding: '4px 10px',
-                borderRadius: '8px',
-                fontSize: '0.72rem',
-                fontWeight: '700',
-                cursor: 'pointer',
-                boxShadow: '0 1px 4px rgba(16, 185, 129, 0.3)',
-              }}
-            >
-              ⚡ Get QuickCash Credits
-            </button>
-          </div>
-        )}
-
-        {useWallet && walletDiscount > 0 && (
-          <div
-            style={{
-              marginTop: '10px',
-              paddingTop: '8px',
-              borderTop: '1px solid #d1fae5',
-              fontSize: '0.75rem',
-              color: '#065f46',
-              fontWeight: '700',
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <span>⚡ QuickCash Applied:</span>
-            <span>-₹{Number(walletDiscount).toFixed(2)}</span>
-          </div>
         )}
       </div>
 
@@ -296,19 +168,6 @@ const CheckoutOrderSummary = ({
             <span>₹{selectedTip}</span>
           </div>
         )}
-        {useWallet && walletDiscount > 0 && (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              color: '#059669',
-              fontWeight: '700',
-            }}
-          >
-            <span>⚡ QuickCash Redeemed</span>
-            <span>-₹{Number(walletDiscount).toFixed(2)}</span>
-          </div>
-        )}
         <div
           style={{
             display: 'flex',
@@ -322,29 +181,6 @@ const CheckoutOrderSummary = ({
           <span style={{ fontSize: '1.05rem', fontWeight: '800', color: '#0f172a' }}>To Pay</span>
           <span style={{ fontSize: '1.3rem', fontWeight: '800', color: '#059669' }}>
             ₹{grandTotal.toFixed(2)}
-          </span>
-        </div>
-
-        {/* 5% Cashback Notification Banner */}
-        <div
-          style={{
-            background: '#ecfdf5',
-            borderRadius: '10px',
-            padding: '10px 12px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontSize: '0.78rem',
-            color: '#065f46',
-            fontWeight: '600',
-            border: '1px solid #a7f3d0',
-            marginTop: '4px',
-          }}
-        >
-          <span style={{ fontSize: '1rem' }}>🎁</span>
-          <span>
-            You will earn <strong>+₹{projectedCashback} QuickCash (5%)</strong> cashback on this
-            order!
           </span>
         </div>
       </div>
@@ -390,11 +226,6 @@ CheckoutOrderSummary.propTypes = {
   finalPayableAmount: PropTypes.number,
   placingOrder: PropTypes.bool,
   onPlaceOrder: PropTypes.func.isRequired,
-  useWallet: PropTypes.bool,
-  walletBalance: PropTypes.number,
-  walletDiscount: PropTypes.number,
-  onToggleWallet: PropTypes.func,
-  onOpenWalletModal: PropTypes.func,
 };
 
 export default CheckoutOrderSummary;

@@ -15,7 +15,6 @@ import {
   Shirt,
 } from 'lucide-react';
 import SearchAutocomplete from './SearchAutocomplete';
-import WalletModal from './wallet/WalletModal';
 import { useLocation } from '../context/LocationContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -25,7 +24,6 @@ const Header = () => {
   const { cart, setCartDrawerOpen } = useCart();
   const { user, logout, openAuthModal, isAdmin, isDeliveryPartner } = useAuth();
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -189,29 +187,6 @@ const Header = () => {
 
         {/* Right Actions: User Profile & Cart Button */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-          <button
-            onClick={() => setWalletModalOpen(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
-              border: '1px solid #10b981',
-              padding: '7px 13px',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              fontWeight: '700',
-              color: '#065f46',
-              boxShadow: '0 2px 6px rgba(16, 185, 129, 0.15)',
-              transition: 'all 0.15s ease',
-            }}
-            title="QuickCash Wallet & Loyalty Rewards"
-          >
-            <span style={{ fontSize: '1rem' }}>⚡</span>
-            <span>QuickCash</span>
-          </button>
-
           {user ? (
             <div style={{ position: 'relative' }}>
               <button
@@ -276,29 +251,23 @@ const Header = () => {
                     <strong style={{ color: '#0f172a' }}>{user.email}</strong>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      setUserDropdownOpen(false);
-                      setWalletModalOpen(true);
-                    }}
+                  <Link
+                    to="/profile"
+                    onClick={() => setUserDropdownOpen(false)}
                     style={{
-                      width: '100%',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
                       padding: '8px 12px',
-                      color: '#047857',
-                      background: 'transparent',
-                      border: 'none',
+                      color: '#334155',
+                      textDecoration: 'none',
                       fontSize: '0.85rem',
                       fontWeight: '600',
                       borderRadius: '8px',
-                      cursor: 'pointer',
-                      textAlign: 'left',
                     }}
                   >
-                    <span>⚡</span> QuickCash Wallet
-                  </button>
+                    <User size={15} color="#059669" /> My Profile
+                  </Link>
 
                   <Link
                     to="/orders"
@@ -311,11 +280,11 @@ const Header = () => {
                       color: '#334155',
                       textDecoration: 'none',
                       fontSize: '0.85rem',
-                      fontWeight: '500',
+                      fontWeight: '600',
                       borderRadius: '8px',
                     }}
                   >
-                    <Package size={16} /> My Orders
+                    <Package size={15} color="#059669" /> Order History
                   </Link>
 
                   <Link
@@ -329,47 +298,11 @@ const Header = () => {
                       color: '#334155',
                       textDecoration: 'none',
                       fontSize: '0.85rem',
-                      fontWeight: '500',
-                      borderRadius: '8px',
-                    }}
-                  >
-                    <Utensils size={16} /> Table Bookings
-                  </Link>
-
-                  <Link
-                    to="/profile"
-                    onClick={() => setUserDropdownOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '8px 12px',
-                      color: '#334155',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '500',
-                      borderRadius: '8px',
-                    }}
-                  >
-                    <User size={16} /> Profile & Addresses
-                  </Link>
-
-                  <Link
-                    to="/clothes"
-                    onClick={() => setUserDropdownOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '8px 12px',
-                      color: '#059669',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
                       fontWeight: '600',
                       borderRadius: '8px',
                     }}
                   >
-                    <Shirt size={16} /> Clothes Shopping
+                    <Utensils size={15} color="#059669" /> Table Bookings
                   </Link>
 
                   {isAdmin && (
@@ -381,14 +314,14 @@ const Header = () => {
                         alignItems: 'center',
                         gap: '8px',
                         padding: '8px 12px',
-                        color: '#6366f1',
+                        color: '#7c3aed',
                         textDecoration: 'none',
                         fontSize: '0.85rem',
                         fontWeight: '600',
                         borderRadius: '8px',
                       }}
                     >
-                      <Shield size={16} /> Admin Dashboard
+                      <Shield size={15} color="#7c3aed" /> Admin Dashboard
                     </Link>
                   )}
 
@@ -401,43 +334,42 @@ const Header = () => {
                         alignItems: 'center',
                         gap: '8px',
                         padding: '8px 12px',
-                        color: '#d97706',
+                        color: '#ea580c',
                         textDecoration: 'none',
                         fontSize: '0.85rem',
                         fontWeight: '600',
                         borderRadius: '8px',
                       }}
                     >
-                      <Bike size={16} /> Driver App
+                      <Bike size={15} color="#ea580c" /> Rider Portal
                     </Link>
                   )}
 
-                  <div
-                    style={{ borderTop: '1px solid #f1f5f9', marginTop: '6px', paddingTop: '6px' }}
+                  <button
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      logout();
+                    }}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 12px',
+                      color: '#dc2626',
+                      background: 'transparent',
+                      border: 'none',
+                      fontSize: '0.85rem',
+                      fontWeight: '600',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      marginTop: '4px',
+                      borderTop: '1px solid #f1f5f9',
+                    }}
                   >
-                    <button
-                      onClick={() => {
-                        setUserDropdownOpen(false);
-                        logout();
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        width: '100%',
-                        padding: '8px 12px',
-                        color: '#ef4444',
-                        background: 'transparent',
-                        border: 'none',
-                        fontSize: '0.85rem',
-                        fontWeight: '500',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <LogOut size={16} /> Logout
-                    </button>
-                  </div>
+                    <LogOut size={15} color="#dc2626" /> Logout
+                  </button>
                 </div>
               )}
             </div>
@@ -445,44 +377,55 @@ const Header = () => {
             <button
               onClick={() => openAuthModal('login')}
               className="btn btn-outline"
-              style={{ fontSize: '0.88rem', padding: '8px 16px' }}
+              style={{ padding: '7px 16px', fontSize: '0.88rem' }}
             >
-              <User size={16} /> Login
+              Sign In
             </button>
           )}
 
-          {/* Cart Button */}
+          {/* Cart Trigger Button */}
           <button
             onClick={() => setCartDrawerOpen(true)}
             className="btn btn-primary"
             style={{
-              padding: '9px 16px',
-              borderRadius: '12px',
-              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 16px',
+              boxShadow: '0 4px 14px rgba(5, 150, 105, 0.3)',
             }}
           >
-            <ShoppingBag size={18} />
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                lineHeight: 1.1,
-              }}
-            >
-              <span style={{ fontSize: '0.72rem', opacity: 0.9 }}>
-                {cart?.totalItems || 0} {cart?.totalItems === 1 ? 'item' : 'items'}
-              </span>
-              <span style={{ fontSize: '0.88rem', fontWeight: '800' }}>
-                ₹{cart?.grandTotal || 0}
-              </span>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <ShoppingBag size={18} />
+              {cart?.totalItems > 0 && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '-8px',
+                    right: '-10px',
+                    background: '#f59e0b',
+                    color: '#ffffff',
+                    fontSize: '0.68rem',
+                    fontWeight: '800',
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '2px solid #059669',
+                  }}
+                >
+                  {cart.totalItems}
+                </span>
+              )}
             </div>
+            <span style={{ fontWeight: '700' }}>
+              {cart?.totalItems > 0 ? `₹${cart.totalPrice}` : 'My Cart'}
+            </span>
           </button>
         </div>
       </div>
-
-      {/* QuickCash Loyalty Wallet Modal */}
-      <WalletModal isOpen={walletModalOpen} onClose={() => setWalletModalOpen(false)} user={user} />
     </header>
   );
 };

@@ -23,7 +23,7 @@ describe('Header Component (Isolated Unit Tests)', () => {
     });
 
     vi.spyOn(CartContextModule, 'useCart').mockReturnValue({
-      cart: { totalItems: 4, finalPrice: 320 },
+      cart: { totalItems: 4, totalPrice: 320 },
       setCartDrawerOpen: handleOpenCart,
       getItemQuantity: vi.fn().mockReturnValue(0),
     });
@@ -43,10 +43,9 @@ describe('Header Component (Isolated Unit Tests)', () => {
 
     expect(screen.getByText('Quick')).toBeInTheDocument();
     expect(screen.getByText('Cart')).toBeInTheDocument();
-    expect(screen.getByText(/QuickCash/i)).toBeInTheDocument();
     expect(screen.getByText(/Delivery in 15 mins/i)).toBeInTheDocument();
     expect(screen.getByText(/Rahul/i)).toBeInTheDocument();
-    expect(screen.getByText(/4 items/i)).toBeInTheDocument();
+    expect(screen.getByText(/₹320/i)).toBeInTheDocument();
     expect(screen.getByText(/Dining & Tables/i)).toBeInTheDocument();
   });
 
@@ -59,7 +58,7 @@ describe('Header Component (Isolated Unit Tests)', () => {
 
     const userBtn = screen.getByText(/Rahul/i);
     fireEvent.click(userBtn);
-    expect(screen.getByText(/My Orders/i)).toBeInTheDocument();
+    expect(screen.getByText(/Order History/i)).toBeInTheDocument();
     expect(screen.getByText(/Table Bookings/i)).toBeInTheDocument();
   });
 });

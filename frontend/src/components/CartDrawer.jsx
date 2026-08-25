@@ -142,30 +142,6 @@ const CartDrawer = () => {
               finalPayableAmount={finalPayableAmount}
             />
 
-            {/* QuickCash Cashback Preview */}
-            <div
-              style={{
-                marginTop: '10px',
-                background: '#ecfdf5',
-                border: '1px solid #a7f3d0',
-                borderRadius: '12px',
-                padding: '8px 12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                fontSize: '0.78rem',
-                color: '#065f46',
-                fontWeight: '700',
-              }}
-            >
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span>⚡</span> QuickCash Cashback on delivery:
-              </span>
-              <span style={{ color: '#047857', fontWeight: '800' }}>
-                +₹{((cart.totalPrice || 0) * 0.05).toFixed(2)}
-              </span>
-            </div>
-
             {/* Checkout Button */}
             <button
               type="button"

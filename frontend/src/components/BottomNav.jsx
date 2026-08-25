@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Grid, Tag, ShoppingBag, User, Package, Utensils, Shirt, Zap } from 'lucide-react';
+import { Home, Grid, ShoppingBag, User, Package, Utensils, Shirt } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -52,16 +52,6 @@ const BottomNav = () => {
       >
         <Utensils size={22} />
         <span>Dining</span>
-      </NavLink>
-
-      <NavLink
-        to="/quickcash"
-        className={({ isActive }) =>
-          `bottom-nav-item ${isActive || location.pathname.startsWith('/quickcash') || location.pathname.startsWith('/loyalty') ? 'active' : ''}`
-        }
-      >
-        <Zap size={22} color="#059669" />
-        <span>QuickCash</span>
       </NavLink>
 
       {/* Cart Drawer Trigger */}

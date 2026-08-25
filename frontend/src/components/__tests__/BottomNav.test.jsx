@@ -22,8 +22,9 @@ describe('BottomNav Component', () => {
     );
 
     expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Clothes')).toBeInTheDocument();
     expect(screen.getByText('Categories')).toBeInTheDocument();
-    expect(screen.getByText('QuickCash')).toBeInTheDocument();
+    expect(screen.getByText('Dining')).toBeInTheDocument();
     expect(screen.getByText('Cart')).toBeInTheDocument();
   });
 });

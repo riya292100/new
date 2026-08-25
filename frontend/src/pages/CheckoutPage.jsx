@@ -3,15 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { addressApi, orderApi, walletApi } from '../services/api';
+import { addressApi, orderApi } from '../services/api';
 import { Clock } from 'lucide-react';
 import CheckoutAddressSelector from '../components/checkout/CheckoutAddressSelector';
 import CheckoutPaymentMethods from '../components/checkout/CheckoutPaymentMethods';
 import CheckoutOrderSummary from '../components/checkout/CheckoutOrderSummary';
-import WalletModal from '../components/wallet/WalletModal';
 
 const CheckoutPage = () => {
-  const { cart, appliedCoupon, removeCoupon, setCouponModalOpen, finalPayableAmount, clearCart } =
+  const { cart, appliedCoupon, removeCoupon, setCouponModalOpen, finalPayableAmount } =
     useCart();
   const { user } = useAuth();
   const { addToast } = useToast();
@@ -38,17 +37,6 @@ const CheckoutPage = () => {
   const [selectedTip, setSelectedTip] = useState(10);
   const [paymentMethod, setPaymentMethod] = useState('UPI');
   const [placingOrder, setPlacingOrder] = useState(false);
-  const [wallet, setWallet] = useState(() => {
-    try {
-      const cached = localStorage.getItem('quickcart_demo_wallet');
-      if (cached) return JSON.parse(cached);
-    } catch (_e) {
-      console.error('Error parsing stored wallet in checkout:', _e);
-    }
-    return { balance: 100.0, totalEarned: 100.0, totalSpent: 0.0 };
-  });
-  const [useWallet, setUseWallet] = useState(false);
-  const [walletModalOpen, setWalletModalOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -70,35 +58,7 @@ const CheckoutPage = () => {
       .catch((err) => {
         console.error('Failed to fetch user addresses:', err);
       });
-
-    walletApi
-      .getWallet()
-      .then((res) => {
-        if (res?.data?.data) {
-          setWallet(res.data.data);
-          localStorage.setItem('quickcart_demo_wallet', JSON.stringify(res.data.data));
-        }
-      })
-      .catch((err) => {
-        console.warn('Using local demo wallet for checkout');
-      });
-
-    const handleQuickCashUpdated = (e) => {
-      if (e.detail?.balance !== undefined) {
-        setWallet((prev) => ({ ...prev, balance: e.detail.balance }));
-        if (e.detail.balance > 0) {
-          setUseWallet(true);
-        }
-      }
-    };
-
-    window.addEventListener('quickcash-updated', handleQuickCashUpdated);
-    return () => window.removeEventListener('quickcash-updated', handleQuickCashUpdated);
   }, [user, navigate]);
-
-  const preWalletTotal = (finalPayableAmount || cart?.finalPrice || 0) + selectedTip;
-  const availableWalletBalance = Number(wallet?.balance || 0);
-  const walletDiscount = useWallet ? Math.min(availableWalletBalance, preWalletTotal) : 0;
 
   const handleCreateAddress = async (e) => {
     e.preventDefault();
@@ -137,21 +97,10 @@ const CheckoutPage = () => {
         couponCode: appliedCoupon?.code || null,
         deliveryInstructions: deliveryNotes || null,
         tipAmount: selectedTip,
-        walletAmountToRedeem: useWallet ? walletDiscount : 0,
       };
 
       const res = await orderApi.createOrder(orderPayload);
       if (res?.data) {
-        try {
-          confetti({
-            particleCount: 80,
-            spread: 70,
-            origin: { y: 0.6 },
-          });
-        } catch (_e) {
-          console.error('Error:', _e);
-        }
-
         addToast('Order placed successfully!', 'success');
         navigate(`/track/${res.data.orderNumber}`);
       }
@@ -225,17 +174,9 @@ const CheckoutPage = () => {
             finalPayableAmount={finalPayableAmount}
             placingOrder={placingOrder}
             onPlaceOrder={handlePlaceOrder}
-            useWallet={useWallet}
-            walletBalance={availableWalletBalance}
-            walletDiscount={walletDiscount}
-            onToggleWallet={setUseWallet}
-            onOpenWalletModal={() => setWalletModalOpen(true)}
           />
         </div>
       </div>
-
-      {/* QuickCash Loyalty Wallet Modal */}
-      <WalletModal isOpen={walletModalOpen} onClose={() => setWalletModalOpen(false)} user={user} />
     </div>
   );
 };
