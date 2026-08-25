@@ -25,6 +25,7 @@ public class InventoryService {
     private final InventoryTransactionRepository inventoryTransactionRepository;
     private final DarkStoreRepository darkStoreRepository;
     private final ProductRepository productRepository;
+    private final com.quickcart.event.DomainEventPublisher domainEventPublisher;
 
     public List<InventoryDto> getInventoriesByStore(Long storeId) {
         return inventoryRepository.findByStoreId(storeId)
@@ -116,6 +117,16 @@ public class InventoryService {
                 .build();
         inventoryTransactionRepository.save(tx);
 
+        if (saved.isLowStock()) {
+            domainEventPublisher.publish(com.quickcart.event.InventoryEvents.LowStockDetectedEvent.builder()
+                    .storeId(store.getId())
+                    .productId(product.getId())
+                    .productName(product.getName())
+                    .currentStock(saved.getAvailableQuantity())
+                    .reorderThreshold(saved.getLowStockThreshold())
+                    .build());
+        }
+
         log.info("Inventory adjusted for product {} at store {}: type={}, quantity={}", product.getId(), store.getId(), type, qty);
         return mapToDto(saved);
     }
@@ -140,7 +151,7 @@ public class InventoryService {
 
         inventory.setAvailableQuantity(inventory.getAvailableQuantity() - quantity);
         inventory.setReservedQuantity(inventory.getReservedQuantity() + quantity);
-        inventoryRepository.save(inventory);
+        Inventory saved = inventoryRepository.save(inventory);
 
         InventoryTransaction tx = InventoryTransaction.builder()
                 .inventory(inventory)
@@ -150,6 +161,16 @@ public class InventoryService {
                 .notes("Reserved for order " + orderNumber)
                 .build();
         inventoryTransactionRepository.save(tx);
+
+        if (saved.isLowStock()) {
+            domainEventPublisher.publish(com.quickcart.event.InventoryEvents.LowStockDetectedEvent.builder()
+                    .storeId(effectiveStoreId)
+                    .productId(productId)
+                    .productName(inventory.getProduct().getName())
+                    .currentStock(saved.getAvailableQuantity())
+                    .reorderThreshold(saved.getLowStockThreshold())
+                    .build());
+        }
     }
 
     @Transactional
