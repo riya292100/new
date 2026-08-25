@@ -87,6 +87,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**", "/api/v1/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/brands/**", "/api/v1/brands/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/recommendations/**", "/api/recommendations/**", "/api/v1/recommendations/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/coupons/active", "/api/v1/coupons/active").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/product/**", "/api/v1/reviews/product/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/dining/restaurants/**", "/api/dining/cuisines", "/api/dining/cities").permitAll()
