@@ -3,6 +3,18 @@ spring:
     name: quickcart-backend
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: quickcart-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.quickcart.*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 server:
   port: ${PORT:8081}
@@ -24,6 +36,8 @@ quickcart:
       keyId: ${RAZORPAY_KEY_ID:rzp_test_quickcartKey2026}
       keySecret: ${RAZORPAY_KEY_SECRET:rzp_secret_quickcartSecret2026}
       webhookSecret: ${RAZORPAY_WEBHOOK_SECRET:quickcart_webhook_secret_2026}
+  events:
+    kafkaEnabled: ${KAFKA_ENABLED:false}
 
 springdoc:
   api-docs:
@@ -40,3 +54,21 @@ management:
   endpoint:
     health:
       show-details: always
+    prometheus:
+      enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentGateway:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+  ratelimiter:
+    instances:
+      orderApi:
+        limit-for-period: 30
+        limit-refresh-period: 1s
+        timeout-duration: 500ms
+
