@@ -46,6 +46,9 @@ public class OrderService {
     private final InventoryService inventoryService;
     private final NotificationService notificationService;
     private final PaymentGatewayService paymentGatewayService;
+    private final PricingService pricingService;
+    private final com.quickcart.event.DomainEventPublisher domainEventPublisher;
+    private final IdempotencyKeyRepository idempotencyKeyRepository;
 
     @Value("${quickcart.app.freeDeliveryThreshold:199.0}")
     private double freeDeliveryThreshold;
@@ -66,19 +69,22 @@ public class OrderService {
             throw new BadRequestException("User must be authenticated to place an order");
         }
 
-        // Idempotency check
+        // 1. Idempotency Check
         if (request.getIdempotencyKey() != null && !request.getIdempotencyKey().isBlank()) {
-            Optional<Order> existingOrder = orderRepository.findAll().stream()
-                    .filter(o -> request.getIdempotencyKey().equals(o.getIdempotencyKey()))
-                    .findFirst();
-            if (existingOrder.isPresent()) {
-                log.info("Idempotent order request detected. Returning existing order #{}", existingOrder.get().getOrderNumber());
-                return mapToDto(existingOrder.get());
+            Optional<IdempotencyKey> existingKey = idempotencyKeyRepository.findByIdempotencyKeyAndUserId(
+                    request.getIdempotencyKey().trim(), currentUser.getId());
+            if (existingKey.isPresent()) {
+                log.info("Idempotent checkout replay detected for key: {}", request.getIdempotencyKey());
+                Optional<Order> matchedOrder = orderRepository.findAll().stream()
+                        .filter(o -> request.getIdempotencyKey().trim().equals(o.getIdempotencyKey()))
+                        .findFirst();
+                if (matchedOrder.isPresent()) {
+                    return mapToDto(matchedOrder.get());
+                }
             }
         }
 
         Cart cart = cartService.getOrCreateUserCart(currentUser);
-
         if (cart.getItems() == null || cart.getItems().isEmpty()) {
             throw new BadRequestException("Your cart is empty. Please add products to place an order.");
         }
@@ -86,95 +92,66 @@ public class OrderService {
         Address address = addressRepository.findByIdAndUserId(request.getAddressId(), currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Address not found with id: " + request.getAddressId()));
 
-        // Assign nearest dark store
+        // Assign nearest active dark store
         DarkStore store = darkStoreRepository.findByIsActiveTrue().stream().findFirst().orElse(null);
         Long storeId = store != null ? store.getId() : null;
 
-        // Validate stock for all items
-        for (CartItem item : cart.getItems()) {
-            Product product = item.getProduct();
-            if (product.getStockQuantity() < item.getQuantity()) {
-                throw new BadRequestException("Insufficient stock for product: " + product.getName() +
-                        ". Available: " + product.getStockQuantity() + ", Requested: " + item.getQuantity());
-            }
-        }
-
-        // Calculate totals server-side (never trusting frontend calculations)
-        BigDecimal itemTotal = BigDecimal.ZERO;
-        for (CartItem item : cart.getItems()) {
-            BigDecimal subtotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
-            itemTotal = itemTotal.add(subtotal);
-        }
-
-        BigDecimal deliveryFee = BigDecimal.ZERO;
-        if (itemTotal.compareTo(BigDecimal.valueOf(freeDeliveryThreshold)) < 0) {
-            deliveryFee = BigDecimal.valueOf(baseDeliveryFee);
-        }
-
-        BigDecimal platformFeeAmount = BigDecimal.valueOf(platformFee);
-        BigDecimal taxAmount = itemTotal.multiply(BigDecimal.valueOf(taxRate)).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal discountAmount = BigDecimal.ZERO;
-        String couponCode = null;
-
+        // Validate active promo coupon if provided
+        Coupon coupon = null;
         if (request.getCouponCode() != null && !request.getCouponCode().isBlank()) {
-            CouponValidationResponse couponResp = couponService.validateCoupon(
-                    new CouponValidationRequest(request.getCouponCode(), itemTotal));
-            if (couponResp.getIsValid()) {
-                discountAmount = couponResp.getDiscountAmount();
-                couponCode = couponResp.getCode();
-
-                // Increment coupon usage
-                couponRepository.findByCodeIgnoreCaseAndIsActiveTrue(couponCode).ifPresent(c -> {
-                    c.setTimesUsed(c.getTimesUsed() + 1);
-                    couponRepository.save(c);
-
-                    CouponUsage usage = CouponUsage.builder()
-                            .coupon(c)
-                            .user(currentUser)
-                            .orderNumber("PENDING")
-                            .discountApplied(couponResp.getDiscountAmount())
-                            .build();
-                    couponUsageRepository.save(usage);
-                });
-            }
+            coupon = couponRepository.findByCodeIgnoreCaseAndIsActiveTrue(request.getCouponCode().trim()).orElse(null);
         }
 
-        BigDecimal tipAmount = request.getTipAmount() != null ? request.getTipAmount() : BigDecimal.ZERO;
-        BigDecimal preWalletTotal = itemTotal.add(deliveryFee).add(platformFeeAmount).add(taxAmount)
-                .add(tipAmount).subtract(discountAmount);
+        // 2. Authoritative Server-Side Pricing Engine
+        PricingCalculation pricing = pricingService.calculate(cart.getItems(), coupon, request.getWalletAmountToRedeem());
 
-        if (preWalletTotal.compareTo(BigDecimal.ZERO) < 0) {
-            preWalletTotal = BigDecimal.ZERO;
-        }
+        BigDecimal tipAmount = request.getTipAmount() != null ? request.getTipAmount().max(BigDecimal.ZERO) : BigDecimal.ZERO;
+        BigDecimal finalTotal = pricing.getFinalPayableAmount().add(tipAmount);
 
         // Generate Order Number
         String orderNumber = "QC" + System.currentTimeMillis() % 100000000;
 
-        // Apply QuickCash Wallet points if requested
-        BigDecimal walletDiscountAmount = BigDecimal.ZERO;
-        if (request.getWalletAmountToRedeem() != null && request.getWalletAmountToRedeem().compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal maxUsable = preWalletTotal;
-            BigDecimal requestedRedeem = request.getWalletAmountToRedeem().min(maxUsable);
-            walletDiscountAmount = walletService.debitForOrder(currentUser, requestedRedeem, orderNumber);
+        // Apply QuickCash Wallet points deduction if calculated
+        BigDecimal walletDeduction = pricing.getWalletDiscount();
+        if (walletDeduction.compareTo(BigDecimal.ZERO) > 0) {
+            walletService.debitForOrder(currentUser, walletDeduction, orderNumber);
         }
 
-        BigDecimal totalAmount = preWalletTotal.subtract(walletDiscountAmount).max(BigDecimal.ZERO);
+        // 3. Transactional Stock Reservation with Pessimistic Locking
+        for (CartItem item : cart.getItems()) {
+            Product product = item.getProduct();
+            inventoryService.reserveStockForOrder(storeId, product.getId(), item.getQuantity(), orderNumber);
+        }
+
+        // Record Coupon Usage
+        if (coupon != null && pricing.getCouponDiscount().compareTo(BigDecimal.ZERO) > 0) {
+            coupon.setTimesUsed(coupon.getTimesUsed() + 1);
+            couponRepository.save(coupon);
+
+            CouponUsage usage = CouponUsage.builder()
+                    .coupon(coupon)
+                    .user(currentUser)
+                    .orderNumber(orderNumber)
+                    .discountApplied(pricing.getCouponDiscount())
+                    .build();
+            couponUsageRepository.save(usage);
+        }
 
         Order order = Order.builder()
                 .orderNumber(orderNumber)
                 .user(currentUser)
                 .address(address)
                 .store(store)
-                .status(OrderStatus.PLACED)
-                .itemTotal(itemTotal)
-                .deliveryFee(deliveryFee)
-                .platformFee(platformFeeAmount)
-                .taxAmount(taxAmount)
-                .discountAmount(discountAmount)
-                .walletDiscountAmount(walletDiscountAmount)
+                .status(OrderStatus.CONFIRMED)
+                .itemTotal(pricing.getItemSubtotal())
+                .deliveryFee(pricing.getDeliveryFee())
+                .platformFee(pricing.getPlatformFee())
+                .taxAmount(pricing.getTaxAmount())
+                .discountAmount(pricing.getCouponDiscount())
+                .walletDiscountAmount(walletDeduction)
                 .tipAmount(tipAmount)
-                .totalAmount(totalAmount)
-                .couponCode(couponCode)
+                .totalAmount(finalTotal)
+                .couponCode(pricing.getAppliedCouponCode())
                 .deliveryInstructions(request.getDeliveryInstructions())
                 .idempotencyKey(request.getIdempotencyKey())
                 .estimatedDeliveryTime(LocalDateTime.now().plusMinutes(15 + (long)(Math.random() * 10)))
@@ -182,17 +159,11 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        // Deduct product stock & reserve in inventory
+        // Create Order Items
         List<OrderItem> orderItems = new ArrayList<>();
         for (CartItem item : cart.getItems()) {
             Product product = item.getProduct();
-            product.setStockQuantity(Math.max(0, product.getStockQuantity() - item.getQuantity()));
-            productRepository.save(product);
-
-            // Reserve in multi-store inventory
-            inventoryService.reserveStockForOrder(storeId, product.getId(), item.getQuantity(), orderNumber);
-
-            BigDecimal lineTotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+            BigDecimal lineTotal = product.getSellingPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
             OrderItem orderItem = new OrderItem(
                     savedOrder,
                     product,
@@ -200,7 +171,7 @@ public class OrderService {
                     product.getImageUrl(),
                     product.getUnitQuantity(),
                     item.getQuantity(),
-                    item.getUnitPrice(),
+                    product.getSellingPrice(),
                     lineTotal
             );
             orderItems.add(orderItem);
@@ -214,7 +185,7 @@ public class OrderService {
                 .transactionId("TXN-" + UUID.randomUUID().toString().substring(0, 12).toUpperCase())
                 .paymentMethod(request.getPaymentMethod())
                 .paymentStatus(request.getPaymentMethod() == PaymentMethod.CASH_ON_DELIVERY ? PaymentStatus.PENDING : PaymentStatus.COMPLETED)
-                .amount(totalAmount)
+                .amount(finalTotal)
                 .currency("INR")
                 .build();
         paymentRepository.save(payment);
@@ -229,19 +200,33 @@ public class OrderService {
             savedOrder.setDeliveryAssignment(assignment);
         }
 
+        // Save idempotency key record if present
+        if (request.getIdempotencyKey() != null && !request.getIdempotencyKey().isBlank()) {
+            idempotencyKeyRepository.save(IdempotencyKey.builder()
+                    .idempotencyKey(request.getIdempotencyKey().trim())
+                    .userId(currentUser.getId())
+                    .requestHash(String.valueOf(request.hashCode()))
+                    .statusCode(200)
+                    .expiresAt(LocalDateTime.now().plusHours(24))
+                    .build());
+        }
+
         // Clear user cart
         cartService.clearCart(currentUser);
 
         OrderResponse response = mapToDto(savedOrder);
 
-        // In-app Notification
-        notificationService.createNotification(
-                currentUser.getId(),
-                "Order Placed Successfully",
-                "Your order #" + orderNumber + " for ₹" + totalAmount + " has been placed!",
-                "ORDER",
-                orderNumber
-        );
+        // 4. Publish Domain Events & Real-time notifications
+        domainEventPublisher.publish(com.quickcart.event.OrderEvents.OrderCreatedEvent.builder()
+                .orderId(savedOrder.getId())
+                .orderNumber(orderNumber)
+                .customerId(currentUser.getId())
+                .customerEmail(currentUser.getEmail())
+                .totalAmount(finalTotal)
+                .paymentMethod(request.getPaymentMethod().name())
+                .itemCount(orderItems.size())
+                .build());
+
         // Broadcast new order creation via WebSocket
         webSocketService.broadcastOrderStatusUpdate(response);
 
@@ -298,8 +283,11 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
 
         OrderStatus oldStatus = order.getStatus();
-        order.setStatus(newStatus);
+        if (oldStatus != null && !oldStatus.canTransitionTo(newStatus)) {
+            throw new BadRequestException("Illegal order state transition from " + oldStatus + " to " + newStatus);
+        }
 
+        order.setStatus(newStatus);
         Long storeId = order.getStore() != null ? order.getStore().getId() : null;
 
         if (newStatus == OrderStatus.DELIVERED) {
@@ -321,6 +309,13 @@ public class OrderService {
 
             // Credit 5% loyalty cashback to customer wallet
             walletService.creditCashbackForOrder(order.getUser(), order);
+
+            domainEventPublisher.publish(com.quickcart.event.OrderEvents.OrderDeliveredEvent.builder()
+                    .orderId(order.getId())
+                    .orderNumber(order.getOrderNumber())
+                    .customerId(order.getUser().getId())
+                    .partnerId(order.getDeliveryAssignment() != null && order.getDeliveryAssignment().getPartner() != null ? order.getDeliveryAssignment().getPartner().getId() : null)
+                    .build());
 
             notificationService.createNotification(
                     order.getUser().getId(),
