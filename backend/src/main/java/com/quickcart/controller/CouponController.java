@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/coupons")
+@RequestMapping({"/api/v1/coupons", "/api/coupons"})
 @RequiredArgsConstructor
 @Tag(name = "Coupons", description = "Endpoints for available coupons and discount validation")
 public class CouponController {

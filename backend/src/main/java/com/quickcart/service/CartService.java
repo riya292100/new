@@ -52,14 +52,14 @@ public class CartService {
     }
 
     public CartResponse getCart() {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         Cart cart = getOrCreateUserCart(currentUser);
         return buildCartResponse(cart);
     }
 
     @Transactional
     public CartResponse addToCart(AddToCartRequest request) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         Cart cart = getOrCreateUserCart(currentUser);
 
         Product product = productRepository.findById(request.getProductId())
@@ -94,7 +94,7 @@ public class CartService {
 
     @Transactional
     public CartResponse updateCartItemQuantity(Long itemId, UpdateCartItemRequest request) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         Cart cart = getOrCreateUserCart(currentUser);
 
         CartItem item = cartItemRepository.findById(itemId)
@@ -122,7 +122,7 @@ public class CartService {
 
     @Transactional
     public CartResponse removeCartItem(Long itemId) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         Cart cart = getOrCreateUserCart(currentUser);
 
         CartItem item = cartItemRepository.findById(itemId)

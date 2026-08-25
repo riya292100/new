@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping({"/api/v1/admin", "/api/admin"})
 @RequiredArgsConstructor
 @Tag(name = "Admin", description = "Endpoints for platform management, analytics, inventory, and order dispatch")
 public class AdminController {

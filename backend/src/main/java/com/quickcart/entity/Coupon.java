@@ -2,6 +2,7 @@ package com.quickcart.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "coupons")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Coupon {
@@ -34,20 +36,28 @@ public class Coupon {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal discountValue;
 
+    @Builder.Default
     @Column(precision = 10, scale = 2)
     private BigDecimal minOrderValue = BigDecimal.ZERO;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal maxDiscountAmount;
 
+    @Builder.Default
     private LocalDateTime validFrom = LocalDateTime.now();
 
     private LocalDateTime validUntil;
 
+    @Builder.Default
     private Integer usageLimit = 10000;
 
+    @Builder.Default
+    private Integer perUserLimit = 1;
+
+    @Builder.Default
     private Integer timesUsed = 0;
 
+    @Builder.Default
     private Boolean isActive = true;
 
     @CreationTimestamp

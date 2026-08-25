@@ -3,6 +3,7 @@ package com.quickcart.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
@@ -38,28 +40,40 @@ public class Order {
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private DarkStore store;
+
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private OrderStatus status = OrderStatus.ORDER_PLACED;
+    private OrderStatus status = OrderStatus.PLACED;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal itemTotal;
 
+    @Builder.Default
     @Column(precision = 10, scale = 2)
     private BigDecimal deliveryFee = BigDecimal.ZERO;
 
+    @Builder.Default
     @Column(precision = 10, scale = 2)
     private BigDecimal platformFee = BigDecimal.valueOf(5.0);
 
+    @Builder.Default
     @Column(precision = 10, scale = 2)
     private BigDecimal taxAmount = BigDecimal.ZERO;
 
+    @Builder.Default
     @Column(precision = 10, scale = 2)
     private BigDecimal discountAmount = BigDecimal.ZERO;
 
+    @Builder.Default
     @Column(precision = 10, scale = 2)
     private BigDecimal walletDiscountAmount = BigDecimal.ZERO;
 
+    @Builder.Default
     @Column(precision = 10, scale = 2)
     private BigDecimal tipAmount = BigDecimal.ZERO;
 
@@ -72,10 +86,14 @@ public class Order {
     @Column(columnDefinition = "TEXT")
     private String deliveryInstructions;
 
+    @Column(length = 100, unique = true)
+    private String idempotencyKey;
+
     private LocalDateTime estimatedDeliveryTime;
 
     private LocalDateTime deliveredAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 

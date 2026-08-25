@@ -89,7 +89,7 @@ public class DiningController {
     @PostMapping("/bookings")
     @Operation(summary = "Book a table reservation at a dining partner (Authenticated)")
     public ResponseEntity<ApiResponse<BookingResponseDto>> createBooking(@Valid @RequestBody CreateBookingRequest request) {
-        User user = authService.getCurrentAuthenticatedUser();
+        com.quickcart.security.UserDetailsImpl user = authService.getCurrentAuthenticatedUser();
         BookingResponseDto booking = bookingService.createBooking(request, user.getId());
         return ResponseEntity.ok(ApiResponse.success("Table reservation confirmed successfully", booking));
     }
@@ -97,7 +97,7 @@ public class DiningController {
     @GetMapping("/bookings/my-bookings")
     @Operation(summary = "Get all table reservations for the current authenticated user")
     public ResponseEntity<ApiResponse<List<BookingResponseDto>>> getMyBookings() {
-        User user = authService.getCurrentAuthenticatedUser();
+        com.quickcart.security.UserDetailsImpl user = authService.getCurrentAuthenticatedUser();
         List<BookingResponseDto> bookings = bookingService.getUserBookings(user.getId());
         return ResponseEntity.ok(ApiResponse.success(bookings));
     }
@@ -105,7 +105,7 @@ public class DiningController {
     @GetMapping("/bookings/ref/{reference}")
     @Operation(summary = "Get reservation details by booking reference code")
     public ResponseEntity<ApiResponse<BookingResponseDto>> getBookingByReference(@PathVariable String reference) {
-        User user = authService.getCurrentAuthenticatedUser();
+        com.quickcart.security.UserDetailsImpl user = authService.getCurrentAuthenticatedUser();
         BookingResponseDto booking = bookingService.getBookingByReference(reference, user.getId());
         return ResponseEntity.ok(ApiResponse.success(booking));
     }
@@ -113,7 +113,7 @@ public class DiningController {
     @PutMapping("/bookings/{id}/cancel")
     @Operation(summary = "Cancel an existing table reservation (Authenticated)")
     public ResponseEntity<ApiResponse<BookingResponseDto>> cancelBooking(@PathVariable Long id) {
-        User user = authService.getCurrentAuthenticatedUser();
+        com.quickcart.security.UserDetailsImpl user = authService.getCurrentAuthenticatedUser();
         BookingResponseDto cancelled = bookingService.cancelBooking(id, user.getId());
         return ResponseEntity.ok(ApiResponse.success("Reservation cancelled successfully", cancelled));
     }
@@ -134,7 +134,7 @@ public class DiningController {
     public ResponseEntity<ApiResponse<RestaurantReviewDto>> submitRestaurantReview(
             @Valid @RequestBody CreateRestaurantReviewRequest request
     ) {
-        User user = authService.getCurrentAuthenticatedUser();
+        com.quickcart.security.UserDetailsImpl user = authService.getCurrentAuthenticatedUser();
         RestaurantReviewDto review = reviewService.addReview(request, user.getId());
         return ResponseEntity.ok(ApiResponse.success("Review posted successfully", review));
     }
@@ -146,7 +146,7 @@ public class DiningController {
     @GetMapping("/favorites")
     @Operation(summary = "Get user's favorite dining spots (Authenticated)")
     public ResponseEntity<ApiResponse<List<RestaurantDto>>> getFavoriteRestaurants() {
-        User user = authService.getCurrentAuthenticatedUser();
+        com.quickcart.security.UserDetailsImpl user = authService.getCurrentAuthenticatedUser();
         List<RestaurantDto> favorites = favoriteService.getUserFavorites(user.getId());
         return ResponseEntity.ok(ApiResponse.success(favorites));
     }
@@ -154,7 +154,7 @@ public class DiningController {
     @PostMapping("/favorites/{restaurantId}/toggle")
     @Operation(summary = "Toggle favorite status for a restaurant (Authenticated)")
     public ResponseEntity<ApiResponse<Boolean>> toggleFavorite(@PathVariable Long restaurantId) {
-        User user = authService.getCurrentAuthenticatedUser();
+        com.quickcart.security.UserDetailsImpl user = authService.getCurrentAuthenticatedUser();
         boolean isFav = favoriteService.toggleFavorite(restaurantId, user.getId());
         String msg = isFav ? "Added to favorite dining spots" : "Removed from favorites";
         return ResponseEntity.ok(ApiResponse.success(msg, isFav));

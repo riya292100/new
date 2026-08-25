@@ -79,7 +79,7 @@ class CartServiceTest {
 
     @Test
     void testAddToCart_NewItem_Success() {
-        when(authService.getCurrentAuthenticatedUser()).thenReturn(mockUser);
+        when(authService.getCurrentUserEntity()).thenReturn(mockUser);
         when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(mockCart));
         when(productRepository.findById(100L)).thenReturn(Optional.of(mockProduct));
         when(cartItemRepository.findByCartIdAndProductId(10L, 100L)).thenReturn(Optional.empty());
@@ -93,7 +93,7 @@ class CartServiceTest {
 
     @Test
     void testAddToCart_ProductNotFound() {
-        when(authService.getCurrentAuthenticatedUser()).thenReturn(mockUser);
+        when(authService.getCurrentUserEntity()).thenReturn(mockUser);
         when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(mockCart));
         when(productRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -103,7 +103,7 @@ class CartServiceTest {
 
     @Test
     void testAddToCart_ExceedsStock() {
-        when(authService.getCurrentAuthenticatedUser()).thenReturn(mockUser);
+        when(authService.getCurrentUserEntity()).thenReturn(mockUser);
         when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(mockCart));
         when(productRepository.findById(100L)).thenReturn(Optional.of(mockProduct));
 

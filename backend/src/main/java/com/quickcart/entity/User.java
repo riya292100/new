@@ -48,6 +48,10 @@ public class User {
     private Boolean isActive = true;
 
     @Builder.Default
+    @Column(nullable = false)
+    private Boolean isVerified = true;
+
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -69,5 +73,6 @@ public class User {
         this.phone = phone;
         this.passwordHash = passwordHash;
         this.isActive = true;
+        this.isVerified = true;
     }
 }

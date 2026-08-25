@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping({"/api/v1/products", "/api/products"})
 @RequiredArgsConstructor
 @Tag(name = "Products", description = "Endpoints for product search, filtering, and recommendations")
 public class ProductController {

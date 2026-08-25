@@ -29,7 +29,7 @@ public class WalletController {
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<WalletResponse>> getMyWallet() {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         WalletResponse wallet = walletService.getWallet(currentUser);
         return ResponseEntity.ok(ApiResponse.success(wallet));
     }
@@ -40,7 +40,7 @@ public class WalletController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         Pageable pageable = PageRequest.of(page, size);
         Page<WalletTransactionDto> transactions = walletService.getTransactions(currentUser, pageable);
         return ResponseEntity.ok(ApiResponse.success(transactions));
@@ -51,7 +51,7 @@ public class WalletController {
     public ResponseEntity<ApiResponse<Map<String, Object>>> previewRedemption(
             @Valid @RequestBody WalletRedeemRequest request
     ) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         WalletResponse wallet = walletService.getWallet(currentUser);
 
         BigDecimal availableBalance = wallet.getBalance() != null ? wallet.getBalance() : BigDecimal.ZERO;
@@ -78,7 +78,7 @@ public class WalletController {
     public ResponseEntity<ApiResponse<WalletResponse>> addDemoFunds(
             @Valid @RequestBody WalletAddFundsRequest request
     ) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         WalletResponse updatedWallet = walletService.addFunds(
                 currentUser,
                 request.getAmount(),

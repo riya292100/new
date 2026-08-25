@@ -1,14 +1,7 @@
 package com.quickcart.service;
 
-import com.quickcart.dto.AuthResponse;
-import com.quickcart.dto.LoginRequest;
-import com.quickcart.dto.SignupRequest;
-import com.quickcart.dto.UserResponse;
-import com.quickcart.entity.Cart;
-import com.quickcart.entity.DeliveryPartner;
-import com.quickcart.entity.ERole;
-import com.quickcart.entity.Role;
-import com.quickcart.entity.User;
+import com.quickcart.dto.*;
+import com.quickcart.entity.*;
 import com.quickcart.exception.BadRequestException;
 import com.quickcart.exception.ResourceNotFoundException;
 import com.quickcart.repository.CartRepository;
@@ -41,6 +34,7 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final CartRepository cartRepository;
     private final DeliveryPartnerRepository deliveryPartnerRepository;
+    private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
 
@@ -56,8 +50,11 @@ public class AuthService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
         return new AuthResponse(
                 jwt,
+                refreshToken.getToken(),
                 userDetails.getId(),
                 userDetails.getFullName(),
                 userDetails.getEmail(),
@@ -103,10 +100,15 @@ public class AuthService {
                         break;
                     case "delivery_partner":
                     case "driver":
-                    case "rider":
-                        Role deliveryRole = roleRepository.findByName(ERole.ROLE_DELIVERY_PARTNER)
+                        Role driverRole = roleRepository.findByName(ERole.ROLE_DELIVERY_PARTNER)
                                 .orElseThrow(() -> new ResourceNotFoundException("Error: Role ROLE_DELIVERY_PARTNER is not found."));
-                        roles.add(deliveryRole);
+                        roles.add(driverRole);
+                        break;
+                    case "store_manager":
+                    case "manager":
+                        Role managerRole = roleRepository.findByName(ERole.ROLE_STORE_MANAGER)
+                                .orElseThrow(() -> new ResourceNotFoundException("Error: Role ROLE_STORE_MANAGER is not found."));
+                        roles.add(managerRole);
                         break;
                     default:
                         Role customerRole = roleRepository.findByName(ERole.ROLE_CUSTOMER)
@@ -119,56 +121,108 @@ public class AuthService {
         user.setRoles(roles);
         User savedUser = userRepository.save(user);
 
-        // If Customer role, create their shopping cart
-        boolean isCustomer = roles.stream().anyMatch(r -> r.getName() == ERole.ROLE_CUSTOMER);
-        if (isCustomer) {
-            Cart cart = new Cart(savedUser);
-            cartRepository.save(cart);
-        }
+        // Auto-create persistent empty cart for customer
+        Cart cart = new Cart();
+        cart.setUser(savedUser);
+        cartRepository.save(cart);
 
-        // If Delivery partner, create delivery partner record
-        boolean isDelivery = roles.stream().anyMatch(r -> r.getName() == ERole.ROLE_DELIVERY_PARTNER);
-        if (isDelivery) {
-            DeliveryPartner partner = new DeliveryPartner(savedUser, "ELECTRIC_SCOOTER", "QC-DL-" + (1000 + savedUser.getId()));
+        // If driver role, create DeliveryPartner entity
+        boolean isDriver = roles.stream().anyMatch(r -> r.getName() == ERole.ROLE_DELIVERY_PARTNER);
+        if (isDriver) {
+            DeliveryPartner partner = new DeliveryPartner();
+            partner.setUser(savedUser);
+            partner.setVehicleType("ELECTRIC_SCOOTER");
+            partner.setVehicleNumber("KA-01-QC-" + (1000 + (int)(Math.random() * 9000)));
             deliveryPartnerRepository.save(partner);
         }
 
-        // Auto authenticate after signup
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, signupRequest.getPassword()));
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        List<String> roleList = roles.stream()
+        List<String> roleNames = roles.stream()
                 .map(r -> r.getName().name())
                 .collect(Collectors.toList());
 
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(savedUser.getId());
+
         return new AuthResponse(
                 jwt,
+                refreshToken.getToken(),
                 savedUser.getId(),
                 savedUser.getFullName(),
                 savedUser.getEmail(),
                 savedUser.getPhone(),
                 savedUser.getAvatarUrl(),
-                roleList
+                roleNames
         );
     }
 
-    public User getCurrentAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetailsImpl)) {
-            throw new BadRequestException("No authenticated user found in session.");
+    public TokenRefreshResponse refreshToken(TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwtUtils.generateTokenFromUsername(user.getEmail());
+                    return new TokenRefreshResponse(token, requestRefreshToken);
+                })
+                .orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
+    }
+
+    @Transactional
+    public void logoutUser() {
+        UserDetailsImpl userDetails = getCurrentAuthenticatedUser();
+        if (userDetails != null) {
+            refreshTokenService.deleteByUserId(userDetails.getId());
         }
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+    }
+
+    @Transactional
+    public void resetPassword(PasswordResetRequest request) {
+        User user = userRepository.findByEmail(request.getEmail().trim().toLowerCase())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + request.getEmail()));
+
+        if (request.getNewPassword() == null || request.getNewPassword().length() < 6) {
+            throw new BadRequestException("New password must be at least 6 characters");
+        }
+
+        user.setPasswordHash(encoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        refreshTokenService.deleteByUserId(user.getId());
+    }
+
+    public UserDetailsImpl getCurrentAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+            return null;
+        }
+        return (UserDetailsImpl) authentication.getPrincipal();
+    }
+
+    public User getCurrentUserEntity() {
+        UserDetailsImpl userDetails = getCurrentAuthenticatedUser();
+        if (userDetails == null) {
+            throw new BadRequestException("User is not authenticated");
+        }
         return userRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userDetails.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    public UserResponse getUserProfile() {
+        User user = getCurrentUserEntity();
+        return mapUserToProfile(user);
     }
 
     public UserResponse getUserProfile(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        return mapUserToProfile(user);
+    }
 
+    private UserResponse mapUserToProfile(User user) {
         List<String> roles = user.getRoles().stream()
                 .map(r -> r.getName().name())
                 .collect(Collectors.toList());
@@ -179,7 +233,6 @@ public class AuthService {
                 user.getEmail(),
                 user.getPhone(),
                 user.getAvatarUrl(),
-                user.getIsActive(),
                 roles,
                 user.getCreatedAt()
         );

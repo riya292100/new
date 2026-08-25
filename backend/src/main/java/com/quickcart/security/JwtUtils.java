@@ -41,6 +41,15 @@ public class JwtUtils {
                 .compact();
     }
 
+    public String generateTokenFromUsername(String username) {
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(key(), Jwts.SIG.HS256)
+                .compact();
+    }
+
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser()
                 .verifyWith(key())

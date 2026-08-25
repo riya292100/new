@@ -73,7 +73,7 @@ class WalletControllerTest {
                 .recentTransactions(new ArrayList<>())
                 .build();
 
-        when(authService.getCurrentAuthenticatedUser()).thenReturn(mockUser);
+        when(authService.getCurrentUserEntity()).thenReturn(mockUser);
     }
 
     @Test

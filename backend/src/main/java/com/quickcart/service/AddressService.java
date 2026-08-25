@@ -21,14 +21,14 @@ public class AddressService {
     private final AuthService authService;
 
     public List<AddressDto> getUserAddresses() {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         return addressRepository.findByUserIdOrderByIsDefaultDescCreatedAtDesc(currentUser.getId()).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public AddressDto getAddressById(Long id) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         Address address = addressRepository.findByIdAndUserId(id, currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Address not found with id: " + id));
         return mapToDto(address);
@@ -36,7 +36,7 @@ public class AddressService {
 
     @Transactional
     public AddressDto createAddress(AddressDto dto) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
 
         // If setting this as default, unset previous default
         if (Boolean.TRUE.equals(dto.getIsDefault())) {
@@ -72,7 +72,7 @@ public class AddressService {
 
     @Transactional
     public AddressDto updateAddress(Long id, AddressDto dto) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         Address address = addressRepository.findByIdAndUserId(id, currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Address not found with id: " + id));
 
@@ -101,7 +101,7 @@ public class AddressService {
 
     @Transactional
     public void deleteAddress(Long id) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         Address address = addressRepository.findByIdAndUserId(id, currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Address not found with id: " + id));
         addressRepository.delete(address);

@@ -82,12 +82,13 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Public Endpoints
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/health/**", "/api/health/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/coupons/active").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/reviews/product/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/v1/auth/**").permitAll()
+                        .requestMatchers("/health/**", "/api/health/**", "/api/v1/health/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/v1/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categories/**", "/api/v1/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/brands/**", "/api/v1/brands/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/coupons/active", "/api/v1/coupons/active").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/product/**", "/api/v1/reviews/product/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/dining/restaurants/**", "/api/dining/cuisines", "/api/dining/cities").permitAll()
                         .requestMatchers("/ws-quickcart/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
@@ -95,9 +96,20 @@ public class WebSecurityConfig {
                         .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                         // Role-Based Endpoints
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/delivery/**").hasAnyRole("DELIVERY_PARTNER", "ADMIN")
-                        .requestMatchers("/api/customer/**", "/api/cart/**", "/api/orders/**", "/api/addresses/**", "/api/payments/**", "/api/coupons/validate", "/api/wallet/**", "/api/dining/bookings/**", "/api/dining/reviews/**", "/api/dining/favorites/**").authenticated()
+                        .requestMatchers("/api/admin/**", "/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/inventory/**", "/api/v1/inventory/**").hasAnyRole("ADMIN", "STORE_MANAGER")
+                        .requestMatchers("/api/delivery/**", "/api/v1/delivery/**").hasAnyRole("DELIVERY_PARTNER", "ADMIN")
+                        .requestMatchers(
+                                "/api/customer/**", "/api/v1/customer/**",
+                                "/api/cart/**", "/api/v1/cart/**",
+                                "/api/orders/**", "/api/v1/orders/**",
+                                "/api/addresses/**", "/api/v1/addresses/**",
+                                "/api/payments/**", "/api/v1/payments/**",
+                                "/api/coupons/validate", "/api/v1/coupons/validate",
+                                "/api/wallet/**", "/api/v1/wallet/**",
+                                "/api/notifications/**", "/api/v1/notifications/**",
+                                "/api/dining/bookings/**", "/api/dining/reviews/**", "/api/dining/favorites/**"
+                        ).authenticated()
 
                         .anyRequest().authenticated()
                 );

@@ -3,6 +3,7 @@ package com.quickcart.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Table(name = "payments")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Payment {
@@ -36,6 +38,7 @@ public class Payment {
     @Column(nullable = false, length = 50)
     private PaymentMethod paymentMethod;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
@@ -43,8 +46,18 @@ public class Payment {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
+    @Builder.Default
     @Column(length = 10)
     private String currency = "INR";
+
+    @Column(length = 100)
+    private String gatewayOrderId;
+
+    @Column(length = 255)
+    private String gatewaySignature;
+
+    @Column(columnDefinition = "TEXT")
+    private String errorMessage;
 
     @Column(columnDefinition = "TEXT")
     private String paymentResponse;

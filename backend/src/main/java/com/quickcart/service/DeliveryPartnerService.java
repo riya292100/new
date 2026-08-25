@@ -28,7 +28,7 @@ public class DeliveryPartnerService {
     private final OrderTrackingWebSocketService webSocketService;
 
     public DeliveryPartner getCurrentPartner() {
-        User user = authService.getCurrentAuthenticatedUser();
+        com.quickcart.security.UserDetailsImpl user = authService.getCurrentAuthenticatedUser();
         return deliveryPartnerRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Delivery partner profile not found for user: " + user.getId()));
     }

@@ -54,6 +54,9 @@ class AuthServiceTest {
     private JwtUtils jwtUtils;
 
     @Mock
+    private RefreshTokenService refreshTokenService;
+
+    @Mock
     private Authentication authentication;
 
     @InjectMocks
@@ -82,6 +85,7 @@ class AuthServiceTest {
         when(roleRepository.findByName(ERole.ROLE_CUSTOMER)).thenReturn(Optional.of(customerRole));
         when(authenticationManager.authenticate(any())).thenReturn(authentication);
         when(jwtUtils.generateJwtToken(authentication)).thenReturn("mock-jwt-token");
+        when(refreshTokenService.createRefreshToken(any())).thenReturn(com.quickcart.entity.RefreshToken.builder().token("mock-refresh-token").build());
 
         User savedUser = new User("John Doe", "john@example.com", "9876543210", "encodedPassword");
         savedUser.setId(1L);

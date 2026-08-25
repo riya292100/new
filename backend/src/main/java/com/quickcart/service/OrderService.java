@@ -6,6 +6,7 @@ import com.quickcart.exception.BadRequestException;
 import com.quickcart.exception.ResourceNotFoundException;
 import com.quickcart.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -32,14 +34,18 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final PaymentRepository paymentRepository;
     private final CouponRepository couponRepository;
+    private final CouponUsageRepository couponUsageRepository;
     private final DeliveryPartnerRepository deliveryPartnerRepository;
     private final DeliveryAssignmentRepository deliveryAssignmentRepository;
+    private final DarkStoreRepository darkStoreRepository;
     private final CartService cartService;
     private final CouponService couponService;
     private final AuthService authService;
-    private final AddressService addressService;
     private final OrderTrackingWebSocketService webSocketService;
     private final WalletService walletService;
+    private final InventoryService inventoryService;
+    private final NotificationService notificationService;
+    private final PaymentGatewayService paymentGatewayService;
 
     @Value("${quickcart.app.freeDeliveryThreshold:199.0}")
     private double freeDeliveryThreshold;
@@ -55,7 +61,22 @@ public class OrderService {
 
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
+        if (currentUser == null) {
+            throw new BadRequestException("User must be authenticated to place an order");
+        }
+
+        // Idempotency check
+        if (request.getIdempotencyKey() != null && !request.getIdempotencyKey().isBlank()) {
+            Optional<Order> existingOrder = orderRepository.findAll().stream()
+                    .filter(o -> request.getIdempotencyKey().equals(o.getIdempotencyKey()))
+                    .findFirst();
+            if (existingOrder.isPresent()) {
+                log.info("Idempotent order request detected. Returning existing order #{}", existingOrder.get().getOrderNumber());
+                return mapToDto(existingOrder.get());
+            }
+        }
+
         Cart cart = cartService.getOrCreateUserCart(currentUser);
 
         if (cart.getItems() == null || cart.getItems().isEmpty()) {
@@ -64,6 +85,10 @@ public class OrderService {
 
         Address address = addressRepository.findByIdAndUserId(request.getAddressId(), currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Address not found with id: " + request.getAddressId()));
+
+        // Assign nearest dark store
+        DarkStore store = darkStoreRepository.findByIsActiveTrue().stream().findFirst().orElse(null);
+        Long storeId = store != null ? store.getId() : null;
 
         // Validate stock for all items
         for (CartItem item : cart.getItems()) {
@@ -74,7 +99,7 @@ public class OrderService {
             }
         }
 
-        // Calculate totals
+        // Calculate totals server-side (never trusting frontend calculations)
         BigDecimal itemTotal = BigDecimal.ZERO;
         for (CartItem item : cart.getItems()) {
             BigDecimal subtotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
@@ -102,6 +127,14 @@ public class OrderService {
                 couponRepository.findByCodeIgnoreCaseAndIsActiveTrue(couponCode).ifPresent(c -> {
                     c.setTimesUsed(c.getTimesUsed() + 1);
                     couponRepository.save(c);
+
+                    CouponUsage usage = CouponUsage.builder()
+                            .coupon(c)
+                            .user(currentUser)
+                            .orderNumber("PENDING")
+                            .discountApplied(couponResp.getDiscountAmount())
+                            .build();
+                    couponUsageRepository.save(usage);
                 });
             }
         }
@@ -127,31 +160,37 @@ public class OrderService {
 
         BigDecimal totalAmount = preWalletTotal.subtract(walletDiscountAmount).max(BigDecimal.ZERO);
 
-        Order order = new Order();
-        order.setOrderNumber(orderNumber);
-        order.setUser(currentUser);
-        order.setAddress(address);
-        order.setStatus(OrderStatus.ORDER_PLACED);
-        order.setItemTotal(itemTotal);
-        order.setDeliveryFee(deliveryFee);
-        order.setPlatformFee(platformFeeAmount);
-        order.setTaxAmount(taxAmount);
-        order.setDiscountAmount(discountAmount);
-        order.setWalletDiscountAmount(walletDiscountAmount);
-        order.setTipAmount(tipAmount);
-        order.setTotalAmount(totalAmount);
-        order.setCouponCode(couponCode);
-        order.setDeliveryInstructions(request.getDeliveryInstructions());
-        order.setEstimatedDeliveryTime(LocalDateTime.now().plusMinutes(15 + (long)(Math.random() * 10)));
+        Order order = Order.builder()
+                .orderNumber(orderNumber)
+                .user(currentUser)
+                .address(address)
+                .store(store)
+                .status(OrderStatus.PLACED)
+                .itemTotal(itemTotal)
+                .deliveryFee(deliveryFee)
+                .platformFee(platformFeeAmount)
+                .taxAmount(taxAmount)
+                .discountAmount(discountAmount)
+                .walletDiscountAmount(walletDiscountAmount)
+                .tipAmount(tipAmount)
+                .totalAmount(totalAmount)
+                .couponCode(couponCode)
+                .deliveryInstructions(request.getDeliveryInstructions())
+                .idempotencyKey(request.getIdempotencyKey())
+                .estimatedDeliveryTime(LocalDateTime.now().plusMinutes(15 + (long)(Math.random() * 10)))
+                .build();
 
         Order savedOrder = orderRepository.save(order);
 
-        // Deduct product stock & create OrderItems
+        // Deduct product stock & reserve in inventory
         List<OrderItem> orderItems = new ArrayList<>();
         for (CartItem item : cart.getItems()) {
             Product product = item.getProduct();
-            product.setStockQuantity(product.getStockQuantity() - item.getQuantity());
+            product.setStockQuantity(Math.max(0, product.getStockQuantity() - item.getQuantity()));
             productRepository.save(product);
+
+            // Reserve in multi-store inventory
+            inventoryService.reserveStockForOrder(storeId, product.getId(), item.getQuantity(), orderNumber);
 
             BigDecimal lineTotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
             OrderItem orderItem = new OrderItem(
@@ -170,13 +209,14 @@ public class OrderService {
         savedOrder.setItems(orderItems);
 
         // Create Payment record
-        Payment payment = new Payment();
-        payment.setOrder(savedOrder);
-        payment.setTransactionId("TXN-" + UUID.randomUUID().toString().substring(0, 12).toUpperCase());
-        payment.setPaymentMethod(request.getPaymentMethod());
-        payment.setPaymentStatus(request.getPaymentMethod() == PaymentMethod.CASH_ON_DELIVERY ? PaymentStatus.PENDING : PaymentStatus.COMPLETED);
-        payment.setAmount(totalAmount);
-        payment.setCurrency("INR");
+        Payment payment = Payment.builder()
+                .order(savedOrder)
+                .transactionId("TXN-" + UUID.randomUUID().toString().substring(0, 12).toUpperCase())
+                .paymentMethod(request.getPaymentMethod())
+                .paymentStatus(request.getPaymentMethod() == PaymentMethod.CASH_ON_DELIVERY ? PaymentStatus.PENDING : PaymentStatus.COMPLETED)
+                .amount(totalAmount)
+                .currency("INR")
+                .build();
         paymentRepository.save(payment);
         savedOrder.setPayment(payment);
 
@@ -194,6 +234,14 @@ public class OrderService {
 
         OrderResponse response = mapToDto(savedOrder);
 
+        // In-app Notification
+        notificationService.createNotification(
+                currentUser.getId(),
+                "Order Placed Successfully",
+                "Your order #" + orderNumber + " for ₹" + totalAmount + " has been placed!",
+                "ORDER",
+                orderNumber
+        );
         // Broadcast new order creation via WebSocket
         webSocketService.broadcastOrderStatusUpdate(response);
 
@@ -201,32 +249,41 @@ public class OrderService {
     }
 
     public List<OrderResponse> getUserOrders() {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         return orderRepository.findByUserIdOrderByCreatedAtDesc(currentUser.getId()).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public Page<OrderResponse> getUserOrdersPaged(int page, int size) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         Pageable pageable = PageRequest.of(page, size);
         return orderRepository.findByUserIdOrderByCreatedAtDesc(currentUser.getId(), pageable)
                 .map(this::mapToDto);
     }
 
     public OrderResponse getOrderById(Long id) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        User currentUser = authService.getCurrentUserEntity();
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
 
         boolean isAuthorized = order.getUser().getId().equals(currentUser.getId()) ||
-                currentUser.getRoles().stream().anyMatch(r -> r.getName() == ERole.ROLE_ADMIN || r.getName() == ERole.ROLE_DELIVERY_PARTNER);
+                currentUser.getRoles().stream().anyMatch(r ->
+                        r.getName() == ERole.ROLE_ADMIN ||
+                        r.getName() == ERole.ROLE_STORE_MANAGER ||
+                        r.getName() == ERole.ROLE_DELIVERY_PARTNER);
 
         if (!isAuthorized) {
             throw new BadRequestException("Unauthorized access to this order.");
         }
 
         return mapToDto(order);
+    }
+
+    public List<OrderResponse> getAllOrdersAdmin() {
+        return orderRepository.findAll(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt")).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 
     public OrderResponse getOrderByOrderNumber(String orderNumber) {
@@ -240,7 +297,11 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
 
+        OrderStatus oldStatus = order.getStatus();
         order.setStatus(newStatus);
+
+        Long storeId = order.getStore() != null ? order.getStore().getId() : null;
+
         if (newStatus == OrderStatus.DELIVERED) {
             order.setDeliveredAt(LocalDateTime.now());
             if (order.getPayment() != null) {
@@ -249,28 +310,77 @@ public class OrderService {
             if (order.getDeliveryAssignment() != null) {
                 order.getDeliveryAssignment().setStatus("DELIVERED");
                 order.getDeliveryAssignment().setDeliveredAt(LocalDateTime.now());
-                DeliveryPartner partner = order.getDeliveryAssignment().getPartner();
-                if (partner != null) {
-                    partner.setTotalDeliveries(partner.getTotalDeliveries() + 1);
-                    deliveryPartnerRepository.save(partner);
+            }
+
+            // Commit deduction for inventory
+            for (OrderItem item : order.getItems()) {
+                if (item.getProduct() != null) {
+                    inventoryService.commitDeductionForOrder(storeId, item.getProduct().getId(), item.getQuantity(), order.getOrderNumber());
                 }
             }
-            // Auto credit 5% cashback to user wallet
+
+            // Credit 5% loyalty cashback to customer wallet
             walletService.creditCashbackForOrder(order.getUser(), order);
+
+            notificationService.createNotification(
+                    order.getUser().getId(),
+                    "Order Delivered!",
+                    "Order #" + order.getOrderNumber() + " was delivered. Enjoy your groceries!",
+                    "ORDER",
+                    order.getOrderNumber()
+            );
+        } else if (newStatus == OrderStatus.CANCELLED) {
+            // Restore product stock and release inventory reservation
+            for (OrderItem item : order.getItems()) {
+                if (item.getProduct() != null) {
+                    inventoryService.releaseReservedStock(storeId, item.getProduct().getId(), item.getQuantity(), order.getOrderNumber());
+                    Product p = item.getProduct();
+                    p.setStockQuantity(p.getStockQuantity() + item.getQuantity());
+                    productRepository.save(p);
+                }
+            }
+
+            // Refund wallet deduction if any
+            if (order.getWalletDiscountAmount() != null && order.getWalletDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+                walletService.refundForOrder(order.getUser(), order.getWalletDiscountAmount(), order.getOrderNumber());
+            }
+
+            // Refund payment if paid via online gateway
+            if (order.getPayment() != null && order.getPayment().getPaymentStatus() == PaymentStatus.COMPLETED) {
+                paymentGatewayService.initiateRefund(order.getOrderNumber(), order.getTotalAmount(), "Order cancelled");
+            }
+
+            if (order.getDeliveryAssignment() != null) {
+                order.getDeliveryAssignment().setStatus("CANCELLED");
+            }
+
+            notificationService.createNotification(
+                    order.getUser().getId(),
+                    "Order Cancelled",
+                    "Order #" + order.getOrderNumber() + " has been cancelled.",
+                    "ORDER",
+                    order.getOrderNumber()
+            );
         }
 
-        Order saved = orderRepository.save(order);
-        OrderResponse response = mapToDto(saved);
+        Order updatedOrder = orderRepository.save(order);
+        OrderResponse response = mapToDto(updatedOrder);
 
-        // Broadcast to live client WebSocket subscribers
+        // Broadcast order status change
         webSocketService.broadcastOrderStatusUpdate(response);
 
+        log.info("Order #{} state transitioned from {} to {}", order.getOrderNumber(), oldStatus, newStatus);
         return response;
     }
 
     @Transactional
     public OrderResponse cancelOrder(Long orderId) {
-        User currentUser = authService.getCurrentAuthenticatedUser();
+        return cancelOrder(orderId, "Cancelled by user");
+    }
+
+    @Transactional
+    public OrderResponse cancelOrder(Long orderId, String reason) {
+        User currentUser = authService.getCurrentUserEntity();
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
 
@@ -279,74 +389,59 @@ public class OrderService {
             throw new BadRequestException("Unauthorized to cancel this order.");
         }
 
-        if (order.getStatus() == OrderStatus.OUT_FOR_DELIVERY || order.getStatus() == OrderStatus.DELIVERED) {
-            throw new BadRequestException("Cannot cancel order once it is out for delivery or delivered.");
+        if (order.getStatus() == OrderStatus.DELIVERED || order.getStatus() == OrderStatus.OUT_FOR_DELIVERY) {
+            throw new BadRequestException("Order cannot be cancelled in status: " + order.getStatus());
         }
 
-        order.setStatus(OrderStatus.CANCELLED);
-
-        // Restore inventory
-        if (order.getItems() != null) {
-            for (OrderItem item : order.getItems()) {
-                Product product = item.getProduct();
-                if (product != null) {
-                    product.setStockQuantity(product.getStockQuantity() + item.getQuantity());
-                    productRepository.save(product);
-                }
-            }
-        }
-
-        if (order.getPayment() != null && order.getPayment().getPaymentStatus() == PaymentStatus.COMPLETED) {
-            order.getPayment().setPaymentStatus(PaymentStatus.REFUNDED);
-        }
-
-        // Refund wallet credits if used
-        if (order.getWalletDiscountAmount() != null && order.getWalletDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
-            walletService.refundForOrder(order.getUser(), order.getWalletDiscountAmount(), order.getOrderNumber());
-        }
-
-        Order saved = orderRepository.save(order);
-        OrderResponse response = mapToDto(saved);
-        webSocketService.broadcastOrderStatusUpdate(response);
-
-        return response;
-    }
-
-    public List<OrderResponse> getAllOrdersAdmin() {
-        return orderRepository.findAllByOrderByCreatedAtDesc().stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
+        return updateOrderStatus(orderId, OrderStatus.CANCELLED);
     }
 
     public OrderResponse mapToDto(Order order) {
-        List<OrderItemResponse> itemDtos = order.getItems() != null
-                ? order.getItems().stream().map(i -> new OrderItemResponse(
-                i.getId(),
-                i.getProduct() != null ? i.getProduct().getId() : null,
-                i.getProductName(),
-                i.getProductImage(),
-                i.getUnitQuantity(),
-                i.getQuantity(),
-                i.getUnitPrice(),
-                i.getTotalPrice()
-        )).collect(Collectors.toList())
-                : new ArrayList<>();
+        List<OrderItemResponse> itemResponses = order.getItems().stream()
+                .map(item -> new OrderItemResponse(
+                        item.getId(),
+                        item.getProduct() != null ? item.getProduct().getId() : null,
+                        item.getProductName(),
+                        item.getProductImage(),
+                        item.getUnitQuantity(),
+                        item.getQuantity(),
+                        item.getUnitPrice(),
+                        item.getTotalPrice()
+                ))
+                .collect(Collectors.toList());
 
-        DeliveryPartner partner = order.getDeliveryAssignment() != null
-                ? order.getDeliveryAssignment().getPartner()
-                : null;
+        AddressDto addressDto = null;
+        if (order.getAddress() != null) {
+            Address a = order.getAddress();
+            addressDto = new AddressDto(
+                    a.getId(), a.getLabel(), a.getReceiverName(), a.getReceiverPhone(),
+                    a.getStreetAddress(), a.getApartmentUnit(), a.getLandmark(),
+                    a.getCity(), a.getState(), a.getPincode(), a.getLatitude(),
+                    a.getLongitude(), a.getIsDefault()
+            );
+        }
 
-        BigDecimal cashback = order.getItemTotal() != null
-                ? order.getItemTotal().multiply(BigDecimal.valueOf(0.05)).setScale(2, RoundingMode.HALF_UP)
-                : BigDecimal.ZERO;
+        PaymentResponseDto paymentDto = null;
+        if (order.getPayment() != null) {
+            Payment p = order.getPayment();
+            paymentDto = PaymentResponseDto.builder()
+                    .id(p.getId())
+                    .orderId(order.getId())
+                    .orderNumber(order.getOrderNumber())
+                    .transactionId(p.getTransactionId())
+                    .paymentMethod(p.getPaymentMethod())
+                    .paymentStatus(p.getPaymentStatus())
+                    .amount(p.getAmount())
+                    .currency(p.getCurrency())
+                    .createdAt(p.getCreatedAt())
+                    .build();
+        }
+
+        BigDecimal cashbackEarned = order.getItemTotal().multiply(BigDecimal.valueOf(0.05)).setScale(2, RoundingMode.HALF_UP);
 
         return new OrderResponse(
                 order.getId(),
                 order.getOrderNumber(),
-                order.getUser().getId(),
-                order.getUser().getFullName(),
-                order.getUser().getPhone(),
-                order.getAddress() != null ? addressService.mapToDto(order.getAddress()) : null,
                 order.getStatus(),
                 order.getItemTotal(),
                 order.getDeliveryFee(),
@@ -354,27 +449,17 @@ public class OrderService {
                 order.getTaxAmount(),
                 order.getDiscountAmount(),
                 order.getWalletDiscountAmount() != null ? order.getWalletDiscountAmount() : BigDecimal.ZERO,
-                cashback,
+                cashbackEarned,
                 order.getTipAmount(),
                 order.getTotalAmount(),
                 order.getCouponCode(),
                 order.getDeliveryInstructions(),
                 order.getEstimatedDeliveryTime(),
                 order.getDeliveredAt(),
-                itemDtos,
-                order.getPayment() != null ? order.getPayment().getPaymentMethod() : null,
-                order.getPayment() != null ? order.getPayment().getPaymentStatus() : null,
-                order.getPayment() != null ? order.getPayment().getTransactionId() : null,
-                partner != null ? partner.getId() : null,
-                partner != null ? partner.getUser().getFullName() : null,
-                partner != null ? partner.getUser().getPhone() : null,
-                partner != null ? partner.getVehicleType() : null,
-                partner != null ? partner.getVehicleNumber() : null,
-                partner != null ? partner.getCurrentLatitude() : null,
-                partner != null ? partner.getCurrentLongitude() : null,
-                partner != null ? partner.getRating() : null,
-                order.getCreatedAt(),
-                order.getUpdatedAt()
+                itemResponses,
+                addressDto,
+                paymentDto,
+                order.getCreatedAt()
         );
     }
 }

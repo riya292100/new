@@ -2,13 +2,17 @@ package com.quickcart.service;
 
 import com.quickcart.dto.ProductRequestDto;
 import com.quickcart.dto.ProductResponseDto;
+import com.quickcart.entity.Brand;
 import com.quickcart.entity.Category;
 import com.quickcart.entity.Product;
 import com.quickcart.exception.BadRequestException;
 import com.quickcart.exception.ResourceNotFoundException;
+import com.quickcart.repository.BrandRepository;
 import com.quickcart.repository.CategoryRepository;
 import com.quickcart.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +31,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final BrandRepository brandRepository;
 
     public Page<ProductResponseDto> getAllProducts(
             Long categoryId,
@@ -46,12 +51,14 @@ public class ProductService {
                 .map(this::mapToDto);
     }
 
+    @Cacheable(value = "products_featured", unless = "#result.isEmpty()")
     public List<ProductResponseDto> getFeaturedProducts() {
         return productRepository.findByIsFeaturedTrueAndIsActiveTrue().stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "products_deals", unless = "#result.isEmpty()")
     public List<ProductResponseDto> getDailyDeals() {
         return productRepository.findByIsDailyDealTrueAndIsActiveTrue().stream()
                 .map(this::mapToDto)
@@ -64,12 +71,14 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "products", key = "#id")
     public ProductResponseDto getProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         return mapToDto(product);
     }
 
+    @Cacheable(value = "products_slug", key = "#slug")
     public ProductResponseDto getProductBySlug(String slug) {
         Product product = productRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with slug: " + slug));
@@ -112,6 +121,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = {"products", "products_slug", "products_featured", "products_deals"}, allEntries = true)
     public ProductResponseDto createProduct(ProductRequestDto dto) {
         Category category = categoryRepository.findById(dto.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + dto.getCategoryId()));
@@ -155,10 +165,14 @@ public class ProductService {
         product.setIsDailyDeal(dto.getIsDailyDeal() != null ? dto.getIsDailyDeal() : false);
         product.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
 
+        // Link Brand entity if available
+        brandRepository.findByNameIgnoreCase(dto.getBrand().trim()).ifPresent(product::setBrandEntity);
+
         return mapToDto(productRepository.save(product));
     }
 
     @Transactional
+    @CacheEvict(value = {"products", "products_slug", "products_featured", "products_deals"}, allEntries = true)
     public ProductResponseDto updateProduct(Long id, ProductRequestDto dto) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
@@ -205,10 +219,13 @@ public class ProductService {
             product.setIsActive(dto.getIsActive());
         }
 
+        brandRepository.findByNameIgnoreCase(dto.getBrand().trim()).ifPresent(product::setBrandEntity);
+
         return mapToDto(productRepository.save(product));
     }
 
     @Transactional
+    @CacheEvict(value = {"products", "products_slug", "products_featured", "products_deals"}, allEntries = true)
     public void updateStock(Long id, int newStock) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
@@ -220,6 +237,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = {"products", "products_slug", "products_featured", "products_deals"}, allEntries = true)
     public void deleteProduct(Long id) {
         if (!productRepository.existsById(id)) {
             throw new ResourceNotFoundException("Product not found with id: " + id);

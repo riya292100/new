@@ -4,6 +4,7 @@ import com.quickcart.entity.OrderStatus;
 import com.quickcart.entity.PaymentMethod;
 import com.quickcart.entity.PaymentStatus;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderResponse {
@@ -38,6 +40,7 @@ public class OrderResponse {
     private String deliveryInstructions;
     private LocalDateTime estimatedDeliveryTime;
     private LocalDateTime deliveredAt;
+    @Builder.Default
     private List<OrderItemResponse> items = new ArrayList<>();
     private PaymentMethod paymentMethod;
     private PaymentStatus paymentStatus;
@@ -55,4 +58,52 @@ public class OrderResponse {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public OrderResponse(
+            Long id,
+            String orderNumber,
+            OrderStatus status,
+            BigDecimal itemTotal,
+            BigDecimal deliveryFee,
+            BigDecimal platformFee,
+            BigDecimal taxAmount,
+            BigDecimal discountAmount,
+            BigDecimal walletDiscountAmount,
+            BigDecimal cashbackEarned,
+            BigDecimal tipAmount,
+            BigDecimal totalAmount,
+            String couponCode,
+            String deliveryInstructions,
+            LocalDateTime estimatedDeliveryTime,
+            LocalDateTime deliveredAt,
+            List<OrderItemResponse> items,
+            AddressDto address,
+            PaymentResponseDto payment,
+            LocalDateTime createdAt
+    ) {
+        this.id = id;
+        this.orderNumber = orderNumber;
+        this.status = status;
+        this.itemTotal = itemTotal;
+        this.deliveryFee = deliveryFee;
+        this.platformFee = platformFee;
+        this.taxAmount = taxAmount;
+        this.discountAmount = discountAmount;
+        this.walletDiscountAmount = walletDiscountAmount;
+        this.cashbackEarned = cashbackEarned;
+        this.tipAmount = tipAmount;
+        this.totalAmount = totalAmount;
+        this.couponCode = couponCode;
+        this.deliveryInstructions = deliveryInstructions;
+        this.estimatedDeliveryTime = estimatedDeliveryTime;
+        this.deliveredAt = deliveredAt;
+        this.items = items != null ? items : new ArrayList<>();
+        this.address = address;
+        if (payment != null) {
+            this.paymentMethod = payment.getPaymentMethod();
+            this.paymentStatus = payment.getPaymentStatus();
+            this.transactionId = payment.getTransactionId();
+        }
+        this.createdAt = createdAt;
+    }
 }

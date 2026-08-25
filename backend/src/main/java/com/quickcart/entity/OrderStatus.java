@@ -1,10 +1,13 @@
 package com.quickcart.entity;
 
 public enum OrderStatus {
-    ORDER_PLACED,
+    PLACED,
+    ORDER_PLACED, // Backwards compatibility
     CONFIRMED,
-    PREPARING,
-    PACKED,
+    PACKING,
+    PREPARING,    // Backwards compatibility
+    PACKED,       // Backwards compatibility
+    READY_FOR_PICKUP,
     OUT_FOR_DELIVERY,
     DELIVERED,
     CANCELLED

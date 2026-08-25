@@ -27,6 +27,12 @@ class CouponServiceTest {
     @Mock
     private CouponRepository couponRepository;
 
+    @Mock
+    private com.quickcart.repository.CouponUsageRepository couponUsageRepository;
+
+    @Mock
+    private com.quickcart.service.AuthService authService;
+
     @InjectMocks
     private CouponService couponService;
 

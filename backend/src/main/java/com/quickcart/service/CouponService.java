@@ -5,9 +5,11 @@ import com.quickcart.dto.CouponValidationRequest;
 import com.quickcart.dto.CouponValidationResponse;
 import com.quickcart.entity.Coupon;
 import com.quickcart.entity.DiscountType;
+import com.quickcart.entity.User;
 import com.quickcart.exception.BadRequestException;
 import com.quickcart.exception.ResourceNotFoundException;
 import com.quickcart.repository.CouponRepository;
+import com.quickcart.repository.CouponUsageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 public class CouponService {
 
     private final CouponRepository couponRepository;
+    private final CouponUsageRepository couponUsageRepository;
+    private final AuthService authService;
 
     public List<CouponDto> getActiveCoupons() {
         return couponRepository.findByIsActiveTrue().stream()
@@ -52,6 +56,14 @@ public class CouponService {
 
         if (coupon.getTimesUsed() != null && coupon.getUsageLimit() != null && coupon.getTimesUsed() >= coupon.getUsageLimit()) {
             return new CouponValidationResponse(false, code, null, BigDecimal.ZERO, "Coupon usage limit reached.");
+        }
+
+        com.quickcart.security.UserDetailsImpl currentUser = authService.getCurrentAuthenticatedUser();
+        if (currentUser != null && coupon.getPerUserLimit() != null) {
+            long usedByUser = couponUsageRepository.countByCouponIdAndUserId(coupon.getId(), currentUser.getId());
+            if (usedByUser >= coupon.getPerUserLimit()) {
+                return new CouponValidationResponse(false, code, null, BigDecimal.ZERO, "You have reached the maximum allowed usage for this coupon.");
+            }
         }
 
         if (coupon.getMinOrderValue() != null && request.getItemTotal().compareTo(coupon.getMinOrderValue()) < 0) {
@@ -96,31 +108,33 @@ public class CouponService {
             throw new BadRequestException("Coupon with code '" + code + "' already exists.");
         }
 
-        Coupon coupon = new Coupon();
-        coupon.setCode(code);
-        coupon.setDescription(dto.getDescription());
-        coupon.setDiscountType(dto.getDiscountType());
-        coupon.setDiscountValue(dto.getDiscountValue());
-        coupon.setMinOrderValue(dto.getMinOrderValue() != null ? dto.getMinOrderValue() : BigDecimal.ZERO);
-        coupon.setMaxDiscountAmount(dto.getMaxDiscountAmount());
-        coupon.setValidFrom(dto.getValidFrom() != null ? dto.getValidFrom() : LocalDateTime.now());
-        coupon.setValidUntil(dto.getValidUntil());
-        coupon.setUsageLimit(dto.getUsageLimit() != null ? dto.getUsageLimit() : 10000);
-        coupon.setTimesUsed(0);
-        coupon.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
+        Coupon coupon = Coupon.builder()
+                .code(code)
+                .description(dto.getDescription())
+                .discountType(dto.getDiscountType())
+                .discountValue(dto.getDiscountValue())
+                .minOrderValue(dto.getMinOrderValue() != null ? dto.getMinOrderValue() : BigDecimal.ZERO)
+                .maxDiscountAmount(dto.getMaxDiscountAmount())
+                .validFrom(dto.getValidFrom() != null ? dto.getValidFrom() : LocalDateTime.now())
+                .validUntil(dto.getValidUntil())
+                .usageLimit(dto.getUsageLimit() != null ? dto.getUsageLimit() : 10000)
+                .perUserLimit(dto.getUsageLimit() != null ? 1 : 1)
+                .timesUsed(0)
+                .isActive(dto.getIsActive() != null ? dto.getIsActive() : true)
+                .build();
 
         return mapToDto(couponRepository.save(coupon));
     }
 
     @Transactional
     public void deleteCoupon(Long id) {
-        if (!couponRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Coupon not found with id: " + id);
-        }
-        couponRepository.deleteById(id);
+        Coupon coupon = couponRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Coupon not found with id: " + id));
+        coupon.setIsActive(false);
+        couponRepository.save(coupon);
     }
 
-    public CouponDto mapToDto(Coupon coupon) {
+    private CouponDto mapToDto(Coupon coupon) {
         return new CouponDto(
                 coupon.getId(),
                 coupon.getCode(),

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping({"/api/v1/reviews", "/api/reviews"})
 @RequiredArgsConstructor
 @Tag(name = "Reviews", description = "Endpoints for customer product ratings and reviews")
 public class ReviewController {

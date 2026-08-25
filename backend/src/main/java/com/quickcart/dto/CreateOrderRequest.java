@@ -3,6 +3,7 @@ package com.quickcart.dto;
 import com.quickcart.entity.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateOrderRequest {
@@ -25,7 +27,11 @@ public class CreateOrderRequest {
 
     private String deliveryInstructions;
 
+    private String idempotencyKey;
+
+    @Builder.Default
     private BigDecimal tipAmount = BigDecimal.ZERO;
 
+    @Builder.Default
     private BigDecimal walletAmountToRedeem = BigDecimal.ZERO;
 }
