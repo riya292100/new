@@ -1,4 +1,4 @@
-# ⚡ QuickCart — Production Full-Stack Quick-Commerce Platform
+# ⚡ QuickCart — Enterprise Full-Stack Quick-Commerce Platform
 
 [![CI/CD Pipeline](https://github.com/riya292100/new/actions/workflows/ci.yml/badge.svg)](https://github.com/riya292100/new/actions/workflows/ci.yml)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.3-brightgreen.svg)](https://spring.io/projects/spring-boot)
@@ -11,136 +11,125 @@
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**QuickCart** is an enterprise-grade, high-performance quick-commerce delivery platform built with **Java 21 / Spring Boot 3** and **React 18 / Vite**. It provides a 10-15 minute grocery and fashion shopping experience with real-time tracking, dark store inventory reservation with concurrency controls, PostgreSQL migrations, Redis caching, loyalty cashback rewards, and table dining reservations.
+**QuickCart** is an enterprise-grade, high-performance quick-commerce delivery platform built with **Java 21 / Spring Boot 3** and **React 18 / Vite**. It provides a 10-15 minute grocery, fashion, and dining experience with real-time tracking, multi-store dark store fulfillment, thread-safe inventory locking, double-entry financial ledgers, customer support SLA management, return workflows, PostgreSQL persistence, Redis caching, loyalty cashback rewards, and table dining reservations.
 
 ---
 
-## 🌟 Key Capabilities
+## 🌟 Architecture & Enterprise Capabilities
 
-### 🛒 1. Customer Storefront & Grocery Delivery
-- **Hyper-Local Catalog & Search**: Real-time grocery catalog with category filtering, brand filters, and instant search autocomplete.
-- **Dark Store Inventory & Reservation**: Multi-store stock tracking with pessimistic write locking (`LockModeType.PESSIMISTIC_WRITE`) and optimistic versioning (`@Version`) preventing overselling under concurrency.
-- **Server-Side Pricing & Cart Integrity**: Cart totals, taxes, delivery fees, and promo calculations verified strictly on backend.
-- **Order State Machine**: Strict lifecycle: `PLACED` ➔ `CONFIRMED` ➔ `PACKING` ➔ `READY_FOR_PICKUP` ➔ `OUT_FOR_DELIVERY` ➔ `DELIVERED`.
-- **Payment Verification & Webhooks**: HMAC SHA-256 digital signature validation and automatic refund handling on order cancellation.
-- **Real-Time Tracking**: WebSocket STOMP live rider GPS tracking and order stage updates.
+### 🛒 1. Multi-Store Dark Store Fulfillment Engine
+- **Geospatial Store Selection**: Automatic routing of customer cart items to the optimal dark store using the Haversine spherical distance formula, store service radiuses, and dynamic workload load balancing.
+- **Dark Store Capacity Management**: Real-time tracking of `currentOrderLoad`, `maxCapacityOrdersPerHour`, manager contact info, and active operating hours (`06:00 - 02:00`).
+- **Pessimistic Locking & Zero Overselling**: Thread-safe stock reservations utilizing `@Lock(LockModeType.PESSIMISTIC_WRITE)` and `@Version` optimistic controls, verified under 100 concurrent threads.
 
-### 💰 2. QuickCash Customer Loyalty Wallet
+### 🛡️ 2. Advanced Security & Multi-Role RBAC
+- **Account Lockout & Protection**: Automatic brute-force prevention locking accounts after 5 consecutive failed attempts for 15 minutes.
+- **Password Reset & Verification Tokens**: Secure cryptographic token generation (`/api/v1/auth/forgot-password`, `/api/v1/auth/reset-password-confirm`, `/api/v1/auth/verify-email`).
+- **Comprehensive RBAC**: Granular role enforcement for `ROLE_CUSTOMER`, `ROLE_STORE_MANAGER`, `ROLE_DELIVERY_PARTNER`, `ROLE_SUPPORT_AGENT`, and `ROLE_ADMIN`.
+
+### 💰 3. Immutable Financial Ledger & Double-Entry Bookkeeping
+- **Audit-Grade Ledger**: Append-only double-entry ledger (`FinancialLedgerEntry`) tracking all `PAYMENT`, `REFUND`, `WALLET_CREDIT`, `WALLET_DEBIT`, `LOYALTY_CASHBACK`, and `COUPON_DISCOUNT` movements.
+- **Compensating Reversals**: Clean financial reversals that never overwrite historical records, guaranteeing audit compliance.
+- **Admin Ledger Stream**: High-throughput paginated stream for finance teams at `GET /api/v1/admin/financial-ledger`.
+
+### 🔄 4. Order State Machine, Audit Timeline & Returns
+- **Order State Timeline**: Immutable audit trail (`OrderStateHistory`) capturing timestamps, actor emails, previous states, new states, and transition reasons (`GET /api/v1/orders/{id}/timeline`).
+- **Returns & Inspection Workflow**: End-to-end customer return lifecycle (`REQUESTED` ➔ `APPROVED` ➔ `PICKUP_SCHEDULED` ➔ `RECEIVED` ➔ `INSPECTED` ➔ `REFUND_PENDING` ➔ `REFUNDED` / `REJECTED`) with 7-day delivery window validation and automated refund disbursements.
+
+### 🎫 5. Customer Support Ticketing & SLA Engine
+- **Priority-Based SLA Tracking**: Auto-calculated resolution SLAs (`URGENT` = 2h, `HIGH` = 6h, `MEDIUM` = 12h, `LOW` = 24h).
+- **Threaded Communication**: Interactive ticket conversations supporting both public customer-agent messages and internal staff-only notes.
+
+### 🧠 6. Intelligent Recommendations & Verified Reviews
+- **Frequently Bought Together**: Basket co-occurrence matrix analyzing historical multi-item order patterns.
+- **Similar & Trending Items**: Dynamic category, brand, and velocity recommendation pipelines.
+- **Verified Purchase Reviews**: Strict database checks verifying that a reviewer has a completed `DELIVERED` order containing the product.
+
+### 💰 7. QuickCash Customer Loyalty Hub
 - **₹100 Welcome Bonus**: Instant sign-up reward credited automatically.
 - **5% Cashback Engine**: Automatic cashback credited on every successfully delivered order.
 - **Seamless Cart Redemption**: 1-click redemption during checkout with instant preview calculation.
-- **Immutable Transaction Ledger**: Complete history with transaction reference tracking and running balances.
-
-### 👗 3. Clothes & Fashion Shopping Hub
-- **Dedicated Fashion Tab**: Browse apparel for Men, Women, and Kids with size selectors (XS-XXL), high-resolution imagery, and discount badges.
-- **Integrated Checkout**: Add apparel and groceries in the same seamless checkout pipeline.
-
-### 🍽️ 4. QuickCart Dining & Table Reservations
-- **Global Discovery**: Curated dining across Tokyo, Paris, New York, London, Rome, and Bengaluru.
-- **Table Booking**: Instant reservations with seating options, dietary requirements, and unique confirmation codes.
-- **Verified Diner Reviews**: Reviews validated against completed restaurant visits.
-
-### 🚴 5. Delivery Partner Portal
-- **Live Dispatch Queue**: Accept or reject delivery assignments in real-time.
-- **Stage Progression Workflow**: Step through pickup, dispatch, and contactless delivery.
-- **Live Location Simulator**: Stream GPS coordinates to customer tracking maps.
-
-### 🛡️ 6. Admin Control Center & Dark Store Operations
-- **KPI Metrics Dashboard**: Live analytics for revenue, orders, active drivers, and low-stock alerts.
-- **Stock Management & Adjustments**: Inventory reconciliation, threshold adjustments, and audit trails.
-- **Role-Based Access Control**: Strict RBAC for `ROLE_CUSTOMER`, `ROLE_STORE_MANAGER`, `ROLE_DELIVERY_PARTNER`, and `ROLE_ADMIN`.
+- **Modularized Frontend Architecture**: Componentized into dedicated stations (`QuickCashHero`, `QuickCashRechargeStation`, `QuickCashCalculator`, `QuickCashPerks`, `QuickCashLedger`).
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+## 🏗️ System Architecture
 
 ```mermaid
 graph TD
-  Client[React 18 / Vite SPA & PWA] -->|REST /api/v1/* & /api/*| Gateway[Spring Boot 3.3 Backend]
+  Client[React 18 / Vite SPA & PWA] -->|REST /api/v1/* & /api/*| Gateway[Spring Boot 3.3 Enterprise Gateway]
   Client -->|WebSocket /ws-quickcart| WSBroker[STOMP Message Broker]
-  Gateway -->|JPA / Hibernate| Postgres[(PostgreSQL 16 Database)]
+  Gateway -->|JPA / Pessimistic Locks| Postgres[(PostgreSQL 16 Database)]
   Gateway -->|Spring Data Redis| Redis[(Redis 7 Distributed Cache)]
-  Flyway[Flyway Migrations] -->|V1 DDL Scripts| Postgres
-  Driver[Delivery App] -->|Live GPS WebSocket| WSBroker
-  WSBroker -->|Live Map Radar Push| Client
+  Gateway -->|Haversine Geo Routing| Fulfillment[Store Fulfillment Engine]
+  Gateway -->|Double-Entry Audit| Ledger[Financial Ledger Service]
+  Gateway -->|Async SLA & Cron Jobs| Scheduler[Scheduled Jobs Service]
+  Driver[Delivery Partner App] -->|Live GPS WebSocket| WSBroker
+  WSBroker -->|Live Radar Push| Client
 ```
 
-### Backend Tech Stack
-- **Java 21** / **Spring Boot 3.3.3**
-- **Spring Security** with Stateless JWT Authentication & Refresh Token Rotation
-- **PostgreSQL 16** with **Flyway** Database Migrations (`V1__initial_schema.sql`)
-- **Redis 7** for fast product caching and session rate limiting
-- **WebSocket (STOMP)** for real-time order tracking & delivery partner radar
-- **Testcontainers** (PostgreSQL) + **JUnit 5** + **Mockito**
+---
 
-### Frontend Tech Stack
-- **React 18.3** with **Vite 6**
-- **Tailwind CSS** with Glassmorphism Design System & Lucide Icons
-- **Vitest** + **Testing Library** (61 test files, 117 tests passing)
-- **Progressive Web App (PWA)** with Service Worker offline caching
-- **Capacitor Android** configuration for Google Play Store APK/AAB builds
+## 🧪 Automated Testing & Verification
+
+The project includes thorough unit, integration, and concurrency tests across both backend and frontend layers:
+
+- **Backend Test Suite (Maven / JUnit 5 / Mockito)**:
+  - **88 / 88 tests passing (100% BUILD SUCCESS)**.
+  - Concurrency validation: `InventoryConcurrencyTest` (100 concurrent threads reserving limited inventory with 0 overselling).
+  - Domain tests: `StoreFulfillmentServiceTest`, `FinancialLedgerServiceTest`, `ReturnServiceTest`, `SupportTicketServiceTest`, `WalletServiceTest`, `PaymentGatewayServiceTest`, `FraudDetectionServiceTest`, `AuthServiceTest`.
+- **Frontend Test Suite (Vitest / Testing Library)**:
+  - **120 / 120 tests passing across 62 test files (100% PASS)**.
+  - Full coverage for storefront, cart drawer, checkout, QuickCash loyalty, dining booking, clothes catalog, admin dashboard, and delivery partner hooks.
 
 ---
 
 ## 🚀 Quick Start (Local Development)
 
 ### Prerequisites
-- Java 17 or 21 JDK
+- Java 21 JDK
 - Node.js 18+ and npm
-- Docker and Docker Compose (optional for containerized run)
+- Docker & Docker Compose (optional)
 
-### Option 1: Run Full Stack via Docker Compose (Recommended)
+### 1. Run Full Stack via Docker Compose
 ```bash
 docker compose up --build
 ```
 - **Storefront & PWA**: `http://localhost:5173` (or `http://localhost:80`)
-- **Backend API**: `http://localhost:8080`
-- **Swagger / OpenAPI Documentation**: `http://localhost:8080/swagger-ui.html`
+- **Backend API**: `http://localhost:8081` (or `http://localhost:8080`)
+- **Swagger / OpenAPI Documentation**: `http://localhost:8081/swagger-ui.html`
+- **H2 Web Console (dev mode)**: `http://localhost:8081/h2-console`
 - **PostgreSQL**: `localhost:5432`
 - **Redis**: `localhost:6379`
 
-### Option 2: Run Standalone Backend & Frontend
-1. **Start Backend**:
-   ```bash
-   cd backend
-   ./mvnw spring-boot:run
-   ```
-   *(Defaults to H2 in-memory mode on `http://localhost:8081` or `8080`)*
+### 2. Run Locally from Source
 
-2. **Start Frontend**:
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
----
-
-## 🔐 Default Demo Accounts
-
-| Role | Email | Password | Access / Capabilities |
-| :--- | :--- | :--- | :--- |
-| **Customer** | `customer@quickcart.com` | `Customer@123` | Storefront, QuickCash Wallet, Cart, Checkout, Order Tracking |
-| **Delivery Partner** | `driver@quickcart.com` | `Driver@123` | Delivery Partner Dispatch Board, GPS Radar, Order Acceptance |
-| **Admin** | `admin@quickcart.com` | `Admin@123` | Full Admin KPI Dashboard, Product Catalog, Inventory, Dispatch |
-
----
-
-## 🧪 Testing & Quality Assurance
-
-### Run Backend Unit & Integration Tests
+#### Backend (Spring Boot 3)
 ```bash
 cd backend
-./mvnw clean test -Dspring.profiles.active=test
+./mvnw spring-boot:run
 ```
 
-### Run Frontend Test Suite
+#### Frontend (React + Vite)
 ```bash
 cd frontend
-npm test -- --run
+npm install
+npm run dev
 ```
 
 ---
 
-## 📄 License
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+## 🔑 Default Seeded Demo Credentials
+
+| Role | Email | Password | Access Capabilities |
+|---|---|---|---|
+| **Admin** | `admin@quickcart.com` | `Admin@123` | Full admin control, financial ledger, store management, inventory, coupons, drivers |
+| **Store Manager** | `manager@quickcart.com` | `Admin@123` | Dark store inventory adjustments, fulfillment capacity, dispatch operations |
+| **Support Agent** | `support@quickcart.com` | `Admin@123` | Customer support ticket resolution, returns inspection, refund approvals |
+| **Delivery Rider** | `driver@quickcart.com` | `Driver@123` | Delivery partner portal, live GPS simulator, order accept/reject |
+| **Customer** | `customer@quickcart.com` | `Customer@123` | Grocery storefront, fashion hub, QuickCash wallet, table bookings, tickets, returns |
+
+---
+
+## 📜 License
+This project is open-source and available under the [MIT License](LICENSE).

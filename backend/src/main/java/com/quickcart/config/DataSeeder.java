@@ -44,6 +44,7 @@ public class DataSeeder implements CommandLineRunner {
     private final CouponRepository couponRepository;
     private final DeliveryPartnerRepository deliveryPartnerRepository;
     private final RestaurantRepository restaurantRepository;
+    private final DarkStoreRepository darkStoreRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -54,11 +55,84 @@ public class DataSeeder implements CommandLineRunner {
             return;
         }
         seedRoles();
+        seedDarkStores();
         seedUsers();
         seedCategoriesAndProducts();
         seedCoupons();
         seedRestaurants();
         logger.info("QuickCart sample data seeded successfully.");
+    }
+
+    private void seedDarkStores() {
+        if (darkStoreRepository.count() == 0) {
+            darkStoreRepository.saveAll(List.of(
+                    DarkStore.builder()
+                            .name("Delhi Central Express Hub")
+                            .code("HUB-DEL-01")
+                            .address("Block B, Connaught Place, New Delhi")
+                            .city("New Delhi")
+                            .state("Delhi")
+                            .pincode("110001")
+                            .latitude(BigDecimal.valueOf(28.6315))
+                            .longitude(BigDecimal.valueOf(77.2167))
+                            .radiusKm(BigDecimal.valueOf(15.0))
+                            .isActive(true)
+                            .maxCapacityOrdersPerHour(200)
+                            .currentOrderLoad(25)
+                            .operatingHours("06:00 - 02:00")
+                            .managerEmail("manager@quickcart.com")
+                            .build(),
+                    DarkStore.builder()
+                            .name("Bangalore Koramangala Hub")
+                            .code("HUB-BLR-01")
+                            .address("80 Feet Road, 4th Block, Koramangala")
+                            .city("Bengaluru")
+                            .state("Karnataka")
+                            .pincode("560034")
+                            .latitude(BigDecimal.valueOf(12.9352))
+                            .longitude(BigDecimal.valueOf(77.6245))
+                            .radiusKm(BigDecimal.valueOf(12.0))
+                            .isActive(true)
+                            .maxCapacityOrdersPerHour(150)
+                            .currentOrderLoad(15)
+                            .operatingHours("06:00 - 01:00")
+                            .managerEmail("manager@quickcart.com")
+                            .build(),
+                    DarkStore.builder()
+                            .name("Bangalore Indiranagar Hub")
+                            .code("HUB-BLR-02")
+                            .address("100 Feet Road, HAL 2nd Stage, Indiranagar")
+                            .city("Bengaluru")
+                            .state("Karnataka")
+                            .pincode("560038")
+                            .latitude(BigDecimal.valueOf(12.9784))
+                            .longitude(BigDecimal.valueOf(77.6408))
+                            .radiusKm(BigDecimal.valueOf(12.0))
+                            .isActive(true)
+                            .maxCapacityOrdersPerHour(150)
+                            .currentOrderLoad(30)
+                            .operatingHours("06:00 - 01:00")
+                            .managerEmail("manager@quickcart.com")
+                            .build(),
+                    DarkStore.builder()
+                            .name("Mumbai Bandra Express Hub")
+                            .code("HUB-BOM-01")
+                            .address("Hill Road, Bandra West, Mumbai")
+                            .city("Mumbai")
+                            .state("Maharashtra")
+                            .pincode("400050")
+                            .latitude(BigDecimal.valueOf(19.0596))
+                            .longitude(BigDecimal.valueOf(72.8295))
+                            .radiusKm(BigDecimal.valueOf(15.0))
+                            .isActive(true)
+                            .maxCapacityOrdersPerHour(180)
+                            .currentOrderLoad(20)
+                            .operatingHours("06:00 - 02:00")
+                            .managerEmail("manager@quickcart.com")
+                            .build()
+            ));
+            logger.info("Seeded 4 regional dark store fulfillment hubs.");
+        }
     }
 
     private void seedRoles() {

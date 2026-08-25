@@ -47,6 +47,8 @@ public class OrderService {
     private final NotificationService notificationService;
     private final PaymentGatewayService paymentGatewayService;
     private final PricingService pricingService;
+    private final StoreFulfillmentService storeFulfillmentService;
+    private final OrderStateHistoryRepository orderStateHistoryRepository;
     private final com.quickcart.event.DomainEventPublisher domainEventPublisher;
     private final IdempotencyKeyRepository idempotencyKeyRepository;
 
@@ -92,9 +94,14 @@ public class OrderService {
         Address address = addressRepository.findByIdAndUserId(request.getAddressId(), currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Address not found with id: " + request.getAddressId()));
 
-        // Assign nearest active dark store
-        DarkStore store = darkStoreRepository.findByIsActiveTrue().stream().findFirst().orElse(null);
+        // Assign optimal fulfillment dark store using multi-store fulfillment engine
+        DarkStore store = storeFulfillmentService.selectOptimalStore(address.getLatitude(), address.getLongitude(), cart.getItems());
         Long storeId = store != null ? store.getId() : null;
+
+        // Increment store workload
+        if (storeId != null) {
+            storeFulfillmentService.adjustStoreLoad(storeId, 1);
+        }
 
         // Validate active promo coupon if provided
         Coupon coupon = null;
@@ -213,6 +220,15 @@ public class OrderService {
 
         // Clear user cart
         cartService.clearCart(currentUser);
+
+        // Save initial state history
+        orderStateHistoryRepository.save(OrderStateHistory.builder()
+                .order(savedOrder)
+                .fromStatus(null)
+                .toStatus(savedOrder.getStatus())
+                .actor(currentUser.getEmail())
+                .reason("Order placed successfully")
+                .build());
 
         OrderResponse response = mapToDto(savedOrder);
 
@@ -361,11 +377,44 @@ public class OrderService {
         Order updatedOrder = orderRepository.save(order);
         OrderResponse response = mapToDto(updatedOrder);
 
+        // Record State History Timeline Entry
+        String actor = "SYSTEM";
+        try {
+            if (authService.getCurrentAuthenticatedUser() != null) {
+                actor = authService.getCurrentAuthenticatedUser().getUsername();
+            }
+        } catch (Exception _e) {
+            // Keep default SYSTEM actor
+        }
+
+        orderStateHistoryRepository.save(OrderStateHistory.builder()
+                .order(updatedOrder)
+                .fromStatus(oldStatus)
+                .toStatus(newStatus)
+                .actor(actor)
+                .reason("Transitioned from " + oldStatus + " to " + newStatus)
+                .build());
+
         // Broadcast order status change
         webSocketService.broadcastOrderStatusUpdate(response);
 
         log.info("Order #{} state transitioned from {} to {}", order.getOrderNumber(), oldStatus, newStatus);
         return response;
+    }
+
+    public List<OrderStateHistoryDto> getOrderTimeline(Long orderId) {
+        return orderStateHistoryRepository.findByOrderIdOrderByCreatedAtAsc(orderId).stream()
+                .map(h -> OrderStateHistoryDto.builder()
+                        .id(h.getId())
+                        .orderId(h.getOrder().getId())
+                        .orderNumber(h.getOrder().getOrderNumber())
+                        .fromStatus(h.getFromStatus())
+                        .toStatus(h.getToStatus())
+                        .actor(h.getActor())
+                        .reason(h.getReason())
+                        .createdAt(h.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Transactional

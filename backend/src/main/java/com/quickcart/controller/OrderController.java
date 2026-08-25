@@ -61,6 +61,13 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.success(order));
     }
 
+    @GetMapping("/{id}/timeline")
+    @Operation(summary = "Get immutable order state transition audit timeline")
+    public ResponseEntity<ApiResponse<List<com.quickcart.dto.OrderStateHistoryDto>>> getOrderTimeline(@PathVariable Long id) {
+        List<com.quickcart.dto.OrderStateHistoryDto> timeline = orderService.getOrderTimeline(id);
+        return ResponseEntity.ok(ApiResponse.success(timeline));
+    }
+
     @PostMapping("/{id}/cancel")
     @Operation(summary = "Cancel an order before dispatch")
     public ResponseEntity<ApiResponse<OrderResponse>> cancelOrder(@PathVariable Long id) {

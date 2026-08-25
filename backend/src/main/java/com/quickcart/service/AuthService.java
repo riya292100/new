@@ -38,9 +38,26 @@ public class AuthService {
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
 
+    @Transactional
     public AuthResponse authenticateUser(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail().trim().toLowerCase(), loginRequest.getPassword()));
+        String email = loginRequest.getEmail().trim().toLowerCase();
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user != null && user.isAccountLocked()) {
+            throw new BadRequestException("Account is temporarily locked due to multiple failed login attempts. Please try again later.");
+        }
+
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword()));
+        } catch (Exception ex) {
+            if (user != null) {
+                user.recordFailedLogin();
+                userRepository.save(user);
+            }
+            throw new BadRequestException("Invalid email or password");
+        }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -49,6 +66,11 @@ public class AuthService {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
+
+        if (user != null) {
+            user.recordSuccessfulLogin();
+            userRepository.save(user);
+        }
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
 
@@ -184,6 +206,76 @@ public class AuthService {
         if (userDetails != null) {
             refreshTokenService.deleteByUserId(userDetails.getId());
         }
+    }
+
+    @Transactional
+    public String initiatePasswordReset(ForgotPasswordRequest request) {
+        User user = userRepository.findByEmail(request.getEmail().trim().toLowerCase())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + request.getEmail()));
+
+        String resetToken = java.util.UUID.randomUUID().toString();
+        user.setPasswordResetToken(resetToken);
+        user.setPasswordResetExpiresAt(java.time.LocalDateTime.now().plusHours(1));
+        userRepository.save(user);
+        return resetToken;
+    }
+
+    @Transactional
+    public void completePasswordResetWithToken(ResetPasswordWithTokenRequest request) {
+        User user = userRepository.findByPasswordResetToken(request.getToken().trim())
+                .orElseThrow(() -> new BadRequestException("Invalid or expired password reset token"));
+
+        if (user.getPasswordResetExpiresAt() == null || java.time.LocalDateTime.now().isAfter(user.getPasswordResetExpiresAt())) {
+            user.setPasswordResetToken(null);
+            user.setPasswordResetExpiresAt(null);
+            userRepository.save(user);
+            throw new BadRequestException("Password reset token has expired. Please request a new one.");
+        }
+
+        user.setPasswordHash(encoder.encode(request.getNewPassword()));
+        user.setPasswordResetToken(null);
+        user.setPasswordResetExpiresAt(null);
+        user.setFailedLoginAttempts(0);
+        user.setLockedUntil(null);
+        userRepository.save(user);
+
+        // Invalidate all existing refresh tokens
+        refreshTokenService.deleteByUserId(user.getId());
+    }
+
+    @Transactional
+    public String initiateEmailVerification(String email) {
+        User user = userRepository.findByEmail(email.trim().toLowerCase())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+
+        String verificationToken = java.util.UUID.randomUUID().toString();
+        user.setVerificationToken(verificationToken);
+        user.setVerificationExpiresAt(java.time.LocalDateTime.now().plusDays(1));
+        userRepository.save(user);
+        return verificationToken;
+    }
+
+    @Transactional
+    public void completeEmailVerification(VerifyEmailRequest request) {
+        User user = userRepository.findByVerificationToken(request.getToken().trim())
+                .orElseThrow(() -> new BadRequestException("Invalid verification token"));
+
+        if (user.getVerificationExpiresAt() == null || java.time.LocalDateTime.now().isAfter(user.getVerificationExpiresAt())) {
+            user.setVerificationToken(null);
+            user.setVerificationExpiresAt(null);
+            userRepository.save(user);
+            throw new BadRequestException("Email verification token has expired");
+        }
+
+        user.setIsVerified(true);
+        user.setVerificationToken(null);
+        user.setVerificationExpiresAt(null);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void revokeUserSessions(Long userId) {
+        refreshTokenService.deleteByUserId(userId);
     }
 
     @Transactional

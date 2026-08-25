@@ -23,4 +23,27 @@ public class RecommendationController {
         List<ProductResponseDto> recommendations = recommendationService.getPersonalizedRecommendations(limit);
         return ResponseEntity.ok(ApiResponse.success(recommendations));
     }
+
+    @GetMapping("/frequently-bought-together")
+    public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getFrequentlyBoughtTogether(
+            @RequestParam Long productId,
+            @RequestParam(defaultValue = "6") int limit) {
+        List<ProductResponseDto> list = recommendationService.getFrequentlyBoughtTogether(productId, limit);
+        return ResponseEntity.ok(ApiResponse.success(list));
+    }
+
+    @GetMapping("/similar")
+    public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getSimilarProducts(
+            @RequestParam Long productId,
+            @RequestParam(defaultValue = "6") int limit) {
+        List<ProductResponseDto> list = recommendationService.getSimilarProducts(productId, limit);
+        return ResponseEntity.ok(ApiResponse.success(list));
+    }
+
+    @GetMapping("/trending")
+    public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getTrending(
+            @RequestParam(defaultValue = "10") int limit) {
+        List<ProductResponseDto> list = recommendationService.getTrendingProducts(limit);
+        return ResponseEntity.ok(ApiResponse.success(list));
+    }
 }

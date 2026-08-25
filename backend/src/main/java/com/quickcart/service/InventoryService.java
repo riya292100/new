@@ -186,6 +186,7 @@ public class InventoryService {
             Inventory inventory = opt.get();
             int currentReserved = inventory.getReservedQuantity() != null ? inventory.getReservedQuantity() : 0;
             inventory.setReservedQuantity(Math.max(0, currentReserved - quantity));
+            inventory.setSoldQuantity((inventory.getSoldQuantity() != null ? inventory.getSoldQuantity() : 0) + quantity);
             inventoryRepository.save(inventory);
 
             InventoryTransaction tx = InventoryTransaction.builder()
@@ -197,6 +198,28 @@ public class InventoryService {
                     .build();
             inventoryTransactionRepository.save(tx);
         }
+    }
+
+    @Transactional
+    public void recordDamagedStock(Long storeId, Long productId, int quantity, String notes) {
+        Inventory inventory = inventoryRepository.findByStoreIdAndProductIdWithLock(storeId, productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory item not found for store: " + storeId + ", product: " + productId));
+
+        if (inventory.getAvailableQuantity() < quantity) {
+            throw new BadRequestException("Cannot mark more stock as damaged than is available. Available: " + inventory.getAvailableQuantity());
+        }
+
+        inventory.setAvailableQuantity(inventory.getAvailableQuantity() - quantity);
+        inventory.setDamagedQuantity((inventory.getDamagedQuantity() != null ? inventory.getDamagedQuantity() : 0) + quantity);
+        inventoryRepository.save(inventory);
+
+        InventoryTransaction tx = InventoryTransaction.builder()
+                .inventory(inventory)
+                .quantity(quantity)
+                .type("DAMAGED")
+                .notes(notes != null ? notes : "Damaged stock deduction")
+                .build();
+        inventoryTransactionRepository.save(tx);
     }
 
     @Transactional

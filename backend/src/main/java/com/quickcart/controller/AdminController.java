@@ -24,6 +24,26 @@ public class AdminController {
     private final OrderService orderService;
     private final CouponService couponService;
     private final DeliveryPartnerService deliveryPartnerService;
+    private final FinancialLedgerService financialLedgerService;
+    private final com.quickcart.repository.DarkStoreRepository darkStoreRepository;
+
+    // Financial Ledger Audit Stream
+    @GetMapping("/financial-ledger")
+    @Operation(summary = "Get paginated double-entry financial ledger movements")
+    public ResponseEntity<ApiResponse<org.springframework.data.domain.Page<FinancialLedgerDto>>> getFinancialLedger(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        org.springframework.data.domain.Page<FinancialLedgerDto> entries = financialLedgerService.getLedgerEntriesPaged(page, size);
+        return ResponseEntity.ok(ApiResponse.success(entries));
+    }
+
+    @GetMapping("/stores")
+    @Operation(summary = "Get all dark store fulfillment hubs")
+    public ResponseEntity<ApiResponse<List<com.quickcart.entity.DarkStore>>> getAllStores() {
+        List<com.quickcart.entity.DarkStore> stores = darkStoreRepository.findAll();
+        return ResponseEntity.ok(ApiResponse.success(stores));
+    }
 
     // Analytics Dashboard
     @GetMapping("/dashboard/stats")

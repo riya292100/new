@@ -53,6 +53,34 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success("Password reset successfully", null));
     }
 
+    @PostMapping("/forgot-password")
+    @Operation(summary = "Request a password reset token for the specified email")
+    public ResponseEntity<ApiResponse<String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        String token = authService.initiatePasswordReset(request);
+        return ResponseEntity.ok(ApiResponse.success("Password reset instructions dispatched", token));
+    }
+
+    @PostMapping("/reset-password-confirm")
+    @Operation(summary = "Confirm password reset using verification token")
+    public ResponseEntity<ApiResponse<Void>> resetPasswordConfirm(@Valid @RequestBody ResetPasswordWithTokenRequest request) {
+        authService.completePasswordResetWithToken(request);
+        return ResponseEntity.ok(ApiResponse.success("Password reset confirmed successfully", null));
+    }
+
+    @PostMapping("/verify-email")
+    @Operation(summary = "Verify account email using token")
+    public ResponseEntity<ApiResponse<Void>> verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
+        authService.completeEmailVerification(request);
+        return ResponseEntity.ok(ApiResponse.success("Email verified successfully", null));
+    }
+
+    @PostMapping("/resend-verification")
+    @Operation(summary = "Resend email verification token")
+    public ResponseEntity<ApiResponse<String>> resendVerification(@Valid @RequestBody ForgotPasswordRequest request) {
+        String token = authService.initiateEmailVerification(request.getEmail());
+        return ResponseEntity.ok(ApiResponse.success("Verification token generated", token));
+    }
+
     @GetMapping("/me")
     @Operation(summary = "Get current authenticated user profile")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {

@@ -47,6 +47,26 @@ public class Inventory {
 
     @Builder.Default
     @Column(nullable = false)
+    private Integer soldQuantity = 0;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer damagedQuantity = 0;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer incomingQuantity = 0;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer reorderLevel = 10;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer maxStock = 200;
+
+    @Builder.Default
+    @Column(nullable = false)
     private Integer lowStockThreshold = 5;
 
     @Version

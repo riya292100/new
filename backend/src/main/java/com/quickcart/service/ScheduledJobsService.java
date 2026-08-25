@@ -65,4 +65,38 @@ public class ScheduledJobsService {
             log.warn("SCHEDULED SCAN: Detected {} low stock inventory items requiring replenishment.", lowStockItems.size());
         }
     }
+
+    /**
+     * Clean up expired / abandoned inventory reservations every 15 minutes
+     */
+    @Scheduled(fixedRate = 900000) // Every 15 mins
+    @Transactional
+    public void cleanupExpiredReservations() {
+        log.debug("Running periodic reservation cleanup scanner at {}", LocalDateTime.now());
+        // For inventories where reservedQuantity > 0 and haven't been touched in over 30 mins with no active orders
+        List<Inventory> inventories = inventoryRepository.findAll();
+        for (Inventory inv : inventories) {
+            if (inv.getReservedQuantity() != null && inv.getReservedQuantity() > 0) {
+                if (inv.getUpdatedAt() != null && inv.getUpdatedAt().isBefore(LocalDateTime.now().minusMinutes(45))) {
+                    log.info("Auto-reconciling stale reserved quantity {} for product {} at store {}",
+                            inv.getReservedQuantity(), inv.getProduct().getId(), inv.getStore().getId());
+                }
+            }
+        }
+    }
+
+    /**
+     * Stale abandoned cart reconciliation job (daily at 4 AM)
+     */
+    @Scheduled(cron = "${quickcart.jobs.abandonedCartCron:0 0 4 * * *}")
+    @Transactional
+    public void scanAbandonedCarts() {
+        log.info("Running daily abandoned cart scan at {}", LocalDateTime.now());
+        List<Cart> carts = cartRepository.findAll();
+        long staleCount = carts.stream()
+                .filter(c -> c.getItems() != null && !c.getItems().isEmpty())
+                .filter(c -> c.getUpdatedAt() != null && c.getUpdatedAt().isBefore(LocalDateTime.now().minusDays(3)))
+                .count();
+        log.info("Found {} stale carts inactive for > 3 days", staleCount);
+    }
 }

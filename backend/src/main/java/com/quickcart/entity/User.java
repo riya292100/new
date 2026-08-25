@@ -62,6 +62,14 @@ public class User {
     private LocalDateTime passwordResetExpiresAt;
 
     @Builder.Default
+    @Column(nullable = false)
+    private Integer failedLoginAttempts = 0;
+
+    private LocalDateTime lockedUntil;
+
+    private LocalDateTime lastLoginAt;
+
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -84,5 +92,33 @@ public class User {
         this.passwordHash = passwordHash;
         this.isActive = true;
         this.isVerified = true;
+        this.failedLoginAttempts = 0;
+    }
+
+    public boolean isAccountLocked() {
+        if (lockedUntil == null) {
+            return false;
+        }
+        if (LocalDateTime.now().isAfter(lockedUntil)) {
+            // Lock expired
+            this.lockedUntil = null;
+            this.failedLoginAttempts = 0;
+            return false;
+        }
+        return true;
+    }
+
+    public void recordFailedLogin() {
+        this.failedLoginAttempts = (this.failedLoginAttempts != null ? this.failedLoginAttempts : 0) + 1;
+        if (this.failedLoginAttempts >= 5) {
+            // Lock account for 15 minutes after 5 consecutive failed attempts
+            this.lockedUntil = LocalDateTime.now().plusMinutes(15);
+        }
+    }
+
+    public void recordSuccessfulLogin() {
+        this.failedLoginAttempts = 0;
+        this.lockedUntil = null;
+        this.lastLoginAt = LocalDateTime.now();
     }
 }
