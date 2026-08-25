@@ -93,9 +93,8 @@ public class SmartDeliveryAssignmentService {
 
         // 3. Zone affinity bonus
         if (targetPincode != null && partner.getUser() != null) {
-            // Check delivery zones
-            List<DeliveryZone> zones = deliveryZoneRepository.findByPincode(targetPincode);
-            if (!zones.isEmpty()) {
+            List<DeliveryZone> activeZones = deliveryZoneRepository.findByIsActiveTrue();
+            if (!activeZones.isEmpty()) {
                 score += 40.0;
             }
         }

@@ -28,7 +28,7 @@ public class HealthController {
     @Autowired(required = false)
     private BuildProperties buildProperties;
 
-    @GetMapping({"/health", "/api/health"})
+    @GetMapping({"/health", "/api/health", "/api/v1/health"})
     public ResponseEntity<ApiResponse<Map<String, Object>>> getHealth() {
         Map<String, Object> health = new HashMap<>();
         health.put("status", "UP");
@@ -42,7 +42,7 @@ public class HealthController {
         return ResponseEntity.ok(ApiResponse.success(health));
     }
 
-    @GetMapping({"/health/liveness", "/api/health/liveness"})
+    @GetMapping({"/health/liveness", "/api/health/liveness", "/api/v1/health/liveness"})
     public ResponseEntity<ApiResponse<Map<String, Object>>> getLiveness() {
         Map<String, Object> liveness = new HashMap<>();
         liveness.put("status", "UP");
@@ -50,7 +50,7 @@ public class HealthController {
         return ResponseEntity.ok(ApiResponse.success(liveness));
     }
 
-    @GetMapping({"/health/readiness", "/api/health/readiness"})
+    @GetMapping({"/health/readiness", "/api/health/readiness", "/api/v1/health/readiness"})
     public ResponseEntity<ApiResponse<Map<String, Object>>> getReadiness() {
         boolean dbHealthy = checkDatabaseHealth();
         Map<String, Object> readiness = new HashMap<>();

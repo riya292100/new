@@ -1,8 +1,7 @@
 package com.quickcart.service;
 
-import com.quickcart.dto.ProductResponse;
+import com.quickcart.dto.ProductResponseDto;
 import com.quickcart.entity.Order;
-import com.quickcart.entity.OrderItem;
 import com.quickcart.entity.Product;
 import com.quickcart.entity.User;
 import com.quickcart.repository.OrderRepository;
@@ -25,8 +24,7 @@ public class RecommendationService {
     private final AuthService authService;
     private final ProductService productService;
 
-    @Cacheable(value = "recommendations", key = "#limit", condition = "#root.target.isAnonymous()")
-    public List<ProductResponse> getPersonalizedRecommendations(int limit) {
+    public List<ProductResponseDto> getPersonalizedRecommendations(int limit) {
         User currentUser = null;
         try {
             currentUser = authService.getCurrentUserEntity();
@@ -42,26 +40,23 @@ public class RecommendationService {
                         .collect(Collectors.toSet());
 
                 if (!orderedCategoryIds.isEmpty()) {
-                    List<Product> recommended = productRepository.findByIsAvailableTrue().stream()
+                    List<Product> recommended = productRepository.findByIsActiveTrue().stream()
                             .filter(p -> p.getCategory() != null && orderedCategoryIds.contains(p.getCategory().getId()))
                             .limit(limit)
                             .collect(Collectors.toList());
 
                     if (!recommended.isEmpty()) {
-                        return recommended.stream().map(productService::mapToResponse).collect(Collectors.toList());
+                        return recommended.stream().map(productService::mapToDto).collect(Collectors.toList());
                     }
                 }
             }
         }
 
         // Fallback to top featured and best seller products
-        return productRepository.findByIsFeaturedTrueAndIsAvailableTrue().stream()
+        return productRepository.findByIsFeaturedTrueAndIsActiveTrue().stream()
                 .limit(limit)
-                .map(productService::mapToResponse)
+                .map(productService::mapToDto)
                 .collect(Collectors.toList());
     }
-
-    public boolean isAnonymous() {
-        return authService.getCurrentAuthenticatedUser() == null;
-    }
 }
+
