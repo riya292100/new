@@ -41,7 +41,9 @@ describe('Header Component (Isolated Unit Tests)', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Quick/i)).toBeInTheDocument();
+    expect(screen.getByText('Quick')).toBeInTheDocument();
+    expect(screen.getByText('Cart')).toBeInTheDocument();
+    expect(screen.getByText(/QuickCash/i)).toBeInTheDocument();
     expect(screen.getByText(/Delivery in 15 mins/i)).toBeInTheDocument();
     expect(screen.getByText(/Rahul/i)).toBeInTheDocument();
     expect(screen.getByText(/4 items/i)).toBeInTheDocument();

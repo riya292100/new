@@ -39,6 +39,7 @@ public class OrderService {
     private final AuthService authService;
     private final AddressService addressService;
     private final OrderTrackingWebSocketService webSocketService;
+    private final WalletService walletService;
 
     @Value("${quickcart.app.freeDeliveryThreshold:199.0}")
     private double freeDeliveryThreshold;
@@ -106,15 +107,25 @@ public class OrderService {
         }
 
         BigDecimal tipAmount = request.getTipAmount() != null ? request.getTipAmount() : BigDecimal.ZERO;
-        BigDecimal totalAmount = itemTotal.add(deliveryFee).add(platformFeeAmount).add(taxAmount)
+        BigDecimal preWalletTotal = itemTotal.add(deliveryFee).add(platformFeeAmount).add(taxAmount)
                 .add(tipAmount).subtract(discountAmount);
 
-        if (totalAmount.compareTo(BigDecimal.ZERO) < 0) {
-            totalAmount = BigDecimal.ZERO;
+        if (preWalletTotal.compareTo(BigDecimal.ZERO) < 0) {
+            preWalletTotal = BigDecimal.ZERO;
         }
 
         // Generate Order Number
         String orderNumber = "QC" + System.currentTimeMillis() % 100000000;
+
+        // Apply QuickCash Wallet points if requested
+        BigDecimal walletDiscountAmount = BigDecimal.ZERO;
+        if (request.getWalletAmountToRedeem() != null && request.getWalletAmountToRedeem().compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal maxUsable = preWalletTotal;
+            BigDecimal requestedRedeem = request.getWalletAmountToRedeem().min(maxUsable);
+            walletDiscountAmount = walletService.debitForOrder(currentUser, requestedRedeem, orderNumber);
+        }
+
+        BigDecimal totalAmount = preWalletTotal.subtract(walletDiscountAmount).max(BigDecimal.ZERO);
 
         Order order = new Order();
         order.setOrderNumber(orderNumber);
@@ -126,6 +137,7 @@ public class OrderService {
         order.setPlatformFee(platformFeeAmount);
         order.setTaxAmount(taxAmount);
         order.setDiscountAmount(discountAmount);
+        order.setWalletDiscountAmount(walletDiscountAmount);
         order.setTipAmount(tipAmount);
         order.setTotalAmount(totalAmount);
         order.setCouponCode(couponCode);
@@ -243,6 +255,8 @@ public class OrderService {
                     deliveryPartnerRepository.save(partner);
                 }
             }
+            // Auto credit 5% cashback to user wallet
+            walletService.creditCashbackForOrder(order.getUser(), order);
         }
 
         Order saved = orderRepository.save(order);
@@ -286,6 +300,11 @@ public class OrderService {
             order.getPayment().setPaymentStatus(PaymentStatus.REFUNDED);
         }
 
+        // Refund wallet credits if used
+        if (order.getWalletDiscountAmount() != null && order.getWalletDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+            walletService.refundForOrder(order.getUser(), order.getWalletDiscountAmount(), order.getOrderNumber());
+        }
+
         Order saved = orderRepository.save(order);
         OrderResponse response = mapToDto(saved);
         webSocketService.broadcastOrderStatusUpdate(response);
@@ -317,6 +336,10 @@ public class OrderService {
                 ? order.getDeliveryAssignment().getPartner()
                 : null;
 
+        BigDecimal cashback = order.getItemTotal() != null
+                ? order.getItemTotal().multiply(BigDecimal.valueOf(0.05)).setScale(2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
         return new OrderResponse(
                 order.getId(),
                 order.getOrderNumber(),
@@ -330,6 +353,8 @@ public class OrderService {
                 order.getPlatformFee(),
                 order.getTaxAmount(),
                 order.getDiscountAmount(),
+                order.getWalletDiscountAmount() != null ? order.getWalletDiscountAmount() : BigDecimal.ZERO,
+                cashback,
                 order.getTipAmount(),
                 order.getTotalAmount(),
                 order.getCouponCode(),

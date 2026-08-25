@@ -30,6 +30,8 @@ public class OrderResponse {
     private BigDecimal platformFee;
     private BigDecimal taxAmount;
     private BigDecimal discountAmount;
+    private BigDecimal walletDiscountAmount;
+    private BigDecimal cashbackEarned;
     private BigDecimal tipAmount;
     private BigDecimal totalAmount;
     private String couponCode;

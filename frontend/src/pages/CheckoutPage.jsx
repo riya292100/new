@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { addressApi, orderApi } from '../services/api';
+import { addressApi, orderApi, walletApi } from '../services/api';
 import { Clock } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import CheckoutAddressSelector from '../components/checkout/CheckoutAddressSelector';
@@ -38,6 +38,8 @@ const CheckoutPage = () => {
   const [selectedTip, setSelectedTip] = useState(10);
   const [paymentMethod, setPaymentMethod] = useState('UPI');
   const [placingOrder, setPlacingOrder] = useState(false);
+  const [wallet, setWallet] = useState(null);
+  const [useWallet, setUseWallet] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -59,7 +61,22 @@ const CheckoutPage = () => {
       .catch((err) => {
         console.error('Failed to fetch user addresses:', err);
       });
+
+    walletApi
+      .getWallet()
+      .then((res) => {
+        if (res?.data?.data) {
+          setWallet(res.data.data);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch wallet for checkout:', err);
+      });
   }, [user, navigate]);
+
+  const preWalletTotal = (finalPayableAmount || cart?.finalPrice || 0) + selectedTip;
+  const availableWalletBalance = Number(wallet?.balance || 0);
+  const walletDiscount = useWallet ? Math.min(availableWalletBalance, preWalletTotal) : 0;
 
   const handleCreateAddress = async (e) => {
     e.preventDefault();
@@ -98,6 +115,7 @@ const CheckoutPage = () => {
         couponCode: appliedCoupon?.code || null,
         deliveryInstructions: deliveryNotes || null,
         tipAmount: selectedTip,
+        walletAmountToRedeem: useWallet ? walletDiscount : 0,
       };
 
       const res = await orderApi.createOrder(orderPayload);
@@ -185,6 +203,10 @@ const CheckoutPage = () => {
             finalPayableAmount={finalPayableAmount}
             placingOrder={placingOrder}
             onPlaceOrder={handlePlaceOrder}
+            useWallet={useWallet}
+            walletBalance={availableWalletBalance}
+            walletDiscount={walletDiscount}
+            onToggleWallet={setUseWallet}
           />
         </div>
       </div>

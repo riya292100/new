@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.0] - 2026-08-25
+
+### Added
+- **Customer Loyalty Points & QuickCash Wallet System**:
+  - Backend Entities & Ledger: `Wallet`, `WalletTransaction`, `WalletTransactionType` (`CREDIT_WELCOME_BONUS`, `CREDIT_CASHBACK`, `CREDIT_PROMO`, `CREDIT_REFUND`, `DEBIT_PURCHASE`).
+  - Automated Welcome Bonus: ₹100 instant QuickCash credited automatically upon new customer initialization.
+  - Automated 5% Delivery Cashback: Automatic calculation and credit of 5% instant cashback to user wallet when an order is completed and delivered.
+  - Order Points Redemption: Customers can redeem up to 100% of their QuickCash balance towards grocery and clothing cart totals at checkout.
+  - Cancellation Refund: Instant automated restoration of redeemed wallet points if an order is cancelled.
+  - Endpoints: `GET /api/wallet`, `GET /api/wallet/transactions`, `POST /api/wallet/redeem-preview`, `POST /api/wallet/add-demo-funds`.
+  - Frontend QuickCash UI: Interactive `WalletModal.jsx` featuring glowing balance card, cashback tier badge, 1-click test recharges (+₹100, +₹250, +₹500), and full transaction history ledger.
+  - Navigation & Triggers: `⚡ QuickCash` button in `Header.jsx`, user profile dropdown, and QuickCash loyalty card in `ProfilePage.jsx`.
+  - Checkout Integration: Pay with QuickCash Wallet toggle in `CheckoutOrderSummary.jsx` & `CheckoutPage.jsx` with bill deduction and 5% cashback earning notice.
+  - Unit & Integration Test Suites: `WalletServiceTest`, `WalletControllerTest`, and `WalletModal.test.jsx`.
+
+---
+
 ## [1.4.0] - 2026-08-25
 
 ### Added

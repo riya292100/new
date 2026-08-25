@@ -15,6 +15,7 @@ import {
   Shirt,
 } from 'lucide-react';
 import SearchAutocomplete from './SearchAutocomplete';
+import WalletModal from './wallet/WalletModal';
 import { useLocation } from '../context/LocationContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -24,6 +25,7 @@ const Header = () => {
   const { cart, setCartDrawerOpen } = useCart();
   const { user, logout, openAuthModal, isAdmin, isDeliveryPartner } = useAuth();
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -187,6 +189,31 @@ const Header = () => {
 
         {/* Right Actions: User Profile & Cart Button */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+          {user && (
+            <button
+              onClick={() => setWalletModalOpen(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
+                border: '1px solid #10b981',
+                padding: '7px 13px',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '700',
+                color: '#065f46',
+                boxShadow: '0 2px 6px rgba(16, 185, 129, 0.15)',
+                transition: 'all 0.15s ease',
+              }}
+              title="QuickCash Wallet & Loyalty Rewards"
+            >
+              <span style={{ fontSize: '1rem' }}>⚡</span>
+              <span>QuickCash</span>
+            </button>
+          )}
+
           {user ? (
             <div style={{ position: 'relative' }}>
               <button
@@ -250,6 +277,30 @@ const Header = () => {
                     Signed in as <br />
                     <strong style={{ color: '#0f172a' }}>{user.email}</strong>
                   </div>
+
+                  <button
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      setWalletModalOpen(true);
+                    }}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 12px',
+                      color: '#047857',
+                      background: 'transparent',
+                      border: 'none',
+                      fontSize: '0.85rem',
+                      fontWeight: '600',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <span>⚡</span> QuickCash Wallet
+                  </button>
 
                   <Link
                     to="/orders"
@@ -431,6 +482,9 @@ const Header = () => {
           </button>
         </div>
       </div>
+
+      {/* QuickCash Loyalty Wallet Modal */}
+      <WalletModal isOpen={walletModalOpen} onClose={() => setWalletModalOpen(false)} user={user} />
     </header>
   );
 };

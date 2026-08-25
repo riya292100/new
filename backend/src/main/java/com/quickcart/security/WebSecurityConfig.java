@@ -97,7 +97,7 @@ public class WebSecurityConfig {
                         // Role-Based Endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/delivery/**").hasAnyRole("DELIVERY_PARTNER", "ADMIN")
-                        .requestMatchers("/api/customer/**", "/api/cart/**", "/api/orders/**", "/api/addresses/**", "/api/payments/**", "/api/coupons/validate", "/api/dining/bookings/**", "/api/dining/reviews/**", "/api/dining/favorites/**").authenticated()
+                        .requestMatchers("/api/customer/**", "/api/cart/**", "/api/orders/**", "/api/addresses/**", "/api/payments/**", "/api/coupons/validate", "/api/wallet/**", "/api/dining/bookings/**", "/api/dining/reviews/**", "/api/dining/favorites/**").authenticated()
 
                         .anyRequest().authenticated()
                 );

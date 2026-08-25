@@ -150,4 +150,15 @@ export const adminApi = {
   getDeliveryPartners: () => api.get('/admin/delivery-partners'),
 };
 
+// Wallet & Customer Loyalty API
+export const walletApi = {
+  getWallet: () => api.get('/wallet'),
+  getTransactions: (page = 0, size = 10) =>
+    api.get(`/wallet/transactions?page=${page}&size=${size}`),
+  previewRedemption: (orderAmount, amountToRedeem) =>
+    api.post('/wallet/redeem-preview', { orderAmount, amountToRedeem }),
+  addDemoFunds: (amount, description) =>
+    api.post('/wallet/add-demo-funds', { amount, description }),
+};
+
 export default api;

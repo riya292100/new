@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { addressApi } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import WalletModal from '../components/wallet/WalletModal';
 import {
   User,
   MapPin,
@@ -20,6 +21,7 @@ const ProfilePage = () => {
   const { addToast } = useToast();
   const [addresses, setAddresses] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [newAddr, setNewAddr] = useState({
     label: 'Home',
     receiverName: user?.fullName || '',
@@ -141,6 +143,62 @@ const ProfilePage = () => {
               <span className="badge badge-featured">{user?.roles?.join(', ')}</span>
             </div>
           </div>
+        </div>
+
+        {/* QuickCash Loyalty Card */}
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #064e3b 0%, #047857 100%)',
+            borderRadius: '20px',
+            padding: '24px',
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '16px',
+            boxShadow: '0 10px 25px -5px rgba(5, 150, 105, 0.4)',
+          }}
+        >
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+              <span style={{ fontSize: '1.2rem' }}>⚡</span>
+              <span
+                style={{
+                  fontWeight: '700',
+                  fontSize: '0.95rem',
+                  letterSpacing: '0.02em',
+                  textTransform: 'uppercase',
+                  color: '#a7f3d0',
+                }}
+              >
+                QuickCash Loyalty & Rewards
+              </span>
+            </div>
+            <h4 style={{ fontSize: '1.4rem', fontWeight: '800', margin: 0 }}>
+              Earn 5% Instant Cashback on All Orders
+            </h4>
+            <p style={{ fontSize: '0.85rem', color: '#d1fae5', margin: '4px 0 0 0' }}>
+              Redeem 100% of your wallet balance on groceries and apparel at checkout.
+            </p>
+          </div>
+          <button
+            onClick={() => setWalletModalOpen(true)}
+            style={{
+              padding: '10px 20px',
+              borderRadius: '12px',
+              background: '#ffffff',
+              color: '#064e3b',
+              fontWeight: '800',
+              fontSize: '0.9rem',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            Open QuickCash Wallet ➔
+          </button>
         </div>
 
         {/* Address Book Card */}
@@ -335,6 +393,8 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      <WalletModal isOpen={walletModalOpen} onClose={() => setWalletModalOpen(false)} user={user} />
     </div>
   );
 };

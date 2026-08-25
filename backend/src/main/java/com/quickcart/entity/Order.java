@@ -58,6 +58,9 @@ public class Order {
     private BigDecimal discountAmount = BigDecimal.ZERO;
 
     @Column(precision = 10, scale = 2)
+    private BigDecimal walletDiscountAmount = BigDecimal.ZERO;
+
+    @Column(precision = 10, scale = 2)
     private BigDecimal tipAmount = BigDecimal.ZERO;
 
     @Column(nullable = false, precision = 10, scale = 2)

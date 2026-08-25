@@ -26,4 +26,6 @@ public class CreateOrderRequest {
     private String deliveryInstructions;
 
     private BigDecimal tipAmount = BigDecimal.ZERO;
+
+    private BigDecimal walletAmountToRedeem = BigDecimal.ZERO;
 }
