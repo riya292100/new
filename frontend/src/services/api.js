@@ -53,6 +53,8 @@ export const catalogApi = {
   getSearchSuggestions: (q) => api.get('/products/search/suggestions', { params: { q } }),
 };
 
+export const productApi = catalogApi;
+
 // Category API alias
 export const categoryApi = {
   getCategories: () => api.get('/categories'),
@@ -146,27 +148,6 @@ export const adminApi = {
   getAllUsers: () => api.get('/admin/users'),
   toggleUserStatus: (id) => api.patch(`/admin/users/${id}/toggle-status`),
   getDeliveryPartners: () => api.get('/admin/delivery-partners'),
-};
-
-// Wishlist API
-export const wishlistApi = {
-  getWishlist: () => api.get('/wishlist'),
-  toggleWishlist: (productId) => api.post(`/wishlist/toggle/${productId}`),
-  moveToCart: (productId) => api.post(`/wishlist/move-to-cart/${productId}`),
-  clearWishlist: () => api.delete('/wishlist/clear'),
-};
-
-// Seller Marketplace API
-export const sellerApi = {
-  getDashboard: () => api.get('/seller/dashboard'),
-  getProducts: () => api.get('/seller/products'),
-  addProduct: (productData) => api.post('/seller/products', productData),
-};
-
-// Pincode & Express Delivery API
-export const pincodeApi = {
-  check: (pincode) => api.get('/pincode/check', { params: { pincode } }),
-  getDetails: (pincode) => api.get(`/pincode/${pincode}`),
 };
 
 export default api;

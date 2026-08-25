@@ -84,7 +84,6 @@ public class WebSecurityConfig {
                         // Public Endpoints
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/health/**", "/api/health/**").permitAll()
-                        .requestMatchers("/api/pincode/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/coupons/active").permitAll()
@@ -97,9 +96,8 @@ public class WebSecurityConfig {
 
                         // Role-Based Endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/seller/**").hasAnyRole("SELLER", "ADMIN")
                         .requestMatchers("/api/delivery/**").hasAnyRole("DELIVERY_PARTNER", "ADMIN")
-                        .requestMatchers("/api/customer/**", "/api/cart/**", "/api/wishlist/**", "/api/orders/**", "/api/addresses/**", "/api/payments/**", "/api/coupons/validate", "/api/dining/bookings/**", "/api/dining/reviews/**", "/api/dining/favorites/**").authenticated()
+                        .requestMatchers("/api/customer/**", "/api/cart/**", "/api/orders/**", "/api/addresses/**", "/api/payments/**", "/api/coupons/validate", "/api/dining/bookings/**", "/api/dining/reviews/**", "/api/dining/favorites/**").authenticated()
 
                         .anyRequest().authenticated()
                 );

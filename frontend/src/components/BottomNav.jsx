@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Grid, Tag, ShoppingBag, User, Package, Utensils } from 'lucide-react';
+import { Home, Grid, Tag, ShoppingBag, User, Package, Utensils, Shirt } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -22,6 +22,16 @@ const BottomNav = () => {
       >
         <Home size={22} />
         <span>Home</span>
+      </NavLink>
+
+      <NavLink
+        to="/clothes"
+        className={({ isActive }) =>
+          `bottom-nav-item ${isActive || location.pathname.startsWith('/clothes') || location.pathname.startsWith('/fashion') ? 'active' : ''}`
+        }
+      >
+        <Shirt size={22} />
+        <span>Clothes</span>
       </NavLink>
 
       <NavLink

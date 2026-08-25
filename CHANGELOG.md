@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.0] - 2026-08-25
+
+### Added
+- **Clothes & Fashion Shopping Feature**:
+  - Dedicated clothes shopping page (`ClothesShoppingPage.jsx` at `/clothes`, `/fashion`, `/clothing`, `/cloths`) with department filters (Men's Wear, Women's Wear, Unisex), garment type pills (T-Shirts, Jeans, Shirts, Dresses, Activewear, Hoodies, Ethnic Wear, Trousers), size filter dropdown, and sorting options.
+  - Interactive Garment Card (`ClothCard.jsx`) with instant on-card size selection chips (`XS`, `S`, `M`, `L`, `XL`, `XXL`, `30`, `32`, `34`, `36`), MRP strikethroughs, discount percentages, fabric specs, and add to cart.
+  - Garment Detail Modal (`ClothDetailModal.jsx`) featuring high-resolution photography, thumbnail selector, interactive size guide modal (Chest, Length, Waist measurements), color swatches, fabric/fit specifications, and 15-minute quick delivery assurance.
+  - Clothes showcase section & promotional banner added to `HomePage.jsx`.
+  - Navigation placement directly before Admin Panel in `Header.jsx` (main nav & user profile dropdown), `RoleSwitcher.jsx` (demo bar), and `BottomNav.jsx` (mobile navigation tab).
+  - Seeded 8+ rich apparel items with size metadata, pricing, discounts, and brand tags in `DataSeeder.java` and `demoConfig.js`.
+  - Added unit test suites for `ClothCard`, `ClothDetailModal`, and `ClothesShoppingPage`.
+
+---
+
+## [1.3.0] - 2026-08-25
+
+### Removed
+- **Marketplace & E-Commerce Additions**:
+  - Removed Seller Hub (`SellerController`, `SellerService`, `SellerDashboard`, `ROLE_SELLER`, `/seller` route).
+  - Removed Wishlist System (`WishlistController`, `WishlistService`, `Wishlist`, `WishlistItem`, `WishlistContext`, `WishlistPage`, `/wishlist` route).
+  - Removed Pincode Engine (`PincodeController`, marketplace ETA calculations).
+  - Removed Invoice Generator (`InvoiceModal`, GST tax receipt generation).
+  - Removed non-grocery product categories (Mobiles, Laptops, Fashion, Consumer Electronics) and marketplace product metadata (specifications table, warranty, EMI calculator).
+
+### Restored
+- **QuickCart Grocery Delivery Platform**:
+  - Restored 10-minute grocery delivery branding and catalog with 11 core categories and 50+ rich grocery items.
+  - Restored grocery product details modal (nutritional information table, related grocery items, grocery reviews).
+  - Restored grocery cart, checkout (10-15 min delivery slot, tip selector, delivery instructions), and live radar order tracking.
+  - Restored 3 core demo roles (Customer, Delivery Partner, Administrator).
+
+---
+
 ## [1.2.0] - 2026-08-22
 
 ### Added

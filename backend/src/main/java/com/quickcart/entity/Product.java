@@ -72,24 +72,6 @@ public class Product {
 
     private Boolean isActive = true;
 
-    // Marketplace & 1-Hour Pan-India Delivery fields
-    private Boolean isOneHourDelivery = true;
-
-    @Column(length = 150)
-    private String sellerName = "QuickCart Assured";
-
-    @Column(length = 150)
-    private String warranty = "1 Year Brand Warranty & 7 Days Replacement";
-
-    @Column(columnDefinition = "TEXT")
-    private String specifications;
-
-    @Column(columnDefinition = "TEXT")
-    private String galleryImages;
-
-    @Column(columnDefinition = "TEXT")
-    private String highlights;
-
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

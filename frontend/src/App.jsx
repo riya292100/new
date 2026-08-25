@@ -4,7 +4,6 @@ import { ToastProvider } from './context/ToastContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LocationProvider } from './context/LocationContext';
 import { CartProvider } from './context/CartContext';
-import { WishlistProvider } from './context/WishlistContext';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -25,13 +24,12 @@ import OrderSuccessPage from './pages/OrderSuccessPage';
 import OrderTrackingPage from './pages/OrderTrackingPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import ProfilePage from './pages/ProfilePage';
-import WishlistPage from './pages/WishlistPage';
-import SellerDashboard from './pages/SellerDashboard';
 import DeliveryPartnerPortal from './pages/DeliveryPartnerPortal';
 import AdminDashboard from './pages/AdminDashboard';
 import DiningDiscoveryPage from './pages/DiningDiscoveryPage';
 import RestaurantDetailsPage from './pages/RestaurantDetailsPage';
 import BookingsPage from './pages/BookingsPage';
+import ClothesShoppingPage from './pages/ClothesShoppingPage';
 
 // Protected route guard
 const ProtectedRoute = ({ children, requiredRole }) => {
@@ -78,11 +76,9 @@ const ProtectedRoute = ({ children, requiredRole }) => {
                 switchDemoRole(
                   requiredRole === 'ROLE_ADMIN'
                     ? 'ADMIN'
-                    : requiredRole === 'ROLE_SELLER'
-                      ? 'SELLER'
-                      : requiredRole === 'ROLE_DELIVERY_PARTNER'
-                        ? 'DELIVERY'
-                        : 'CUSTOMER'
+                    : requiredRole === 'ROLE_DELIVERY_PARTNER'
+                      ? 'DELIVERY'
+                      : 'CUSTOMER'
                 )
               }
               className="btn btn-primary btn-block"
@@ -90,11 +86,9 @@ const ProtectedRoute = ({ children, requiredRole }) => {
               1-Click Demo Login as{' '}
               {requiredRole === 'ROLE_ADMIN'
                 ? 'Admin'
-                : requiredRole === 'ROLE_SELLER'
-                  ? 'Marketplace Seller'
-                  : requiredRole === 'ROLE_DELIVERY_PARTNER'
-                    ? 'Delivery Partner'
-                    : 'Customer'}
+                : requiredRole === 'ROLE_DELIVERY_PARTNER'
+                  ? 'Delivery Partner'
+                  : 'Customer'}
             </button>
             <button onClick={() => openAuthModal('login')} className="btn btn-outline btn-block">
               Open Regular Login Modal
@@ -120,34 +114,14 @@ const ProtectedRoute = ({ children, requiredRole }) => {
           </h2>
           <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '24px' }}>
             This portal requires{' '}
-            <strong>
-              {requiredRole === 'ROLE_ADMIN'
-                ? 'Administrator'
-                : requiredRole === 'ROLE_SELLER'
-                  ? 'Seller'
-                  : 'Delivery Partner'}
-            </strong>{' '}
+            <strong>{requiredRole === 'ROLE_ADMIN' ? 'Administrator' : 'Delivery Partner'}</strong>{' '}
             privileges.
           </p>
           <button
-            onClick={() =>
-              switchDemoRole(
-                requiredRole === 'ROLE_ADMIN'
-                  ? 'ADMIN'
-                  : requiredRole === 'ROLE_SELLER'
-                    ? 'SELLER'
-                    : 'DELIVERY'
-              )
-            }
+            onClick={() => switchDemoRole(requiredRole === 'ROLE_ADMIN' ? 'ADMIN' : 'DELIVERY')}
             className="btn btn-accent btn-block"
           >
-            Switch to{' '}
-            {requiredRole === 'ROLE_ADMIN'
-              ? 'Admin'
-              : requiredRole === 'ROLE_SELLER'
-                ? 'Seller'
-                : 'Delivery Partner'}{' '}
-            Demo View
+            Switch to {requiredRole === 'ROLE_ADMIN' ? 'Admin' : 'Delivery Partner'} Demo View
           </button>
         </div>
       </div>
@@ -185,14 +159,13 @@ const AppContent = () => {
       <main style={{ flex: 1, paddingBottom: '70px' }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/clothes" element={<ClothesShoppingPage />} />
+          <Route path="/fashion" element={<ClothesShoppingPage />} />
+          <Route path="/clothing" element={<ClothesShoppingPage />} />
+          <Route path="/cloths" element={<ClothesShoppingPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/category" element={<CategoryPage />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
-          <Route path="/products/:id" element={<ProductDetailsPage />} />
-          <Route path="/wishlist" element={<WishlistPage />} />
-          <Route path="/seller" element={<SellerDashboard />} />
-          <Route path="/sellerdashboard" element={<SellerDashboard />} />
-          <Route path="/merchant" element={<SellerDashboard />} />
           <Route path="/dining" element={<DiningDiscoveryPage />} />
           <Route path="/restaurants" element={<DiningDiscoveryPage />} />
           <Route path="/restaurant/:id" element={<RestaurantDetailsPage />} />
@@ -322,9 +295,7 @@ const App = () => {
           <AuthProvider>
             <LocationProvider>
               <CartProvider>
-                <WishlistProvider>
-                  <AppContent />
-                </WishlistProvider>
+                <AppContent />
               </CartProvider>
             </LocationProvider>
           </AuthProvider>

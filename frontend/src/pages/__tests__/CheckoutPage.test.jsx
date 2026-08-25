@@ -60,7 +60,7 @@ describe('CheckoutPage Component', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText(/1-Hour SuperFast/i)).toBeInTheDocument();
+    expect(screen.getByText(/10-15 Minute Express Delivery Active/i)).toBeInTheDocument();
     expect(screen.getByText('Choose Payment Method')).toBeInTheDocument();
     expect(screen.getByText('Place Express Order')).toBeInTheDocument();
   });

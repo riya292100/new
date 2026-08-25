@@ -32,9 +32,6 @@ public class DataSeeder implements CommandLineRunner {
     @Value("${quickcart.demo.customer-password:Customer@123}")
     private String customerPassword;
 
-    @Value("${quickcart.demo.seller-password:Seller@123}")
-    private String sellerPassword;
-
     @Value("${quickcart.demo.seeding-enabled:true}")
     private boolean seedingEnabled;
 
@@ -76,7 +73,6 @@ public class DataSeeder implements CommandLineRunner {
         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN).orElseThrow();
         Role driverRole = roleRepository.findByName(ERole.ROLE_DELIVERY_PARTNER).orElseThrow();
         Role customerRole = roleRepository.findByName(ERole.ROLE_CUSTOMER).orElseThrow();
-        Role sellerRole = roleRepository.findByName(ERole.ROLE_SELLER).orElseThrow();
 
         // 1. Admin User
         if (userRepository.findByEmail("admin@quickcart.com").isEmpty()) {
@@ -146,14 +142,6 @@ public class DataSeeder implements CommandLineRunner {
             address2.setIsDefault(false);
             addressRepository.save(address2);
         }
-
-        // 4. Marketplace Seller User
-        if (userRepository.findByEmail("seller@quickcart.com").isEmpty()) {
-            User seller = new User("SuperComNet India (Verified Seller)", "seller@quickcart.com", "9876543213", passwordEncoder.encode(sellerPassword));
-            seller.setAvatarUrl("https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80");
-            seller.setRoles(Set.of(sellerRole, customerRole));
-            userRepository.save(seller);
-        }
     }
 
     private void seedCategoriesAndProducts() {
@@ -161,271 +149,367 @@ public class DataSeeder implements CommandLineRunner {
             return;
         }
 
-        // 12 Indian Marketplace Categories
-        Category cMobiles = categoryRepository.save(new Category("Mobiles & Tablets", "mobiles-tablets", "Smartphones, flagship 5G phones, iPads & tablets with 1-hour delivery", "Smartphone", "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&auto=format&fit=crop&q=80", 1));
-        Category cElectronics = categoryRepository.save(new Category("Electronics & Audio", "electronics-audio", "Wireless earbuds, Bluetooth speakers, noise-canceling headphones & smartwatches", "Headphones", "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80", 2));
-        Category cComputers = categoryRepository.save(new Category("Computers & Laptops", "computers-accessories", "MacBooks, gaming laptops, mechanical keyboards & wireless mice", "Laptop", "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&auto=format&fit=crop&q=80", 3));
-        Category cFashion = categoryRepository.save(new Category("Fashion & Apparel", "fashion-apparel", "Men's & women's trendy clothing, denim jeans, sneakers & watches", "Shirt", "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&auto=format&fit=crop&q=80", 4));
-        Category cHome = categoryRepository.save(new Category("Home & Kitchen", "home-kitchen", "Smart air fryers, mixer grinders, cookware & home decor", "Home", "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80", 5));
-        Category cGrocery = categoryRepository.save(new Category("Groceries & Essentials", "groceries-essentials", "Daily farm fresh fruits, dairy, organic atta, tea & snacks", "ShoppingBag", "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80", 6));
-        Category cBeauty = categoryRepository.save(new Category("Beauty & Personal Care", "beauty-personal-care", "Skincare serums, grooming trimmers, luxury perfumes & haircare", "Sparkles", "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&auto=format&fit=crop&q=80", 7));
-        Category cSports = categoryRepository.save(new Category("Sports & Fitness", "sports-fitness", "Gym dumbbells, yoga mats, badminton racquets & sports shoes", "Activity", "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&auto=format&fit=crop&q=80", 8));
-        Category cBooks = categoryRepository.save(new Category("Books & Stationery", "books-stationery", "Best-selling self-help books, fiction novels, diaries & fine pens", "BookOpen", "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&auto=format&fit=crop&q=80", 9));
-        Category cToys = categoryRepository.save(new Category("Toys & Baby Care", "toys-baby-care", "Building blocks, remote control cars, baby diapers & feeding essentials", "Gift", "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=600&auto=format&fit=crop&q=80", 10));
-        Category cAppliances = categoryRepository.save(new Category("Home Appliances", "home-appliances", "Smart televisions, inverter refrigerators & automatic washing machines", "Tv", "https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=600&auto=format&fit=crop&q=80", 11));
-        Category cDining = categoryRepository.save(new Category("QuickCart Dining", "dining-experiences", "Curated table reservations at Michelin-star & rooftop restaurants", "Utensils", "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop&q=80", 12));
+        // 1. Fruits & Vegetables
+        Category c1 = categoryRepository.save(new Category("Fruits & Vegetables", "fruits-vegetables", "Farm-fresh handpicked fruits, leafy greens & organic vegetables", "Carrot", "https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=600&auto=format&fit=crop&q=80", 1));
+        // 2. Dairy & Breakfast
+        Category c2 = categoryRepository.save(new Category("Dairy & Breakfast", "dairy-breakfast", "Fresh milk, paneer, curd, eggs, butter & breakfast staples", "Milk", "https://images.unsplash.com/photo-1528750997573-59b89d56f4f7?w=600&auto=format&fit=crop&q=80", 2));
+        // 3. Snacks & Munchies
+        Category c3 = categoryRepository.save(new Category("Snacks & Munchies", "snacks-munchies", "Crispy chips, nachos, roasted nuts, popcorn & cookies", "Cookie", "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=600&auto=format&fit=crop&q=80", 3));
+        // 4. Beverages & Juices
+        Category c4 = categoryRepository.save(new Category("Beverages & Cold Drinks", "beverages", "Fresh fruit juices, sparkling soda, iced teas & kombucha", "Coffee", "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format&fit=crop&q=80", 4));
+        // 5. Bakery & Bread
+        Category c5 = categoryRepository.save(new Category("Bakery & Breads", "bakery-breads", "Artisanal sourdough, brown bread, croissants, muffins & cakes", "Croissant", "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80", 5));
+        // 6. Instant Food & Ready Meals
+        Category c6 = categoryRepository.save(new Category("Instant Food", "instant-food", "Ramen noodles, instant pasta, frozen snacks & ready-to-eat meals", "Soup", "https://images.unsplash.com/photo-1612927601601-6638404737ce?w=600&auto=format&fit=crop&q=80", 6));
+        // 7. Personal Care & Hygiene
+        Category c7 = categoryRepository.save(new Category("Personal Care", "personal-care", "Skincare, haircare, body washes, sanitizers & grooming kits", "Sparkles", "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&auto=format&fit=crop&q=80", 7));
+        // 8. Household Essentials & Cleaning
+        Category c8 = categoryRepository.save(new Category("Household Essentials", "household-essentials", "Detergents, floor cleaners, trash bags, kitchen foil & tissues", "Home", "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=600&auto=format&fit=crop&q=80", 8));
+        // 9. Baby Care
+        Category c9 = categoryRepository.save(new Category("Baby Care", "baby-care", "Premium diapers, baby wipes, baby lotions & organic feeding food", "Baby", "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&auto=format&fit=crop&q=80", 9));
+        // 10. Pet Supplies
+        Category c10 = categoryRepository.save(new Category("Pet Supplies", "pet-supplies", "Nutritious dog & cat kibble, treats, pet shampoo & chew toys", "Dog", "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&auto=format&fit=crop&q=80", 10));
+        // 11. Electronics & Accessories
+        Category c11 = categoryRepository.save(new Category("Electronics & Accessories", "electronics-accessories", "Fast charging cables, powerbanks, earbuds, batteries & adapters", "Zap", "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80", 11));
+        // 12. Clothes & Fashion
+        Category c12 = categoryRepository.save(new Category("Clothes & Fashion", "clothes-fashion", "Premium t-shirts, shirts, denim jeans, cotton hoodies, ethnic kurtas & dresses", "Shirt", "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&auto=format&fit=crop&q=80", 12));
 
-        // 1. Mobiles & Tablets
-        createProduct(cMobiles, "Apple iPhone 15 Pro (128 GB, Natural Titanium)", "iphone-15-pro-128gb", "Apple",
-                "A17 Pro chip with 6-core GPU, titanium design with ceramic shield front, 48MP main camera with 3x telephoto, and Action button.",
-                BigDecimal.valueOf(134900), BigDecimal.valueOf(127999), 5, "1 Unit", 25, "SKU-MOB-001",
-                "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.8), 2450, true, true, "SuperComNet India", "1 Year Apple Warranty",
-                "Display: 6.1\" Super Retina XDR OLED | Processor: A17 Pro | RAM: 8 GB | Storage: 128 GB | OS: iOS 17",
-                "Titanium Design, 48MP Pro Camera, USB-C 3.0 Speeds, Dynamic Island, 23h Battery");
+        // Seed rich real-world items
+        List<Product> products = List.of(
+                // Fruits & Veggies
+                createProd(c1, "Farm Fresh Alphonso Mangoes", "al-fresh-mangoes", "Nature's Basket", "Handpicked sweet & aromatic Ratnagiri Alphonso mangoes.", BigDecimal.valueOf(450), BigDecimal.valueOf(349), "1 kg (approx 3-4 pcs)", 45, "https://images.unsplash.com/photo-1553279768-865429fa0078?w=500&auto=format&fit=crop&q=80", true, true, 4.8, 128),
+                createProd(c1, "Fresh Royal Gala Red Apples", "fresh-gala-apples", "Organic Farms", "Crisp, sweet Washington style red gala apples rich in antioxidants.", BigDecimal.valueOf(180), BigDecimal.valueOf(145), "4 pcs (approx 500g)", 80, "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop&q=80", true, false, 4.6, 94),
+                createProd(c1, "Hydroponic English Cucumber", "hydro-english-cucumber", "Urban Greens", "Pesticide-free crisp English cucumbers ideal for fresh salads.", BigDecimal.valueOf(60), BigDecimal.valueOf(42), "500 g", 120, "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=500&auto=format&fit=crop&q=80", false, false, 4.5, 45),
+                createProd(c1, "Organic Baby Spinach", "organic-baby-spinach", "Leafy Delight", "Pre-washed tender baby spinach leaves, rich in iron & fiber.", BigDecimal.valueOf(50), BigDecimal.valueOf(38), "250 g pack", 35, "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=500&auto=format&fit=crop&q=80", true, true, 4.7, 82),
+                createProd(c1, "Fresh Vine Ripe Red Tomatoes", "fresh-red-tomatoes", "Nature's Basket", "Plump juicy tomatoes directly sourced from local greenhouse farms.", BigDecimal.valueOf(40), BigDecimal.valueOf(28), "1 kg", 90, "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop&q=80", false, false, 4.4, 60),
 
-        createProduct(cMobiles, "Samsung Galaxy S24 Ultra 5G (AI Enabled, 256 GB, Titanium Gray)", "samsung-galaxy-s24-ultra-256gb", "Samsung",
-                "Galaxy AI features like Circle to Search, Live Translate, 200MP camera with 5x optical zoom, Snapdragon 8 Gen 3 processor, and built-in S-Pen.",
-                BigDecimal.valueOf(134999), BigDecimal.valueOf(119999), 11, "1 Unit", 30, "SKU-MOB-002",
-                "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.7), 1890, true, false, "RetailNet India", "1 Year Comprehensive Warranty",
-                "Display: 6.8\" Dynamic AMOLED 2X 120Hz | Processor: Snapdragon 8 Gen 3 | RAM: 12 GB | Storage: 256 GB",
-                "Galaxy AI, 200MP Quad Telephoto, Titanium Frame, 5000 mAh Battery, Embedded S-Pen");
+                // Dairy & Breakfast
+                createProd(c2, "Amul Taaza Homogenised Toned Milk", "amul-taaza-milk", "Amul", "Nutritious pasteurised toned milk with zero preservatives.", BigDecimal.valueOf(34), BigDecimal.valueOf(31), "500 ml pouch", 150, "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop&q=80", true, false, 4.9, 320),
+                createProd(c2, "Fresh Malai Paneer", "fresh-malai-paneer", "Mother Dairy", "Soft, melt-in-mouth cottage cheese crafted from rich buffalo milk.", BigDecimal.valueOf(95), BigDecimal.valueOf(82), "200 g pack", 60, "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&auto=format&fit=crop&q=80", true, true, 4.8, 210),
+                createProd(c2, "Farm Fresh Brown Organic Eggs", "brown-organic-eggs", "Eggoz", "Antibiotic-free, nutrient-dense brown eggs with golden yolk.", BigDecimal.valueOf(110), BigDecimal.valueOf(89), "Pack of 6", 75, "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=500&auto=format&fit=crop&q=80", true, false, 4.7, 188),
+                createProd(c2, "Amul Salted Butter", "amul-salted-butter", "Amul", "Classic delicious salted butter made from pure fresh cream.", BigDecimal.valueOf(60), BigDecimal.valueOf(56), "100 g", 110, "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=500&auto=format&fit=crop&q=80", false, false, 4.9, 410),
+                createProd(c2, "Epigamia Greek Yogurt (Wild Blueberry)", "epigamia-blueberry-yogurt", "Epigamia", "High protein Greek yogurt with real blueberry puree.", BigDecimal.valueOf(60), BigDecimal.valueOf(49), "90 g cup", 40, "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=500&auto=format&fit=crop&q=80", true, true, 4.6, 75),
 
-        createProduct(cMobiles, "OnePlus 12 5G (Flowy Emerald, 16GB RAM, 512GB)", "oneplus-12-5g-512gb", "OnePlus",
-                "Snapdragon 8 Gen 3, 4th Gen Hasselblad Camera with Sony LYT-808 sensor, 5400 mAh battery with 100W SUPERVOOC charging.",
-                BigDecimal.valueOf(69999), BigDecimal.valueOf(64999), 7, "1 Unit", 40, "SKU-MOB-003",
-                "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.6), 1120, false, true, "TrueCom Retail", "1 Year Brand Warranty",
-                "Display: 6.82\" 2K ProXDR 120Hz | Processor: Snapdragon 8 Gen 3 | RAM: 16 GB | 100W SuperVOOC Charger in box",
-                "100W Fast Charge, Hasselblad Camera System, 5400mAh Battery, Dual Cryo-velocity VC Cooling");
+                // Snacks & Munchies
+                createProd(c3, "Lay's Classic Salted Potato Chips", "lays-classic-salted", "Lay's", "Thinly sliced, crispy golden potato chips seasoned with fine salt.", BigDecimal.valueOf(30), BigDecimal.valueOf(28), "90 g", 140, "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&auto=format&fit=crop&q=80", true, false, 4.6, 230),
+                createProd(c3, "Doritos Sweet Chilli Nacho Crisps", "doritos-sweet-chilli", "Doritos", "Crunchy corn tortilla triangles coated in exotic sweet chilli spice.", BigDecimal.valueOf(50), BigDecimal.valueOf(42), "130 g", 85, "https://images.unsplash.com/photo-1613919113640-25732ec5e61f?w=500&auto=format&fit=crop&q=80", true, true, 4.7, 140),
+                createProd(c3, "Roasted California Almonds", "roasted-california-almonds", "Nutty Gritties", "Lightly salted, oven roasted crunchy jumbo California almonds.", BigDecimal.valueOf(250), BigDecimal.valueOf(199), "200 g pouch", 55, "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=500&auto=format&fit=crop&q=80", true, false, 4.8, 92),
+                createProd(c3, "Dark Fantasy Choco Fills Cookies", "dark-fantasy-choco-fills", "Sunfeast", "Crunchy chocolate biscuit outer crust bursting with rich molten choco cream.", BigDecimal.valueOf(90), BigDecimal.valueOf(75), "300 g pack", 95, "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=500&auto=format&fit=crop&q=80", false, true, 4.8, 175),
+                createProd(c3, "Act II Butter Lovers Popcorn", "act-ii-butter-popcorn", "Act II", "Instant microwave popcorn drenched in warm buttery goodness.", BigDecimal.valueOf(40), BigDecimal.valueOf(33), "85 g", 65, "https://images.unsplash.com/photo-1578849278619-e73505e9610f?w=500&auto=format&fit=crop&q=80", false, false, 4.5, 62),
 
-        // 2. Electronics & Audio
-        createProduct(cElectronics, "boAt Rockerz 550 Over-Ear Wireless Headphones", "boat-rockerz-550-wireless", "boAt",
-                "50mm dynamic drivers with deep bass, 20 hours playback, physical noise isolation, plush ear cushions, and Bluetooth v5.0.",
-                BigDecimal.valueOf(4999), BigDecimal.valueOf(1799), 64, "1 Unit", 85, "SKU-ELE-001",
-                "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.4), 4850, true, true, "boAt Official Store", "1 Year Replacement Warranty",
-                "Driver: 50mm Dynamic | Playtime: 20 Hours | Battery: 500 mAh | Connectivity: Bluetooth v5.0 + AUX",
-                "50mm Dynamic Drivers, Ergonomic Over-Ear Fit, 20-Hour Playtime, Dual Mode Connectivity");
+                // Beverages & Juices
+                createProd(c4, "Raw Pressery Cold Pressed Valencia Orange Juice", "raw-valencia-orange-juice", "Raw Pressery", "100% natural cold pressed orange juice with no added sugar.", BigDecimal.valueOf(120), BigDecimal.valueOf(99), "250 ml bottle", 50, "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=500&auto=format&fit=crop&q=80", true, true, 4.7, 130),
+                createProd(c4, "Coca-Cola Zero Sugar Can", "coca-cola-zero-can", "Coca-Cola", "The iconic Coca-Cola refreshing fizz with zero sugar & calories.", BigDecimal.valueOf(40), BigDecimal.valueOf(38), "300 ml can", 180, "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&auto=format&fit=crop&q=80", true, false, 4.8, 380),
+                createProd(c4, "Red Bull Energy Drink", "red-bull-energy-can", "Red Bull", "Vitalizes body and mind with premium taurine and B-group vitamins.", BigDecimal.valueOf(125), BigDecimal.valueOf(115), "250 ml can", 90, "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500&auto=format&fit=crop&q=80", true, false, 4.7, 210),
+                createProd(c4, "Paper Boat Tender Coconut Water", "paper-boat-coconut-water", "Paper Boat", "Pure, hydrating natural coconut water packed with essential electrolytes.", BigDecimal.valueOf(60), BigDecimal.valueOf(48), "200 ml tetra", 110, "https://images.unsplash.com/photo-1525385133512-2f3bdd039054?w=500&auto=format&fit=crop&q=80", false, true, 4.6, 95),
 
-        createProduct(cElectronics, "Sony WH-1000XM5 Active Noise Canceling Wireless Headphones", "sony-wh-1000xm5-anc", "Sony",
-                "Industry-leading noise cancellation with two processors and 8 microphones, Ultra-comfortable design, 30 hours battery life with quick charge.",
-                BigDecimal.valueOf(34990), BigDecimal.valueOf(26990), 23, "1 Unit", 20, "SKU-ELE-002",
-                "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.9), 3200, true, false, "Electronics Hub", "1 Year Sony India Warranty",
-                "ANC: Dual HD V1 Processors | Battery: 30 Hours | Codecs: LDAC, AAC, SBC | Weight: 250 g",
-                "Auto NC Optimizer, Multipoint Connection, Speak-to-Chat, 3-min Charge for 3h Play");
+                // Bakery & Bread
+                createProd(c5, "The Baker's Dozen 100% Whole Wheat Bread", "whole-wheat-bread-loaf", "The Baker's Dozen", "Artisanal stoneground whole wheat loaf baked fresh daily.", BigDecimal.valueOf(55), BigDecimal.valueOf(48), "400 g loaf", 70, "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=80", true, false, 4.6, 115),
+                createProd(c5, "Fresh Butter Croissants", "fresh-butter-croissants", "French Crust", "Flaky, golden, buttery layered French pastries baked to perfection.", BigDecimal.valueOf(140), BigDecimal.valueOf(110), "Pack of 2 (160g)", 25, "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&auto=format&fit=crop&q=80", true, true, 4.8, 88),
+                createProd(c5, "Garlic & Herb Sourdough Baguette", "garlic-herb-baguette", "Artisan Bakehouse", "Naturally fermented crusty sourdough infused with roasted garlic & parsley.", BigDecimal.valueOf(95), BigDecimal.valueOf(79), "250 g", 20, "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=500&auto=format&fit=crop&q=80", false, false, 4.7, 42),
 
-        createProduct(cElectronics, "Noise ColorFit Pulse 3 Smart Watch with BT Calling", "noise-colorfit-pulse-3", "Noise",
-                "1.96-inch TFT display, Bluetooth calling with dialpad, 100+ sports modes, 24x7 heart rate and SpO2 monitor, 7 days battery.",
-                BigDecimal.valueOf(4999), BigDecimal.valueOf(1499), 70, "1 Unit", 110, "SKU-ELE-003",
-                "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.3), 6400, false, true, "Noise Direct Store", "1 Year Manufacturer Warranty",
-                "Display: 1.96\" TFT 550 Nits | Battery: 7 Days | Water Resistance: IP68 | Sensors: Heart Rate, SpO2",
-                "Bluetooth Calling, 100+ Sports Modes, IP68 Waterproof, 150+ Cloud Watch Faces");
+                // Instant Food
+                createProd(c6, "Maggi 2-Minute Masala Instant Noodles", "maggi-masala-noodles-4pack", "Nestle Maggi", "India's favorite instant noodles infused with signature aromatic spices.", BigDecimal.valueOf(56), BigDecimal.valueOf(52), "4 x 70g (280g)", 200, "https://images.unsplash.com/photo-1612927601601-6638404737ce?w=500&auto=format&fit=crop&q=80", true, false, 4.9, 540),
+                createProd(c6, "Samyang 2x Spicy Hot Chicken Ramen", "samyang-2x-spicy-ramen", "Samyang", "Extreme Korean spicy stir-fried instant noodles for heat lovers.", BigDecimal.valueOf(150), BigDecimal.valueOf(125), "140 g pack", 40, "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=500&auto=format&fit=crop&q=80", true, true, 4.5, 160),
+                createProd(c6, "McCain French Fries (Ready to Fry)", "mccain-french-fries", "McCain", "Crispy golden restaurant style potato fries ready in 3 minutes.", BigDecimal.valueOf(130), BigDecimal.valueOf(109), "420 g pack", 50, "https://images.unsplash.com/photo-1576107232684-1279f3908594?w=500&auto=format&fit=crop&q=80", false, false, 4.6, 95),
 
-        // 3. Computers & Laptops
-        createProduct(cComputers, "Apple MacBook Air M3 (13.6-inch Liquid Retina, 8GB, 256GB SSD)", "apple-macbook-air-m3", "Apple",
-                "Supercharged by the M3 chip with 8-core CPU and 10-core GPU, up to 18 hours battery life, 1080p FaceTime HD camera, MagSafe 3 charging.",
-                BigDecimal.valueOf(114900), BigDecimal.valueOf(104990), 9, "1 Unit", 15, "SKU-CMP-001",
-                "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.9), 980, true, false, "Apple Authorized Reseller", "1 Year Apple Warranty",
-                "Display: 13.6\" Liquid Retina (2560x1664) | Chip: Apple M3 8-Core | RAM: 8GB Unified | Storage: 256GB SSD",
-                "M3 Powerhouse, Fanless Silent Design, 18-Hour Battery, MagSafe 3, Dual External Display Support");
+                // Personal Care
+                createProd(c7, "Dettol Original Germ Protection Liquid Handwash", "dettol-handwash-refill", "Dettol", "Trusted 99.9% germ defense formula with classic pine scent.", BigDecimal.valueOf(99), BigDecimal.valueOf(85), "675 ml refill pouch", 85, "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=80", true, false, 4.8, 260),
+                createProd(c7, "Nivea Soft Light Moisturizing Cream", "nivea-soft-cream", "Nivea", "Non-greasy nourishing daily body and face cream with Vitamin E & Jojoba.", BigDecimal.valueOf(190), BigDecimal.valueOf(155), "200 ml jar", 60, "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500&auto=format&fit=crop&q=80", true, true, 4.7, 145),
+                createProd(c7, "Colgate MaxFresh Peppermint Toothpaste", "colgate-maxfresh-peppermint", "Colgate", "Infused with cooling breath strips for intense minty freshness.", BigDecimal.valueOf(120), BigDecimal.valueOf(98), "150 g tube", 110, "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=500&auto=format&fit=crop&q=80", false, false, 4.6, 175),
 
-        createProduct(cComputers, "Logitech MX Master 3S Wireless Performance Mouse", "logitech-mx-master-3s", "Logitech",
-                "8K DPI any-surface tracking, quiet clicks, MagSpeed electromagnetic scrolling (1000 lines/sec), cross-computer Flow control.",
-                BigDecimal.valueOf(10995), BigDecimal.valueOf(8495), 23, "1 Unit", 45, "SKU-CMP-002",
-                "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.8), 2100, true, true, "SuperComNet India", "2 Years Limited Hardware Warranty",
-                "DPI: 200-8000 DPI | Battery: 70 Days on full charge | Connectivity: Bluetooth + Logi Bolt USB Receiver",
-                "Quiet Click Switches, 8000 DPI Darkfield Sensor, MagSpeed Scroll Wheel, Easy-Switch for 3 Devices");
+                // Household Essentials
+                createProd(c8, "Surf Excel Matic Top Load Liquid Detergent", "surf-excel-matic-liquid", "Surf Excel", "Tough stain removal in 1 wash inside washing machine.", BigDecimal.valueOf(220), BigDecimal.valueOf(189), "1 L bottle", 70, "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=500&auto=format&fit=crop&q=80", true, false, 4.8, 310),
+                createProd(c8, "Vim Lemon Dishwash Gel", "vim-dishwash-gel", "Vim", "Concentrated lemon power cuts through heavy grease easily.", BigDecimal.valueOf(115), BigDecimal.valueOf(99), "500 ml bottle", 90, "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=500&auto=format&fit=crop&q=80", false, true, 4.7, 220),
+                createProd(c8, "Origami 3-Ply Luxury Kitchen Towel Tissues", "origami-kitchen-towels", "Origami", "Highly absorbent virgin paper towels for food wrapping & cleaning.", BigDecimal.valueOf(90), BigDecimal.valueOf(72), "2 Rolls pack", 60, "https://images.unsplash.com/photo-1584556812952-905ffd0c611a?w=500&auto=format&fit=crop&q=80", false, false, 4.5, 78),
 
-        // 4. Fashion & Apparel
-        createProduct(cFashion, "Levi's Men's 511 Slim Fit Stretchable Denim Jeans", "levis-511-slim-fit-jeans", "Levi's",
-                "Classic 511 slim fit cut with stretch denim for all-day comfort, zip fly with button closure, iconic back leather patch.",
-                BigDecimal.valueOf(3999), BigDecimal.valueOf(2199), 45, "1 Pair (Size 32)", 60, "SKU-FAS-001",
-                "https://images.unsplash.com/photo-1542272604-780c96856592?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.5), 1870, false, true, "Levi's Official Store", "30 Days Easy Return",
-                "Material: 99% Cotton, 1% Elastane | Fit: Slim Fit | Rise: Mid Rise | Wash Care: Machine Wash Cold",
-                "Stretch Denim Fabric, Classic 5-Pocket Styling, Durable Stitching, Versatile Medium Indigo Wash");
+                // Baby Care
+                createProd(c9, "Pampers Premium Pants Diapers (Medium)", "pampers-premium-m", "Pampers", "Ultra soft, breathable 360-degree cottony fit with up to 12 hours absorption.", BigDecimal.valueOf(699), BigDecimal.valueOf(549), "Pack of 34 Pants", 40, "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=500&auto=format&fit=crop&q=80", true, true, 4.8, 190),
+                createProd(c9, "Himalaya Gentle Baby Wipes (Aloe & Lotus)", "himalaya-baby-wipes", "Himalaya", "Alcohol-free soothing wet wipes enriched with Indian Lotus & Aloe Vera.", BigDecimal.valueOf(175), BigDecimal.valueOf(139), "Pack of 72 Wipes", 65, "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=80", true, false, 4.7, 110),
 
-        createProduct(cFashion, "Puma Smashic Unisex Casual Classic White Sneakers", "puma-smashic-sneakers-white", "Puma",
-                "Clean tennis-inspired silhouette with durable synthetic leather upper, SoftFoam+ comfort sockliner for instant cushioning.",
-                BigDecimal.valueOf(4499), BigDecimal.valueOf(1999), 56, "1 Pair (UK 8)", 75, "SKU-FAS-002",
-                "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.4), 3120, true, true, "Puma Official Hub", "30 Days Easy Return",
-                "Upper: Synthetic Leather | Sole: Rubber | Insole: SoftFoam+ Cushion | Closure: Lace-up",
-                "SoftFoam+ Step-in Comfort, Grippy Rubber Outsole, Timeless Streetwear Styling");
+                // Pet Supplies
+                createProd(c10, "Pedigree Adult Dry Dog Food (Chicken & Veg)", "pedigree-dog-food-chicken", "Pedigree", "Complete and balanced nutrition with 20% protein for strong muscles.", BigDecimal.valueOf(380), BigDecimal.valueOf(329), "1.2 kg bag", 45, "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=500&auto=format&fit=crop&q=80", true, false, 4.7, 140),
+                createProd(c10, "Whiskas Adult Cat Food (Ocean Fish in Jelly)", "whiskas-cat-wet-food", "Whiskas", "Delicious gourmet wet meal packed with essential Omega 3 & zinc.", BigDecimal.valueOf(50), BigDecimal.valueOf(42), "85 g pouch", 90, "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop&q=80", true, true, 4.8, 85),
 
-        // 5. Home & Kitchen
-        createProduct(cHome, "Philips Digital Air Fryer HD9252 with Rapid Air Technology", "philips-digital-air-fryer-hd9252", "Philips",
-                "Air fry with up to 90% less fat, touch screen with 7 pre-set cooking programs, 4.1L capacity, keep warm function, dishwasher safe parts.",
-                BigDecimal.valueOf(11995), BigDecimal.valueOf(6999), 42, "1 Unit (4.1 L)", 35, "SKU-HOM-001",
-                "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.7), 2900, true, true, "Philips Home Store", "2 Years Philips India Warranty",
-                "Capacity: 4.1 Litres | Power: 1400 Watts | Presets: 7 Cooking Modes | Auto Shut-off: Yes",
-                "Rapid Air 360 Technology, Digital Touch Screen, NutriU Recipe App Access, Easy Clean Non-stick Basket");
+                // Electronics
+                createProd(c11, "boAt 65W GaN Fast Charger Adapter", "boat-65w-gan-charger", "boAt", "Ultra-compact dual port Type-C charger with Power Delivery & QuickCharge.", BigDecimal.valueOf(1499), BigDecimal.valueOf(899), "1 unit", 25, "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=500&auto=format&fit=crop&q=80", true, true, 4.6, 95),
+                createProd(c11, "Duracell Ultra Alkaline AA Batteries", "duracell-ultra-aa-4pack", "Duracell", "Long-lasting power with Powercheck technology for high-drain devices.", BigDecimal.valueOf(180), BigDecimal.valueOf(149), "Pack of 4", 80, "https://images.unsplash.com/photo-1619725002198-6a689b72f41d?w=500&auto=format&fit=crop&q=80", false, false, 4.9, 210),
+                createProd(c11, "Portronics Braided Type-C Fast Charging Cable", "portronics-type-c-cable", "Portronics", "Durable nylon braided 60W charging & sync cable (1.2m length).", BigDecimal.valueOf(299), BigDecimal.valueOf(179), "1 pc (1.2m)", 60, "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80", true, false, 4.5, 75),
 
-        // 6. Groceries & Essentials
-        createProduct(cGrocery, "Aashirvaad Superior MP Sharbati Whole Wheat Atta 10kg", "aashirvaad-sharbati-atta-10kg", "Aashirvaad",
-                "100% whole wheat grains harvested from Madhya Pradesh Sehore fields, making rotis softer, fluffier and nutrient-rich.",
-                BigDecimal.valueOf(540), BigDecimal.valueOf(465), 14, "10 kg Pack", 150, "SKU-GRO-001",
-                "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.8), 8400, false, true, "QuickCart Dark Store #01", "100% Quality Assured",
-                "Grain: 100% MP Sharbati Wheat | Shelf Life: 6 Months | Dietary: High Dietary Fibre, No Added Maida",
-                "0% Maida, Retains Natural Moisture for Softer Rotis, Packed with Iron and Fibre");
+                // Clothes & Fashion
+                createProd(c12, "Classic Crewneck Cotton T-Shirt", "classic-crewneck-cotton-tshirt", "Roadster", "100% pre-shrunk combed cotton t-shirt with ribbed collar. Sizes: S, M, L, XL, XXL.", BigDecimal.valueOf(799), BigDecimal.valueOf(399), "Size: S, M, L, XL, XXL", 60, "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80", true, true, 4.8, 185),
+                createProd(c12, "Slim Fit Stretch Denim Jeans", "slim-fit-stretch-denim-jeans", "Levi's", "Authentic 511 slim fit indigo wash stretch denim jeans. Sizes: 30, 32, 34, 36.", BigDecimal.valueOf(2799), BigDecimal.valueOf(1599), "Size: 30, 32, 34, 36", 40, "https://images.unsplash.com/photo-1542272604-780c96856592?w=500&auto=format&fit=crop&q=80", true, false, 4.9, 240),
+                createProd(c12, "Oxford Casual Button-Down Shirt", "oxford-casual-buttondown-shirt", "Allen Solly", "Crisp tailored 100% breathable cotton shirt for casual and office wear. Sizes: M, L, XL, XXL.", BigDecimal.valueOf(1699), BigDecimal.valueOf(899), "Size: M, L, XL, XXL", 45, "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop&q=80", true, true, 4.7, 130),
+                createProd(c12, "Floral Print Summer Cotton Midi Dress", "floral-print-summer-midi-dress", "H&M", "Breezy A-line tiered silhouette dress with sweetheart neckline. Sizes: XS, S, M, L, XL.", BigDecimal.valueOf(1999), BigDecimal.valueOf(999), "Size: XS, S, M, L, XL", 35, "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&auto=format&fit=crop&q=80", true, false, 4.8, 115),
+                createProd(c12, "Dry-Fit Athletic Training T-Shirt", "dryfit-athletic-training-tshirt", "Nike", "Dri-FIT moisture wicking sportswear jersey with reflective accents. Sizes: S, M, L, XL, XXL.", BigDecimal.valueOf(1495), BigDecimal.valueOf(899), "Size: S, M, L, XL, XXL", 50, "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500&auto=format&fit=crop&q=80", true, true, 4.8, 210),
+                createProd(c12, "Cozy Fleece Pullover Winter Hoodie", "cozy-fleece-pullover-hoodie", "Zara Man", "Heavyweight 360 GSM cotton-poly brushed fleece hoodie with kangaroo pocket. Sizes: M, L, XL, XXL.", BigDecimal.valueOf(2499), BigDecimal.valueOf(1349), "Size: M, L, XL, XXL", 30, "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500&auto=format&fit=crop&q=80", false, true, 4.7, 95),
+                createProd(c12, "Handcrafted Silk Blend Festive Kurta", "handcrafted-silk-blend-kurta", "FabIndia", "Intricate mandarin collar festive ethnic kurta crafted from fine silk blend. Sizes: S, M, L, XL.", BigDecimal.valueOf(2290), BigDecimal.valueOf(1299), "Size: S, M, L, XL", 25, "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&auto=format&fit=crop&q=80", false, false, 4.6, 78),
+                createProd(c12, "Tailored Stretch Chino Trousers", "tailored-stretch-chino-trousers", "Van Heusen", "Smart flat-front khaki chinos in premium stretch cotton twill. Sizes: 30, 32, 34, 36.", BigDecimal.valueOf(1899), BigDecimal.valueOf(1099), "Size: 30, 32, 34, 36", 40, "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=500&auto=format&fit=crop&q=80", true, false, 4.7, 86)
+        );
 
-        createProduct(cGrocery, "Amul Butter Pasteurized (Pack of 2 x 500g)", "amul-butter-pasteurized-500g-pack", "Amul",
-                "Utterly Butterly Delicious iconic Indian salted butter churned from pure fresh cow and buffalo milk cream.",
-                BigDecimal.valueOf(570), BigDecimal.valueOf(525), 8, "1 kg (2x500g)", 200, "SKU-GRO-002",
-                "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.9), 12000, true, true, "Amul Fresh Dairy Hub", "Keep Refrigerated at 4°C",
-                "Ingredients: Milk Fat 80%, Moisture 16%, Salt 3% | Brand: Amul (The Taste of India)",
-                "Rich Creamy Texture, Classic Savory Flavor, Churned from Pure Milk Cream");
-
-        // 7. Beauty & Personal Care
-        createProduct(cBeauty, "Philips OneBlade Hybrid Beard Trimmer & Shaver QP2821", "philips-oneblade-trimmer-qp2821", "Philips",
-                "Revolutionary hybrid styler that can trim, shave, and create clean lines and edges on any length of hair, dual protection system.",
-                BigDecimal.valueOf(2499), BigDecimal.valueOf(1749), 30, "1 Unit", 80, "SKU-BEA-001",
-                "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.6), 5100, true, true, "Philips Grooming Direct", "2 Years Worldwide Guarantee",
-                "Blade Tech: OneBlade 360 | Runtime: 45 Mins | Wet & Dry: 100% Waterproof | Combs: 5-in-1 Adjustable",
-                "Cuts Hair Not Skin, 100% Waterproof, 45 Min Cordless Shave, Long-lasting Replacement Blade");
-
-        // 8. Sports & Fitness
-        createProduct(cSports, "Decathlon Domyos Hexagonal Rubber Dumbbells Set (2 x 5kg)", "decathlon-hex-dumbbells-5kg", "Decathlon",
-                "Ergonomic knurled steel grip, heavy-duty hexagonal rubber coating that won't roll or damage flooring during intense workouts.",
-                BigDecimal.valueOf(2999), BigDecimal.valueOf(1999), 33, "10 kg Pair", 45, "SKU-SPO-001",
-                "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.8), 1650, false, true, "Decathlon Sports India", "2 Years Guarantee",
-                "Weight: 2 x 5 kg (10 kg total) | Core: Cast Iron | Outer: Non-scratch Rubber | Grip: Knurled Chrome",
-                "Hexagonal Anti-Roll Shape, Floor-Safe Rubber Coating, Knurled Slip-Resistant Grip");
-
-        // 9. Books & Stationery
-        createProduct(cBooks, "Atomic Habits by James Clear (Hardcover Edition)", "atomic-habits-james-clear-hardcover", "Penguin Random House",
-                "An Easy & Proven Way to Build Good Habits & Break Bad Ones. Over 15 million copies sold globally.",
-                BigDecimal.valueOf(899), BigDecimal.valueOf(499), 44, "Hardcover", 90, "SKU-BOK-001",
-                "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.9), 18200, true, true, "National Book Depository", "100% Original Print",
-                "Author: James Clear | Language: English | Publisher: Penguin Life | Pages: 320 | Binding: Hardcover",
-                "#1 New York Times Bestseller, Proven 4-Step Habit Framework, High Quality Paper");
-
-        // 10. Toys & Baby Care
-        createProduct(cToys, "LEGO Technic Monster Jam Dragon Truck 2-in-1 Building Kit", "lego-technic-monster-jam-dragon", "LEGO",
-                "2-in-1 pull-back monster truck that rebuilds into a Crocodile Buggy with dragon spikes and fiery horn details for kids 7+.",
-                BigDecimal.valueOf(1999), BigDecimal.valueOf(1499), 25, "217 Pieces", 55, "SKU-TOY-001",
-                "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.7), 890, false, true, "LEGO Official Store", "100% Genuine LEGO Guarantee",
-                "Piece Count: 217 | Age Group: 7+ Years | Action: Pull-Back Motor Mechanism | Model: 42149",
-                "2-in-1 Rebuildable Model, Powerful Pull-Back Action, Authentic Monster Jam Graphics");
-
-        // 11. Home Appliances
-        createProduct(cAppliances, "LG 65-inch 4K Ultra HD Smart OLED TV (4K Cinema HDR, Dolby Atmos)", "lg-65-inch-oled-4k-smart-tv", "LG",
-                "Self-lit OLED pixels for infinite contrast, α9 AI Processor 4K Gen6, 120Hz refresh rate, Dolby Vision IQ and Dolby Atmos audio.",
-                BigDecimal.valueOf(219990), BigDecimal.valueOf(149990), 32, "1 Unit (65-inch)", 12, "SKU-APP-001",
-                "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=600&auto=format&fit=crop&q=80",
-                BigDecimal.valueOf(4.9), 620, true, false, "LG Electronics India", "3 Years Panel Warranty",
-                "Screen: 65\" 4K OLED (3840x2160) | Refresh Rate: 120 Hz | OS: webOS 24 | Sound: 40W 2.2 Channel Dolby Atmos",
-                "Self-Lit OLED Pixels, Dolby Vision IQ & Atmos, 0.1ms Response Time for Gaming, Hands-Free Voice Control");
+        productRepository.saveAll(products);
     }
 
-    private void createProduct(Category category, String name, String slug, String brand, String description,
-                               BigDecimal mrp, BigDecimal sellingPrice, Integer discount, String unit,
-                               Integer stock, String sku, String image, BigDecimal rating, Integer ratingCount,
-                               Boolean isFeatured, Boolean isDailyDeal, String seller, String warranty,
-                               String specs, String highlights) {
+    private Product createProd(Category cat, String name, String slug, String brand, String desc, BigDecimal mrp, BigDecimal sp, String unit, int stock, String img, boolean feat, boolean daily, double rating, int ratingCount) {
         Product p = new Product();
-        p.setCategory(category);
+        p.setCategory(cat);
         p.setName(name);
         p.setSlug(slug);
         p.setBrand(brand);
-        p.setDescription(description);
+        p.setDescription(desc);
         p.setMrp(mrp);
-        p.setSellingPrice(sellingPrice);
+        p.setSellingPrice(sp);
+        int discount = mrp.subtract(sp).multiply(BigDecimal.valueOf(100)).divide(mrp, 0, java.math.RoundingMode.HALF_UP).intValue();
         p.setDiscountPercentage(discount);
         p.setUnitQuantity(unit);
         p.setStockQuantity(stock);
         p.setLowStockThreshold(10);
-        p.setSku(sku);
-        p.setImageUrl(image);
-        p.setRating(rating);
+        p.setSku("QC-" + slug.toUpperCase().replace("-", "").substring(0, Math.min(8, slug.length())));
+        p.setImageUrl(img);
+        p.setIsFeatured(feat);
+        p.setIsDailyDeal(daily);
+        p.setRating(BigDecimal.valueOf(rating));
         p.setRatingCount(ratingCount);
-        p.setIsFeatured(isFeatured);
-        p.setIsDailyDeal(isDailyDeal);
         p.setIsActive(true);
-        p.setIsOneHourDelivery(true);
-        p.setSellerName(seller);
-        p.setWarranty(warranty);
-        p.setSpecifications(specs);
-        p.setHighlights(highlights);
-        p.setGalleryImages(image);
-        productRepository.save(p);
+        return p;
     }
 
     private void seedCoupons() {
-        if (couponRepository.count() > 0) return;
+        if (couponRepository.count() > 0) {
+            return;
+        }
+
         Coupon c1 = new Coupon();
-        c1.setCode("QUICK100");
-        c1.setDescription("Flat ₹100 instant discount on your order");
-        c1.setDiscountType(DiscountType.FLAT);
-        c1.setDiscountValue(BigDecimal.valueOf(100));
-        c1.setMinOrderValue(BigDecimal.valueOf(499));
+        c1.setCode("WELCOME50");
+        c1.setDescription("50% flat discount up to ₹100 on your first QuickCart order!");
+        c1.setDiscountType(DiscountType.PERCENTAGE);
+        c1.setDiscountValue(BigDecimal.valueOf(50));
+        c1.setMinOrderValue(BigDecimal.valueOf(149));
         c1.setMaxDiscountAmount(BigDecimal.valueOf(100));
-        c1.setValidUntil(LocalDateTime.now().plusMonths(3));
-        c1.setUsageLimit(500);
+        c1.setValidUntil(LocalDateTime.now().plusMonths(6));
+        c1.setUsageLimit(50000);
         c1.setIsActive(true);
-        couponRepository.save(c1);
 
         Coupon c2 = new Coupon();
-        c2.setCode("BHARAT20");
-        c2.setDescription("20% off on electronics & fashion mega deals");
+        c2.setCode("FLASH20");
+        c2.setDescription("Instant 20% discount on groceries above ₹299 (Max ₹60)");
         c2.setDiscountType(DiscountType.PERCENTAGE);
         c2.setDiscountValue(BigDecimal.valueOf(20));
-        c2.setMinOrderValue(BigDecimal.valueOf(999));
-        c2.setMaxDiscountAmount(BigDecimal.valueOf(500));
+        c2.setMinOrderValue(BigDecimal.valueOf(299));
+        c2.setMaxDiscountAmount(BigDecimal.valueOf(60));
         c2.setValidUntil(LocalDateTime.now().plusMonths(3));
-        c2.setUsageLimit(1000);
+        c2.setUsageLimit(20000);
         c2.setIsActive(true);
-        couponRepository.save(c2);
 
         Coupon c3 = new Coupon();
-        c3.setCode("EXPRESSFREE");
-        c3.setDescription("Free 1-Hour SuperFast Express Delivery on orders above ₹499");
+        c3.setCode("QUICK100");
+        c3.setDescription("Flat ₹100 discount on big grocery haul orders over ₹799!");
         c3.setDiscountType(DiscountType.FLAT);
-        c3.setDiscountValue(BigDecimal.valueOf(49));
-        c3.setMinOrderValue(BigDecimal.valueOf(499));
-        c3.setMaxDiscountAmount(BigDecimal.valueOf(49));
+        c3.setDiscountValue(BigDecimal.valueOf(100));
+        c3.setMinOrderValue(BigDecimal.valueOf(799));
         c3.setValidUntil(LocalDateTime.now().plusMonths(3));
-        c3.setUsageLimit(5000);
+        c3.setUsageLimit(10000);
         c3.setIsActive(true);
-        couponRepository.save(c3);
+
+        Coupon c4 = new Coupon();
+        c4.setCode("SUPERBUY");
+        c4.setDescription("Special 15% OFF on midnight snacks and weekend party essentials!");
+        c4.setDiscountType(DiscountType.PERCENTAGE);
+        c4.setDiscountValue(BigDecimal.valueOf(15));
+        c4.setMinOrderValue(BigDecimal.valueOf(199));
+        c4.setMaxDiscountAmount(BigDecimal.valueOf(50));
+        c4.setValidUntil(LocalDateTime.now().plusMonths(4));
+        c4.setUsageLimit(15000);
+        c4.setIsActive(true);
+
+        couponRepository.saveAll(List.of(c1, c2, c3, c4));
     }
 
     private void seedRestaurants() {
         if (restaurantRepository.count() > 0) return;
-        Restaurant r1 = new Restaurant();
-        r1.setName("Trattoria Da Enzo al 29");
-        r1.setSlug("trattoria-da-enzo-al-29");
-        r1.setDescription("Authentic Roman classics with hand-made tonnarelli cacio e pepe and crispy artichokes.");
-        r1.setCountry("Italy");
-        r1.setCity("Rome");
-        r1.setAddress("Via dei Vascellari, 29, 00153 Roma RM, Italy");
-        r1.setCuisine("Italian");
-        r1.setPriceLevel("$$");
-        r1.setRating(4.9);
-        r1.setReviewCount(1420);
-        r1.setImageUrl("https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80");
-        r1.setOpeningHours("12:30 PM - 11:00 PM");
-        r1.setPhone("+39 06 581 2260");
-        r1.setWebsite("https://www.daenzoal29.com");
-        r1.setLatitude(41.8876);
-        r1.setLongitude(12.4776);
-        r1.setIsDineInAvailable(true);
-        r1.setIsVegetarianFriendly(true);
-        r1.setIsVeganFriendly(false);
-        r1.setActive(true);
-        restaurantRepository.save(r1);
+
+        Restaurant r1 = Restaurant.builder()
+                .name("Trattoria da Enzo al 29")
+                .slug("trattoria-da-enzo-rome")
+                .description("Authentic Roman trattoria renowned for signature Carbonara, Cacio e Pepe, and fresh burrata.")
+                .cuisine("Italian")
+                .country("Italy")
+                .city("Rome")
+                .address("Via dei Vascellari, 29, 00153 Roma RM")
+                .latitude(41.8885)
+                .longitude(12.4764)
+                .rating(4.9)
+                .reviewCount(340)
+                .priceLevel("$$")
+                .imageUrl("https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1551183053-bf91a1d81141,https://images.unsplash.com/photo-1579684947550-22e945225d9a")
+                .openingHours("12:30 PM - 11:00 PM")
+                .phone("+39 06 581 2260")
+                .website("https://trattoriadaenzo.it")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(false)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(true)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        Restaurant r2 = Restaurant.builder()
+                .name("Sukiyabashi Jiro Roppongi")
+                .slug("sukiyabashi-jiro-tokyo")
+                .description("World-class Edomae sushi experience crafted with meticulously selected seasonal seafood.")
+                .cuisine("Japanese")
+                .country("Japan")
+                .city("Tokyo")
+                .address("Roppongi Hills Keyakizaka Dori 3F, Minato-ku, Tokyo")
+                .latitude(35.6596)
+                .longitude(139.7297)
+                .rating(4.95)
+                .reviewCount(520)
+                .priceLevel("$$$$")
+                .imageUrl("https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1611143669185-af224c5e3252,https://images.unsplash.com/photo-1553621042-f6e147245754")
+                .openingHours("11:30 AM - 9:30 PM")
+                .phone("+81 3-5413-6626")
+                .website("https://sushi-jiro.jp")
+                .isVegetarianFriendly(false)
+                .isVeganFriendly(false)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(false)
+                .isTakeawayAvailable(false)
+                .active(true)
+                .build();
+
+        Restaurant r3 = Restaurant.builder()
+                .name("Gramercy Tavern")
+                .slug("gramercy-tavern-new-york")
+                .description("Contemporary American culinary staple featuring wood-fired seasonal dining and farm-to-table menus.")
+                .cuisine("American")
+                .country("USA")
+                .city("New York")
+                .address("42 E 20th St, New York, NY 10003")
+                .latitude(40.7384)
+                .longitude(-73.9884)
+                .rating(4.8)
+                .reviewCount(410)
+                .priceLevel("$$$")
+                .imageUrl("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1544025162-d76694265947,https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c")
+                .openingHours("12:00 PM - 10:00 PM")
+                .phone("+1 212-477-0777")
+                .website("https://gramercytavern.com")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(true)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(true)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        Restaurant r4 = Restaurant.builder()
+                .name("Le Comptoir du Relais")
+                .slug("le-comptoir-du-relais-paris")
+                .description("Classic Parisian bistro serving elevated French gastronomy and artisanal charcuterie.")
+                .cuisine("French")
+                .country("France")
+                .city("Paris")
+                .address("9 Carr de l'Odéon, 75006 Paris")
+                .latitude(48.8517)
+                .longitude(2.3387)
+                .rating(4.75)
+                .reviewCount(280)
+                .priceLevel("$$$")
+                .imageUrl("https://images.unsplash.com/photo-1502301103665-0b95cc738daf?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c,https://images.unsplash.com/photo-1555396273-367ea4eb4db5")
+                .openingHours("12:00 PM - 11:00 PM")
+                .phone("+33 1 44 27 07 97")
+                .website("https://hotel-paris-relais-saint-germain.com")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(false)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(false)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        Restaurant r5 = Restaurant.builder()
+                .name("Dishoom Shoreditch")
+                .slug("dishoom-shoreditch-london")
+                .description("Paying homage to the heritage Irani cafes of Bombay with signature black daal and gunpowder potatoes.")
+                .cuisine("Indian")
+                .country("UK")
+                .city("London")
+                .address("7 Boundary St, London E2 7JE")
+                .latitude(51.5244)
+                .longitude(-0.0772)
+                .rating(4.85)
+                .reviewCount(680)
+                .priceLevel("$$")
+                .imageUrl("https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4,https://images.unsplash.com/photo-1565557623262-b51c2513a641")
+                .openingHours("8:00 AM - 11:00 PM")
+                .phone("+44 20 7420 9324")
+                .website("https://dishoom.com")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(true)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(true)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        Restaurant r6 = Restaurant.builder()
+                .name("6 Ballygunge Place")
+                .slug("6-ballygunge-place-kolkata")
+                .description("Heritage Bengali fine dining celebrating Daab Chingri, Kosha Mangsho, and authentic Kolkata flavors.")
+                .cuisine("Indian")
+                .country("India")
+                .city("Kolkata")
+                .address("6, Ballygunge Place, Kolkata, West Bengal 700019")
+                .latitude(22.5280)
+                .longitude(88.3659)
+                .rating(4.8)
+                .reviewCount(450)
+                .priceLevel("$$")
+                .imageUrl("https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1585937421612-70a008356fbe,https://images.unsplash.com/photo-1555396273-367ea4eb4db5")
+                .openingHours("12:00 PM - 10:30 PM")
+                .phone("+91 33 2460 3922")
+                .website("https://6ballygungeplace.in")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(false)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(true)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        Restaurant r7 = Restaurant.builder()
+                .name("Toscano Italian Bistro & Wine Bar")
+                .slug("toscano-ub-city-bengaluru")
+                .description("Charming open-air Italian restaurant and wine bar overlooking UB City amphitheatre.")
+                .cuisine("Italian")
+                .country("India")
+                .city("Bengaluru")
+                .address("UB City, Vittal Mallya Rd, Bengaluru, Karnataka 560001")
+                .latitude(12.9719)
+                .longitude(77.5960)
+                .rating(4.75)
+                .reviewCount(380)
+                .priceLevel("$$$")
+                .imageUrl("https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?w=800&auto=format&fit=crop&q=60")
+                .galleryImages("https://images.unsplash.com/photo-1555396273-367ea4eb4db5,https://images.unsplash.com/photo-1517248135467-4c7edcad34c4")
+                .openingHours("11:00 AM - 11:00 PM")
+                .phone("+91 80 4173 8800")
+                .website("https://toscano.co.in")
+                .isVegetarianFriendly(true)
+                .isVeganFriendly(true)
+                .isDineInAvailable(true)
+                .isDeliveryAvailable(true)
+                .isTakeawayAvailable(true)
+                .active(true)
+                .build();
+
+        restaurantRepository.saveAll(List.of(r1, r2, r3, r4, r5, r6, r7));
     }
 }

@@ -1,12 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
 import ProductDetailModal from '../ProductDetailModal';
 import { CartProvider } from '../../context/CartContext';
 import { AuthProvider } from '../../context/AuthContext';
 import { ToastProvider } from '../../context/ToastContext';
-import { WishlistProvider } from '../../context/WishlistContext';
 
 vi.mock('../../services/api', () => ({
   reviewApi: {
@@ -15,11 +13,6 @@ vi.mock('../../services/api', () => ({
   },
   catalogApi: {
     getRelatedProducts: vi.fn().mockResolvedValue({ data: [] }),
-  },
-  pincodeApi: {
-    check: vi.fn().mockResolvedValue({
-      data: { city: 'New Delhi', estimatedEta: '45-60 mins', isOneHourAvailable: true },
-    }),
   },
 }));
 
@@ -38,17 +31,13 @@ const mockProduct = {
 describe('ProductDetailModal Component', () => {
   it('renders product information properly', () => {
     render(
-      <MemoryRouter>
-        <ToastProvider>
-          <AuthProvider>
-            <CartProvider>
-              <WishlistProvider>
-                <ProductDetailModal product={mockProduct} onClose={vi.fn()} />
-              </WishlistProvider>
-            </CartProvider>
-          </AuthProvider>
-        </ToastProvider>
-      </MemoryRouter>
+      <ToastProvider>
+        <AuthProvider>
+          <CartProvider>
+            <ProductDetailModal product={mockProduct} onClose={vi.fn()} />
+          </CartProvider>
+        </AuthProvider>
+      </ToastProvider>
     );
 
     expect(screen.getByText('Organic Avocados')).toBeInTheDocument();
@@ -60,17 +49,13 @@ describe('ProductDetailModal Component', () => {
 
   it('renders nothing if product prop is null', () => {
     render(
-      <MemoryRouter>
-        <ToastProvider>
-          <AuthProvider>
-            <CartProvider>
-              <WishlistProvider>
-                <ProductDetailModal product={null} onClose={vi.fn()} />
-              </WishlistProvider>
-            </CartProvider>
-          </AuthProvider>
-        </ToastProvider>
-      </MemoryRouter>
+      <ToastProvider>
+        <AuthProvider>
+          <CartProvider>
+            <ProductDetailModal product={null} onClose={vi.fn()} />
+          </CartProvider>
+        </AuthProvider>
+      </ToastProvider>
     );
 
     expect(screen.queryByText('Organic Avocados')).not.toBeInTheDocument();

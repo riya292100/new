@@ -5,9 +5,6 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import CategoryPage from '../CategoryPage';
 import * as api from '../../services/api';
 import * as CartContextModule from '../../context/CartContext';
-import { WishlistProvider } from '../../context/WishlistContext';
-import { ToastProvider } from '../../context/ToastContext';
-import { AuthProvider } from '../../context/AuthContext';
 
 describe('CategoryPage Component (Isolated Unit Tests)', () => {
   const mockProducts = [
@@ -52,15 +49,9 @@ describe('CategoryPage Component (Isolated Unit Tests)', () => {
   it('renders category page with products list and filters', async () => {
     render(
       <MemoryRouter initialEntries={['/category/fruits-vegetables']}>
-        <ToastProvider>
-          <AuthProvider>
-            <WishlistProvider>
-              <Routes>
-                <Route path="/category/:slug" element={<CategoryPage />} />
-              </Routes>
-            </WishlistProvider>
-          </AuthProvider>
-        </ToastProvider>
+        <Routes>
+          <Route path="/category/:slug" element={<CategoryPage />} />
+        </Routes>
       </MemoryRouter>
     );
 

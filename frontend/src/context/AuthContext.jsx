@@ -119,9 +119,6 @@ export const AuthProvider = ({ children }) => {
       if (roleName === 'ADMIN') {
         targetUser = DEMO_USERS.admin;
         targetRole = 'ROLE_ADMIN';
-      } else if (roleName === 'SELLER') {
-        targetUser = DEMO_USERS.seller;
-        targetRole = 'ROLE_SELLER';
       } else if (roleName === 'DELIVERY') {
         targetUser = DEMO_USERS.driver;
         targetRole = 'ROLE_DELIVERY_PARTNER';
@@ -132,14 +129,7 @@ export const AuthProvider = ({ children }) => {
       } catch (loginErr) {
         // Fallback demo user when backend is offline
         const demoObj = {
-          id:
-            roleName === 'ADMIN'
-              ? 99
-              : roleName === 'SELLER'
-                ? 77
-                : roleName === 'DELIVERY'
-                  ? 88
-                  : 1,
+          id: roleName === 'ADMIN' ? 99 : roleName === 'DELIVERY' ? 88 : 1,
           fullName: targetUser.label || roleName,
           email: targetUser.email,
           phone: '9876543210',
@@ -166,7 +156,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAdmin = user?.roles?.includes('ROLE_ADMIN');
-  const isSeller = user?.roles?.includes('ROLE_SELLER');
   const isDeliveryPartner = user?.roles?.includes('ROLE_DELIVERY_PARTNER');
 
   return (
@@ -179,7 +168,6 @@ export const AuthProvider = ({ children }) => {
         logout,
         switchDemoRole,
         isAdmin,
-        isSeller,
         isDeliveryPartner,
         authModalOpen,
         authModalMode,

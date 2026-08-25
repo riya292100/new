@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useOrderTracking } from '../hooks/useOrderTracking';
 import LiveRadarMap from '../components/LiveRadarMap';
 import TimelineStages from '../components/TimelineStages';
-import InvoiceModal from '../components/InvoiceModal';
 import {
   CheckCircle2,
   Clock,
@@ -17,12 +16,10 @@ import {
   ArrowLeft,
   RefreshCw,
   XCircle,
-  FileText,
 } from 'lucide-react';
 
 const OrderTrackingPage = () => {
   const { orderNumber } = useParams();
-  const [showInvoice, setShowInvoice] = useState(false);
   const { order, loading, cancelling, fetchError, refresh, cancelOrder } = useOrderTracking(
     orderNumber,
     { pollingInterval: 6000 }
@@ -351,41 +348,22 @@ const OrderTrackingPage = () => {
               </span>
             </div>
 
-            {/* Invoice and Cancel Actions */}
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}
-            >
-              <button
-                type="button"
-                onClick={() => setShowInvoice(true)}
-                className="btn btn-outline btn-block btn-sm"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                }}
-              >
-                <FileText size={16} /> Download Tax Invoice (PDF)
-              </button>
-
-              {!isCancelled &&
-                order.status !== 'OUT_FOR_DELIVERY' &&
-                order.status !== 'DELIVERED' && (
-                  <button
-                    onClick={handleCancelOrder}
-                    disabled={cancelling}
-                    className="btn btn-danger btn-block btn-sm"
-                  >
-                    {cancelling ? 'Cancelling...' : 'Cancel Order'}
-                  </button>
-                )}
-            </div>
+            {/* Cancel Button */}
+            {!isCancelled &&
+              order.status !== 'OUT_FOR_DELIVERY' &&
+              order.status !== 'DELIVERED' && (
+                <button
+                  onClick={handleCancelOrder}
+                  disabled={cancelling}
+                  className="btn btn-danger btn-block btn-sm"
+                  style={{ marginTop: '16px' }}
+                >
+                  {cancelling ? 'Cancelling...' : 'Cancel Order'}
+                </button>
+              )}
           </div>
         </div>
       </div>
-
-      {showInvoice && <InvoiceModal order={order} onClose={() => setShowInvoice(false)} />}
     </div>
   );
 };
