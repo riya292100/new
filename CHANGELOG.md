@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.7.0] - 2026-08-26
+
+### Added
+- **Polyglot Microservice Architecture**:
+  - **Python 3.12 / FastAPI AI Demand Engine** (`services/ai-demand-engine`):
+    - Moving average sales velocity and Single Exponential Smoothing (SES) demand forecasting (`app/forecaster.py`).
+    - Automated inventory safety stock and Reorder Point ($ROP$) calculation.
+    - Product co-occurrence affinity graph for frequently bought together cart recommendations (`app/recommender.py`).
+    - Dynamic surge delivery fee multiplier based on store backlog, rider scarcity, and inclement weather (`app/pricing.py`).
+    - Automated pytest unit test suite (`tests/test_forecaster.py`) with 100% pass rate.
+  - **Go 1.22+ / Golang Spatial Telemetry Service** (`services/telemetry-service`):
+    - Concurrent mutex-locked in-memory rider spatial index (`tracker/geo.go`) for high-frequency GPS ingestion.
+    - Spherical Haversine proximity ring candidate finder with ETA arrival calculations.
+    - REST endpoints for GPS location updates and nearby driver searches (`tracker/handler.go`).
+    - Automated Go unit tests with race-condition detection (`tracker/geo_test.go`).
+  - **TypeScript Domain Contracts Layer** (`frontend/src/types`):
+    - Universal domain contracts interface (`domain.d.ts`) defining types for `User`, `Product`, `DarkStore`, `Order`, `RiderTelemetryLocation`, `DemandPrediction`, and `DynamicSurgeInfo`.
+    - Integrated `tsconfig.json` for frontend typechecking.
+  - **Fullstack Docker & CI/CD Pipeline**:
+    - Updated `docker-compose.yml` to orchestrate 5 microservices across Java, Python, Go, and React.
+    - Enhanced GitHub Actions CI workflow (`.github/workflows/ci.yml`) running parallel test runners for Go (`go test`), Python (`pytest`), Java Maven, React Vitest, and full Docker stack build validation.
+
+---
+
 ## [1.6.0] - 2026-08-26
 
 ### Added
