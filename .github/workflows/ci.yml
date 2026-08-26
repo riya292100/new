@@ -96,21 +96,11 @@ jobs:
 
       - name: Run Backend Tests (JUnit 5)
         working-directory: ./backend
-        run: |
-          if [ -f "./mvnw" ]; then
-            ./mvnw -B clean test -Dspring.profiles.active=test
-          else
-            mvn -B clean test -Dspring.profiles.active=test
-          fi
+        run: mvn -B test -Dspring.profiles.active=test
 
       - name: Package Standalone Production JAR
         working-directory: ./backend
-        run: |
-          if [ -f "./mvnw" ]; then
-            ./mvnw -B package -DskipTests
-          else
-            mvn -B package -DskipTests
-          fi
+        run: mvn -B package -DskipTests
 
   python-ci:
     name: Python AI Demand Engine (pytest)

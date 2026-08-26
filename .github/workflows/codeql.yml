@@ -48,12 +48,7 @@ jobs:
       - name: Build Java Backend (CodeQL)
         if: matrix.language == 'java-kotlin'
         working-directory: ./backend
-        run: |
-          if [ -f "./mvnw" ]; then
-            ./mvnw -B clean compile -DskipTests
-          else
-            mvn -B clean compile -DskipTests
-          fi
+        run: mvn -B compile -DskipTests
 
       - name: Autobuild (JavaScript/TypeScript)
         if: matrix.language != 'java-kotlin'
