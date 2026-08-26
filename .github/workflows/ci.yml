@@ -96,7 +96,12 @@ jobs:
 
       - name: Run Backend Tests (JUnit 5)
         working-directory: ./backend
-        run: mvn -B test -Dspring.profiles.active=test
+        run: |
+          mvn -B test -Dspring.profiles.active=test || {
+            echo "=== SUREFIRE REPORTS ==="
+            cat target/surefire-reports/*.txt 2>/dev/null || true
+            exit 1
+          }
 
       - name: Package Standalone Production JAR
         working-directory: ./backend
