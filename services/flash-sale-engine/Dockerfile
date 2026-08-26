@@ -1,7 +1,5 @@
-# Multi-stage Docker build for Rust Flash Sale Engine
-FROM rust:1.80-alpine AS builder
-
-RUN apk add --no-cache musl-dev
+# Stage 1: Build binary using Rust stable slim
+FROM rust:1.80-slim-bookworm AS builder
 
 WORKDIR /app
 COPY Cargo.toml ./
@@ -9,10 +7,10 @@ COPY src ./src
 
 RUN cargo build --release
 
-# Minimal runtime stage
-FROM alpine:3.20
+# Stage 2: Minimal runtime image
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache ca-certificates tzdata
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY --from=builder /app/target/release/flash-sale-engine /app/flash-sale-engine
