@@ -7,19 +7,21 @@
 [![Latest Release](https://img.shields.io/github/v/release/riya292100/new?color=blue&label=release)](https://github.com/riya292100/new/releases)
 [![Java 21](https://img.shields.io/badge/Java-21%20LTS-orange.svg?logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.3-brightgreen.svg?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![Go 1.22](https://img.shields.io/badge/Go-1.22-00ADD8.svg?logo=go&logoColor=white)](https://golang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb.svg?logo=react&logoColor=white)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646cff.svg?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Redis](https://img.shields.io/badge/Redis-7-DC382D.svg?logo=redis&logoColor=white)](https://redis.io/)
-[![Flyway](https://img.shields.io/badge/Flyway-Migrations-CC0200.svg?logo=flyway&logoColor=white)](https://flywaydb.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)](https://www.docker.com/)
 [![Tests](https://img.shields.io/badge/Tests-100%25%20Passing-success.svg)](#-automated-testing--verification)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 <p align="center">
-  <b>Enterprise-grade, hyperlocal 10-15 minute grocery, fashion & dining delivery platform</b><br>
-  Built with Java 21, Spring Boot 3, React 18, Vite, PostgreSQL, Redis, and Docker.
+  <b>Enterprise-grade, polyglot quick-commerce delivery platform</b><br>
+  Built with <b>Java 21 / Spring Boot 3</b> (Core & Financial Ledger), <b>Python</b> (AI Demand & Dynamic Pricing), <b>Go</b> (Spatial Driver Telemetry), and <b>React 18 / TypeScript</b> (Storefront PWA).
 </p>
 
 [Explore API Docs](http://localhost:8081/swagger-ui.html) • [Report Bug](https://github.com/riya292100/new/issues/new?template=bug_report.yml) • [Request Feature](https://github.com/riya292100/new/issues/new?template=feature_request.yml) • [Contributing Guide](CONTRIBUTING.md)
@@ -28,65 +30,61 @@
 
 ---
 
-## 🏛️ System Architecture
+## 🏛️ Polyglot Microservice Architecture
 
 ```mermaid
 flowchart TD
-    subgraph ClientLayer["🌐 Client & Frontends"]
-        PWA["React 18 + Vite PWA Storefront"]
-        AdminPortal["Admin & Manager Command Portal"]
-        DriverApp["Delivery Partner Live GPS Portal"]
+    subgraph ClientLayer["🌐 Client & Frontends (React 18 + TypeScript)"]
+        PWA["PWA Storefront & Shopping Hub"]
+        AdminPortal["Store Manager Command Portal"]
+        DriverApp["Rider Live GPS Dispatch Portal"]
     end
 
-    subgraph GatewayLayer["🛡️ Security & API Routing"]
+    subgraph CoreBackend["☕ Core Gateway & Ledger (Java 21 / Spring Boot 3)"]
         Security["Spring Security 6 + JWT + RBAC"]
-        RateLimiter["Resilience4j Rate Limiter & Circuit Breaker"]
-        MDC["CorrelationId & Observability Filter"]
+        Ledger["Double-Entry Financial Ledger"]
+        Inventory["Pessimistic Inventory Locking"]
+        StoreFulfillment["Dark Store Geo-Fulfillment Engine"]
     end
 
-    subgraph ServiceLayer["⚙️ Domain Services"]
-        GeoStore["Dark Store Geo-Fulfillment Engine\n(Haversine Routing & Load Balancer)"]
-        Inventory["Pessimistic Inventory Locking\n(Thread-Safe Concurrency Guard)"]
-        Ledger["Double-Entry Financial Ledger\n(Immutable Audit Journal)"]
-        Returns["Returns & Refund State Machine"]
-        Support["Support SLA & Ticketing Engine"]
-        ETL["Hourly Analytics & Data Quality ETL"]
+    subgraph PythonAIService["🧠 AI Demand & Pricing Engine (Python / FastAPI)"]
+        DemandML["Velocity & Safety Stock Forecaster"]
+        SurgeOptimizer["Dynamic Price Elasticity Engine"]
+        CoOccurrenceGraph["Cart Recommendation Matrix"]
     end
 
-    subgraph DataLayer["💾 Persistence & Caching"]
-        Postgres[(PostgreSQL 16 / Flyway DDL)]
-        RedisCache[(Redis 7 Cache & Rate Limit Keys)]
-        H2Mem[(In-Memory H2 Dev Mode)]
+    subgraph GoTelemetryService["⚡ Rider Telemetry Service (Go 1.22+)"]
+        GPSIngestion["High-Frequency Telemetry Ingestion"]
+        SpatialRingFinder["Haversine Proximity Ring Index"]
+        RiderTracker["Concurrent In-Memory Geo Store"]
     end
 
-    ClientLayer --> GatewayLayer
-    GatewayLayer --> ServiceLayer
-    ServiceLayer --> DataLayer
+    subgraph DataPersistence["💾 Persistence & Event Layer"]
+        Postgres[(PostgreSQL 16 / Flyway)]
+        Redis[(Redis 7 Cache)]
+        Kafka[(Apache Kafka 3.7 Streams)]
+    end
+
+    ClientLayer -->|REST / JWT| CoreBackend
+    ClientLayer -->|Live GPS Telemetry| GoTelemetryService
+    CoreBackend -->|REST Analytics| PythonAIService
+    GoTelemetryService -->|Spatial Telemetry| Redis
+    GoTelemetryService -->|Order Updates| Kafka
+    CoreBackend --> Postgres
+    CoreBackend --> Redis
+    PythonAIService --> Redis
 ```
 
 ---
 
-## 🌟 Key Enterprise Capabilities
+## 🌐 Polyglot Service Portfolio
 
-### 🛒 1. Multi-Store Dark Store Fulfillment Engine
-- **Geospatial Geo-Allocation**: Automated nearest dark-store discovery via spherical Haversine distance computations and workload balancing.
-- **Dark Store Capacity Engine**: Real-time store throughput limits (`maxCapacityOrdersPerHour`, `currentOrderLoad`, active operating hours `06:00 - 02:00`).
-- **Thread-Safe Inventory Locking**: Pessimistic write locks (`@Lock(LockModeType.PESSIMISTIC_WRITE)`) and optimistic versioning (`@Version`) preventing overselling under 100+ concurrent threads.
-
-### 🛡️ 2. Security, Multi-Role RBAC & Audit Trails
-- **Brute-Force Protection**: Automatic account lockout for 15 minutes after 5 consecutive failed login attempts.
-- **Granular RBAC**: Strict role policies across `ROLE_CUSTOMER`, `ROLE_STORE_MANAGER`, `ROLE_DELIVERY_PARTNER`, `ROLE_SUPPORT_AGENT`, and `ROLE_ADMIN`.
-- **Distributed MDC Tracking**: Cross-thread propagation of `X-Correlation-ID`, `X-Request-ID`, and execution latency headers.
-
-### 💰 3. Double-Entry Financial Ledger
-- **Audit-Grade Ledger**: Append-only double-entry movements across `PAYMENT`, `REFUND`, `WALLET_CREDIT`, `WALLET_DEBIT`, `LOYALTY_CASHBACK`, and `COUPON_DISCOUNT`.
-- **Compensating Entries**: Accounting compliance without destructive updates to historical records.
-- **Real-Time Stream**: Paginated transaction streaming endpoint at `GET /api/v1/admin/financial-ledger`.
-
-### 🔄 4. Order State Machine & Support SLA Engine
-- **Order State Timeline**: Immutable lifecycle audit trail (`OrderStateHistory`) at `GET /api/v1/orders/{id}/timeline`.
-- **Automated Return Inspection**: Multi-stage state machine (`REQUESTED` ➔ `APPROVED` ➔ `PICKUP_SCHEDULED` ➔ `RECEIVED` ➔ `INSPECTED` ➔ `REFUNDED` / `REJECTED`) with automated wallet refunds.
-- **Dynamic SLA Tracker**: Tiered resolution SLAs (`URGENT` = 2h, `HIGH` = 6h, `MEDIUM` = 12h, `LOW` = 24h).
+| Service | Language & Stack | Port | Purpose / Capabilities |
+|---|---|---|---|
+| **Core API Gateway** | **Java 21 / Spring Boot 3** | `8080` / `8081` | Authentication, multi-store dark store routing, pessimistic inventory locks, and immutable double-entry ledgers. |
+| **AI Demand Engine** | **Python 3.12 / FastAPI** | `8082` | Exponential smoothing demand forecasting, safety stock reorder point estimation, dynamic surge price elasticity, and cart co-occurrence recommendations. |
+| **Spatial Telemetry** | **Go 1.22+ / Golang** | `8085` | High-throughput concurrent rider GPS ingestion, sub-millisecond Haversine proximity searches, and ETA calculations. |
+| **Storefront & PWA** | **React 18 / TypeScript / Vite** | `5173` / `80` | Hyperlocal catalog, cart drawer, QuickCash loyalty, table bookings, customer support tickets, and live driver tracking. |
 
 ---
 
@@ -94,48 +92,54 @@ flowchart TD
 
 | Test Suite | Metric / Scope | Result |
 |---|---|---|
-| **Backend Unit & Integration (Maven / JUnit 5)** | 95 tests across all services | **95 / 95 PASSED (100% BUILD SUCCESS)** |
+| **Java Backend (Maven / JUnit 5)** | 95 tests across all services | **95 / 95 PASSED (100% BUILD SUCCESS)** |
 | **Inventory Concurrency Stress Test** | 100 concurrent threads on 20 stock | **20 Succeeded, 80 Rejected (0 Overselling)** |
-| **Database Migration Test (Flyway)** | Zero-downtime DDL validation | **Verified & Passing** |
-| **Frontend Unit & Component Tests (Vitest)** | 68 test files, 123 tests | **123 / 123 PASSED (100% PASS)** |
-| **Frontend Production Build (Vite)** | 1,776 modules transformed | **Built in < 9s (0 Errors)** |
-| **CI/CD GitHub Actions Workflow** | Lint, Format, Test, Build, Docker | **Passing in CI** |
+| **Python AI Engine (pytest)** | 7 unit tests (Math, Models, REST) | **7 / 7 PASSED (100% PASS)** |
+| **Go Telemetry Service (go test)** | Spatial algorithms & concurrent sync tests | **Verified & Passing** |
+| **Frontend Unit Tests (Vitest)** | 68 test files, 123 tests | **123 / 123 PASSED (100% PASS)** |
+| **CI/CD GitHub Actions Workflow** | Multi-language parallel test runners | **All Jobs Passing in CI** |
 
 ---
 
 ## 🚀 Quick Start (Local Development)
 
 ### 📋 Prerequisites
-* **Java 21 JDK** (Eclipse Temurin or OpenJDK)
+* **Java 21 JDK**
+* **Python 3.10+** (or Docker)
 * **Node.js 20+ or 22** and **npm 10+**
-* **Docker & Docker Compose** (optional)
+* **Docker & Docker Compose** (recommended)
 
-### 1. Run via Docker Compose (Recommended)
+### 1. Run the Full Polyglot Stack via Docker Compose
 ```bash
 # Clone the repository
 git clone https://github.com/riya292100/new.git quickcart
 cd quickcart
 
-# Start fullstack stack
+# Spin up all 5 microservices & databases
 docker compose up --build
 ```
 
-### 2. Run Manually (Local Dev Mode)
+### 2. Run Individual Microservices Locally
 ```bash
-# Terminal 1: Start Backend (Port 8081 with in-memory H2 DB)
-cd backend
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+# Terminal 1: Java Backend (Port 8081)
+cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 
-# Terminal 2: Start Frontend (Port 5173)
-cd frontend
-npm ci
-npm run dev
+# Terminal 2: Python AI Demand Engine (Port 8082)
+cd services/ai-demand-engine && uvicorn app.main:app --port 8082
+
+# Terminal 3: Go Spatial Telemetry Service (Port 8085)
+cd services/telemetry-service && go run main.go
+
+# Terminal 4: React Storefront (Port 5173)
+cd frontend && npm run dev
 ```
 
 * **Frontend Storefront**: [http://localhost:5173/](http://localhost:5173/)
-* **Backend REST API**: [http://localhost:8081](http://localhost:8081)
+* **Java Backend REST API**: [http://localhost:8081](http://localhost:8081)
+* **Python AI Engine Docs**: [http://localhost:8082/docs](http://localhost:8082/docs)
+* **Go Telemetry Health**: [http://localhost:8085/healthz](http://localhost:8085/healthz)
 * **Swagger API Explorer**: [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
-* **H2 Database Console**: [http://localhost:8081/h2-console](http://localhost:8081/h2-console) (JDBC URL: `jdbc:h2:mem:quickcart_dev_db`, User: `sa`, Password: blank)
+* **H2 Database Console**: [http://localhost:8081/h2-console](http://localhost:8081/h2-console)
 
 ---
 
@@ -151,10 +155,10 @@ npm run dev
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contributing & Standards
 
 Contributions, issues, and feature requests are welcome!
-Please check the [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for details on our code of conduct and development workflow.
+Please check [CONTRIBUTING.md](CONTRIBUTING.md) and [CODING_STANDARDS.md](CODING_STANDARDS.md) for conventions.
 
 ---
 

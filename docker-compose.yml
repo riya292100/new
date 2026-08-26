@@ -108,6 +108,30 @@ services:
     networks:
       - quickcart-net
 
+  # Python AI Demand Forecasting & Recommender Engine
+  ai-demand-engine:
+    build:
+      context: ./services/ai-demand-engine
+      dockerfile: Dockerfile
+    container_name: quickcart-ai-demand-engine
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    networks:
+      - quickcart-net
+
+  # Go Real-Time Rider Telemetry & Spatial Proximity Service
+  telemetry-service:
+    build:
+      context: ./services/telemetry-service
+      dockerfile: Dockerfile
+    container_name: quickcart-telemetry-service
+    restart: unless-stopped
+    ports:
+      - "8085:8085"
+    networks:
+      - quickcart-net
+
 volumes:
   postgres_data:
     driver: local

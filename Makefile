@@ -12,9 +12,13 @@ build:
 test:
 	npm --prefix frontend run test
 
+test-python:
+	cd services/ai-demand-engine && pytest
+
 test-all:
 	npm --prefix frontend run coverage
 	cd backend && mvn clean test -Dspring.profiles.active=test
+	cd services/ai-demand-engine && pytest
 
 lint:
 	npm --prefix frontend run lint

@@ -18,10 +18,10 @@
 ---
 
 ### 🌟 About Me
-- 🔭 **Currently Building**: [**QuickCart**](https://github.com/riya292100/new) — Hyperlocal 10-minute quick-commerce platform featuring multi-store geo-fulfillment, pessimistic locking, and double-entry financial ledgers.
-- ⚡ **Core Strengths**: Clean Hexagonal Architecture, Database Optimization (PostgreSQL & Flyway), Redis Caching, Concurrency Control, Microservices, and Cloud Native CI/CD.
-- 💬 **Ask Me About**: Java 21, Spring Boot 3, React 18, State Machines, Thread-Safe Concurrency, Distributed Logging & Observability.
-- 🌱 **Continuous Learning**: Event-Driven Architectures (Apache Kafka), Kubernetes orchestration, and AI-assisted developer workflows.
+- 🔭 **Currently Building**: [**QuickCart**](https://github.com/riya292100/new) — Enterprise polyglot quick-commerce platform engineered with **Java 21 / Spring Boot 3** (Transactional Core), **Python FastAPI** (AI Demand & Pricing Engine), and **Go** (Spatial Driver Telemetry).
+- ⚡ **Core Strengths**: Distributed Systems, Hexagonal Architecture, High-Concurrency Locking, Geospatial Indexing, PostgreSQL & Redis Optimization, Microservice Orchestration.
+- 💬 **Ask Me About**: Java 21, Python, Go (Golang), React 18, TypeScript, Docker, Kafka, Thread-Safe Concurrency, and Distributed Observability.
+- 🌱 **Continuous Learning**: Event-Driven Architectures, Kubernetes clustering, and AI-assisted engineering workflows.
 
 ---
 
@@ -29,11 +29,12 @@
 
 <div align="center">
 
-#### ⚙️ Backend & Architecture
+#### ⚙️ Polyglot Backend & Microservices
 ![Java](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot_3-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
-![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)
-![Hibernate](https://img.shields.io/badge/Hibernate_JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white)
+![Python](https://img.shields.io/badge/Python_3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Go](https://img.shields.io/badge/Go_1.22-00ADD8?style=for-the-badge&logo=go&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 
 #### 🌐 Frontend & UI Engineering
