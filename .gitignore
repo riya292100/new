@@ -46,6 +46,24 @@ lerna-debug.log*
 ehthumbs.db
 Thumbs.db
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+telemetry-server
+
 # Environment variables
 .env
 .env.local
