@@ -1,0 +1,51 @@
+name: 💡 Feature Request
+description: Propose a new feature, optimization, or architectural enhancement.
+title: "[FEATURE]: "
+labels: ["enhancement", "proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a feature for QuickCart! Please explain how this enhancement benefits the platform.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: Category of the proposed change.
+      options:
+        - Storefront & UX Enhancement
+        - Dark Store & Logistics Algorithm
+        - Performance & Concurrency Tuning
+        - Security & RBAC Policies
+        - Observability & Metrics (Prometheus/Grafana)
+        - Payment & Financial Ledger
+        - Mobile PWA Capabilities
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem or limitation?
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see.
+      placeholder: Add support for...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternative solutions or workarounds you've explored.
+    validations:
+      required: false

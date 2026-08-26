@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions & Community Q&A
+    url: https://github.com/riya292100/new/discussions
+    about: Ask questions, share ideas, and discuss architectural patterns with the community.
+  - name: 🛡️ Security Vulnerability Reporting
+    url: https://github.com/riya292100/new/security/advisories/new
+    about: Privately report sensitive security issues in accordance with our SECURITY.md policy.
