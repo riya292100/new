@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.0] - 2026-08-26
+
+### Added
+- **Frontend Architecture & Modularization**:
+  - Extracted atomic sub-components (`HeroPromoBanner.jsx`, `DeliveryGuaranteeStrip.jsx`, `InstantFashionBanner.jsx`, `ClothingHeroBanner.jsx`, `ClothingFilterBar.jsx`, `DriverStatsGrid.jsx`, `AssignedOrderCard.jsx`, `EmptyOrdersState.jsx`).
+  - Added comprehensive Vitest unit tests for all new sub-components, increasing test suite to 123 tests across 68 test files with 100% pass rate.
+  - Configured coverage threshold enforcement in `vitest.config.js` and `npm audit --audit-level=high` in CI workflows.
+- **Backend MDC Request Correlation & Observability**:
+  - Distributed `CorrelationIdFilter` with `X-Correlation-ID`, `X-Request-ID`, and `X-Response-Time-Millis` headers.
+  - Thread-safe `MdcTaskDecorator` propagating correlation IDs across asynchronous task worker threads.
+  - Structured console and rolling file log formatting in `logback-spring.xml`.
+  - Added integration test `CorrelationIdFilterIntegrationTest.java`.
+- **Maven Build Hardening & Dependency Checksums**:
+  - Configured `maven-enforcer-plugin` enforcing Java 21+ and Maven 3.8+ standards in `pom.xml`.
+  - Configured `checksum-maven-plugin` for SHA-512 and SHA-256 artifact verification.
+- **Data Engineering Pipelines & Reconciliation**:
+  - Added `generateAnalyticsExportReport()` in `DataPipelineService` generating CSV/JSON analytical reports.
+  - Added `POST /api/v1/admin/analytics/etl/reconciliation` and `GET /api/v1/admin/analytics/export/daily-report` endpoints in `AnalyticsEtlController`.
+  - Added standalone `FlywayMigrationTest` verifying schema migrations against ephemeral database without external services.
+
+---
+
 ## [1.5.0] - 2026-08-25
 
 ### Added

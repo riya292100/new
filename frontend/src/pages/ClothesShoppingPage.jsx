@@ -1,41 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import {
-  Shirt,
-  Sparkles,
-  Filter,
-  ArrowUpDown,
-  Search,
-  Check,
-  Zap,
-  ShieldCheck,
-  Truck,
-  RotateCcw,
-  Tag,
-} from 'lucide-react';
+import { Shirt } from 'lucide-react';
 import ClothCard from '../components/clothing/ClothCard';
 import ClothDetailModal from '../components/clothing/ClothDetailModal';
+import ClothingHeroBanner from '../components/clothing/ClothingHeroBanner';
+import ClothingFilterBar from '../components/clothing/ClothingFilterBar';
 import { productApi } from '../services/api';
 import { FALLBACK_CLOTHES } from '../utils/demoConfig';
 import logger from '../utils/logger';
 
-const DEPARTMENTS = ['All', "Men's Wear", "Women's Wear", 'Unisex'];
-const GARMENT_TYPES = [
-  'All Types',
-  'T-Shirts',
-  'Jeans',
-  'Shirts',
-  'Dresses',
-  'Activewear',
-  'Hoodies',
-  'Ethnic Wear',
-  'Trousers',
-];
-const SIZES = ['All Sizes', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '30', '32', '34', '36'];
-
 const ClothesShoppingPage = () => {
   const [clothes, setClothes] = useState(FALLBACK_CLOTHES);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [selectedDepartment, setSelectedDepartment] = useState('All');
   const [selectedGarmentType, setSelectedGarmentType] = useState('All Types');
   const [selectedSize, setSelectedSize] = useState('All Sizes');
@@ -48,10 +23,8 @@ const ClothesShoppingPage = () => {
     const fetchClothes = async () => {
       try {
         setLoading(true);
-        // Try fetching category products from backend if category exists
         const res = await productApi.getProducts({ category: 'clothes-fashion', size: 50 });
         if (isMounted && res?.data?.content && res.data.content.length > 0) {
-          // Merge with fallback clothes metadata for richer attributes
           const backendItems = res.data.content.map((p) => {
             const match = FALLBACK_CLOTHES.find((f) => f.slug === p.slug);
             return {
@@ -90,12 +63,10 @@ const ClothesShoppingPage = () => {
   const filteredClothes = useMemo(() => {
     return clothes
       .filter((item) => {
-        // Department Filter
         if (selectedDepartment === "Men's Wear" && item.department !== 'Men') return false;
         if (selectedDepartment === "Women's Wear" && item.department !== 'Women') return false;
         if (selectedDepartment === 'Unisex' && item.department !== 'Unisex') return false;
 
-        // Garment Type Filter
         if (selectedGarmentType !== 'All Types') {
           const typeLower = selectedGarmentType.toLowerCase();
           const matchName = item.name.toLowerCase().includes(typeLower);
@@ -103,7 +74,6 @@ const ClothesShoppingPage = () => {
           if (!matchName && !matchType) return false;
         }
 
-        // Size Filter
         if (selectedSize !== 'All Sizes') {
           const hasSize =
             item.sizes?.includes(selectedSize) ||
@@ -111,7 +81,6 @@ const ClothesShoppingPage = () => {
           if (!hasSize) return false;
         }
 
-        // Search Query
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase();
           const match =
@@ -131,241 +100,33 @@ const ClothesShoppingPage = () => {
         if (sortBy === 'price-high') return priceB - priceA;
         if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
         if (sortBy === 'discount') return (b.discountPercentage || 0) - (a.discountPercentage || 0);
-        return 0; // default featured
+        return 0;
       });
   }, [clothes, selectedDepartment, selectedGarmentType, selectedSize, searchQuery, sortBy]);
+
+  const handleResetFilters = () => {
+    setSelectedDepartment('All');
+    setSelectedGarmentType('All Types');
+    setSelectedSize('All Sizes');
+    setSearchQuery('');
+  };
 
   return (
     <div className="container" style={{ padding: '24px 16px', maxWidth: '1240px' }}>
       {/* Hero Banner */}
-      <div
-        className="glass-card"
-        style={{
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #064e3b 100%)',
-          borderRadius: '24px',
-          padding: '36px 32px',
-          color: '#ffffff',
-          marginBottom: '28px',
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: '0 12px 30px rgba(0,0,0,0.15)',
-        }}
-      >
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: '680px' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: 'rgba(16, 185, 129, 0.2)',
-              color: '#34d399',
-              padding: '4px 12px',
-              borderRadius: '9999px',
-              fontSize: '0.8rem',
-              fontWeight: '700',
-              marginBottom: '14px',
-              border: '1px solid rgba(52, 211, 153, 0.3)',
-            }}
-          >
-            <Zap size={15} fill="#34d399" /> INSTANT 15-MINUTE FASHION & APPAREL
-          </div>
-
-          <h1
-            style={{
-              fontSize: '2.2rem',
-              fontWeight: '900',
-              lineHeight: '1.2',
-              marginBottom: '12px',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Trending Clothes & Daily Apparel Delivered in{' '}
-            <span style={{ color: '#34d399' }}>15 Mins</span>
-          </h1>
-
-          <p
-            style={{
-              fontSize: '0.96rem',
-              color: '#94a3b8',
-              lineHeight: '1.5',
-              marginBottom: '20px',
-            }}
-          >
-            Discover everyday cotton t-shirts, stretch denim, casual shirts, flowy dresses, and
-            ethnic wear with instant doorstep delivery and 7-day hassle-free exchanges.
-          </p>
-
-          {/* Quick Stats Strip */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Truck size={18} color="#34d399" />
-              <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>⚡ 15-Min Delivery</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <RotateCcw size={18} color="#34d399" />
-              <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>7-Day Doorstep Returns</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <ShieldCheck size={18} color="#34d399" />
-              <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>100% Genuine Brands</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ClothingHeroBanner />
 
       {/* Filter Control Bar */}
-      <div
-        className="glass-card"
-        style={{
-          background: '#ffffff',
-          borderRadius: '18px',
-          padding: '16px 20px',
-          marginBottom: '24px',
-          border: '1px solid #e2e8f0',
-        }}
-      >
-        {/* Department Pills */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            overflowX: 'auto',
-            paddingBottom: '12px',
-            borderBottom: '1px solid #f1f5f9',
-            marginBottom: '14px',
-          }}
-        >
-          <span
-            style={{ fontSize: '0.82rem', fontWeight: '700', color: '#64748b', marginRight: '4px' }}
-          >
-            DEPARTMENT:
-          </span>
-          {DEPARTMENTS.map((dept) => {
-            const isSelected = selectedDepartment === dept;
-            return (
-              <button
-                key={dept}
-                type="button"
-                onClick={() => setSelectedDepartment(dept)}
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: '10px',
-                  fontSize: '0.82rem',
-                  fontWeight: '700',
-                  border: isSelected ? '1.5px solid #059669' : '1px solid #e2e8f0',
-                  background: isSelected ? '#ecfdf5' : '#f8fafc',
-                  color: isSelected ? '#065f46' : '#334155',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                {dept}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Garment Type & Size Filter Row */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '16px',
-          }}
-        >
-          {/* Garment Type Pills */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              overflowX: 'auto',
-              flex: 1,
-            }}
-          >
-            <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b' }}>TYPE:</span>
-            {GARMENT_TYPES.map((type) => {
-              const isSelected = selectedGarmentType === type;
-              return (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setSelectedGarmentType(type)}
-                  style={{
-                    padding: '4px 10px',
-                    borderRadius: '8px',
-                    fontSize: '0.78rem',
-                    fontWeight: '600',
-                    border: isSelected ? '1px solid #059669' : '1px solid #e2e8f0',
-                    background: isSelected ? '#059669' : '#ffffff',
-                    color: isSelected ? '#ffffff' : '#475569',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {type}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Size Filter Dropdown / Pills */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b' }}>SIZE:</span>
-              <select
-                value={selectedSize}
-                onChange={(e) => setSelectedSize(e.target.value)}
-                style={{
-                  padding: '6px 10px',
-                  borderRadius: '8px',
-                  border: '1px solid #cbd5e1',
-                  background: '#ffffff',
-                  fontSize: '0.82rem',
-                  fontWeight: '600',
-                  color: '#0f172a',
-                  cursor: 'pointer',
-                }}
-              >
-                {SIZES.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Sort Dropdown */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b' }}>SORT:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                style={{
-                  padding: '6px 10px',
-                  borderRadius: '8px',
-                  border: '1px solid #cbd5e1',
-                  background: '#ffffff',
-                  fontSize: '0.82rem',
-                  fontWeight: '600',
-                  color: '#0f172a',
-                  cursor: 'pointer',
-                }}
-              >
-                <option value="featured">✨ Featured</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="rating">Top Rated (★)</option>
-                <option value="discount">Biggest Savings (%)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ClothingFilterBar
+        selectedDepartment={selectedDepartment}
+        onSelectDepartment={setSelectedDepartment}
+        selectedGarmentType={selectedGarmentType}
+        onSelectGarmentType={setSelectedGarmentType}
+        selectedSize={selectedSize}
+        onSelectSize={setSelectedSize}
+        sortBy={sortBy}
+        onSelectSortBy={setSortBy}
+      />
 
       {/* Results Header */}
       <div
@@ -389,12 +150,7 @@ const ClothesShoppingPage = () => {
           searchQuery) && (
           <button
             type="button"
-            onClick={() => {
-              setSelectedDepartment('All');
-              setSelectedGarmentType('All Types');
-              setSelectedSize('All Sizes');
-              setSearchQuery('');
-            }}
+            onClick={handleResetFilters}
             style={{
               background: 'none',
               border: 'none',
@@ -446,16 +202,7 @@ const ClothesShoppingPage = () => {
             Try choosing a different size, department, or reset your filters to see all available
             apparel.
           </p>
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedDepartment('All');
-              setSelectedGarmentType('All Types');
-              setSelectedSize('All Sizes');
-              setSearchQuery('');
-            }}
-            className="btn btn-primary"
-          >
+          <button type="button" onClick={handleResetFilters} className="btn btn-primary">
             Show All Clothes
           </button>
         </div>

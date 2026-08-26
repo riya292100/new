@@ -36,6 +36,11 @@ quickcart:
       keyId: ${RAZORPAY_KEY_ID:rzp_test_quickcartKey2026}
       keySecret: ${RAZORPAY_KEY_SECRET:rzp_secret_quickcartSecret2026}
       webhookSecret: ${RAZORPAY_WEBHOOK_SECRET:quickcart_webhook_secret_2026}
+  demo:
+    admin-password: ${QUICKCART_DEMO_ADMIN_PASSWORD:Admin@123}
+    driver-password: ${QUICKCART_DEMO_DRIVER_PASSWORD:Driver@123}
+    customer-password: ${QUICKCART_DEMO_CUSTOMER_PASSWORD:Customer@123}
+    seeding-enabled: ${QUICKCART_SEEDING_ENABLED:true}
   events:
     kafkaEnabled: ${KAFKA_ENABLED:false}
 

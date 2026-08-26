@@ -41,6 +41,10 @@ jobs:
         working-directory: ./frontend
         run: npm run typecheck
 
+      - name: Security Dependency Audit
+        working-directory: ./frontend
+        run: npm audit --audit-level=high
+
   frontend-ci:
     name: Frontend Tests & Build
     runs-on: ubuntu-latest

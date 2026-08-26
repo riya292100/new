@@ -32,41 +32,34 @@
 - **Compensating Reversals**: Clean financial reversals that never overwrite historical records, guaranteeing audit compliance.
 - **Admin Ledger Stream**: High-throughput paginated stream for finance teams at `GET /api/v1/admin/financial-ledger`.
 
-### 🔄 4. Order State Machine, Audit Timeline & Returns
+### 📊 4. Data Engineering & Observability Pipelines
+- **Hourly Sales Aggregation ETL**: Extracts transactional order streams, calculates dimensional revenue, delivery fees, discounts, and units sold (`HourlySalesAggregate`).
+- **Product Demand & Velocity Scoring**: Real-time scoring formula calculating demand momentum across moving 7-day windows (`ProductDemandAggregate`).
+- **Automated Data Quality Engine**: Automated rule-based anomaly detection checking for negative stock, pricing variances, and un-reconciled orders (`DataQualityReport`).
+- **Automated Payment & Ledger Reconciliation**: Hourly reconciliation batch matching payment gateway transactions with orders, refunds, and double-entry ledgers.
+- **Distributed MDC Correlation Tracking**: Automatic injection of `X-Correlation-ID`, `X-Request-ID`, and `X-Response-Time-Millis` across HTTP servlet filters, thread-safe asynchronous task executors, and structured logging outputs.
+
+### 🔄 5. Order State Machine, Audit Timeline & Returns
 - **Order State Timeline**: Immutable audit trail (`OrderStateHistory`) capturing timestamps, actor emails, previous states, new states, and transition reasons (`GET /api/v1/orders/{id}/timeline`).
 - **Returns & Inspection Workflow**: End-to-end customer return lifecycle (`REQUESTED` ➔ `APPROVED` ➔ `PICKUP_SCHEDULED` ➔ `RECEIVED` ➔ `INSPECTED` ➔ `REFUND_PENDING` ➔ `REFUNDED` / `REJECTED`) with 7-day delivery window validation and automated refund disbursements.
 
-### 🎫 5. Customer Support Ticketing & SLA Engine
+### 🎫 6. Customer Support Ticketing & SLA Engine
 - **Priority-Based SLA Tracking**: Auto-calculated resolution SLAs (`URGENT` = 2h, `HIGH` = 6h, `MEDIUM` = 12h, `LOW` = 24h).
 - **Threaded Communication**: Interactive ticket conversations supporting both public customer-agent messages and internal staff-only notes.
 
-### 🧠 6. Intelligent Recommendations & Verified Reviews
-- **Frequently Bought Together**: Basket co-occurrence matrix analyzing historical multi-item order patterns.
-- **Similar & Trending Items**: Dynamic category, brand, and velocity recommendation pipelines.
-- **Verified Purchase Reviews**: Strict database checks verifying that a reviewer has a completed `DELIVERED` order containing the product.
-
-### 💰 7. QuickCash Customer Loyalty Hub
-- **₹100 Welcome Bonus**: Instant sign-up reward credited automatically.
-- **5% Cashback Engine**: Automatic cashback credited on every successfully delivered order.
-- **Seamless Cart Redemption**: 1-click redemption during checkout with instant preview calculation.
-- **Modularized Frontend Architecture**: Componentized into dedicated stations (`QuickCashHero`, `QuickCashRechargeStation`, `QuickCashCalculator`, `QuickCashPerks`, `QuickCashLedger`).
-
 ---
 
-## 🏗️ System Architecture
+## 🗄️ Database & Migrations
 
-```mermaid
-graph TD
-  Client[React 18 / Vite SPA & PWA] -->|REST /api/v1/* & /api/*| Gateway[Spring Boot 3.3 Enterprise Gateway]
-  Client -->|WebSocket /ws-quickcart| WSBroker[STOMP Message Broker]
-  Gateway -->|JPA / Pessimistic Locks| Postgres[(PostgreSQL 16 Database)]
-  Gateway -->|Spring Data Redis| Redis[(Redis 7 Distributed Cache)]
-  Gateway -->|Haversine Geo Routing| Fulfillment[Store Fulfillment Engine]
-  Gateway -->|Double-Entry Audit| Ledger[Financial Ledger Service]
-  Gateway -->|Async SLA & Cron Jobs| Scheduler[Scheduled Jobs Service]
-  Driver[Delivery Partner App] -->|Live GPS WebSocket| WSBroker
-  WSBroker -->|Live Radar Push| Client
-```
+QuickCart utilizes **Flyway** for database version control and zero-downtime DDL schema migrations:
+- **Migration Location**: `backend/src/main/resources/db/migration/V1__initial_schema.sql`
+- **Tables Provisioned**: 20+ enterprise tables including `users`, `roles`, `products`, `categories`, `orders`, `order_items`, `inventories`, `delivery_partners`, `delivery_assignments`, `wallets`, `wallet_transactions`, `financial_ledger_entries`, `hourly_sales_aggregates`, `data_quality_reports`, and `audit_logs`.
+- **Standalone Isolated Migration Testing**:
+  Run Flyway tests without requiring external PostgreSQL services:
+  ```bash
+  cd backend
+  ./mvnw test -Dtest=FlywayMigrationTest
+  ```
 
 ---
 
@@ -74,54 +67,59 @@ graph TD
 
 The project includes thorough unit, integration, and concurrency tests across both backend and frontend layers:
 
-- **Backend Test Suite (Maven / JUnit 5 / Mockito)**:
-  - **88 / 88 tests passing (100% BUILD SUCCESS)**.
+- **Backend Test Suite (Maven / JUnit 5 / Mockito / Testcontainers)**:
+  - **95 / 95 tests passing (100% BUILD SUCCESS)**.
   - Concurrency validation: `InventoryConcurrencyTest` (100 concurrent threads reserving limited inventory with 0 overselling).
-  - Domain tests: `StoreFulfillmentServiceTest`, `FinancialLedgerServiceTest`, `ReturnServiceTest`, `SupportTicketServiceTest`, `WalletServiceTest`, `PaymentGatewayServiceTest`, `FraudDetectionServiceTest`, `AuthServiceTest`.
-- **Frontend Test Suite (Vitest / Testing Library)**:
-  - **120 / 120 tests passing across 62 test files (100% PASS)**.
-  - Full coverage for storefront, cart drawer, checkout, QuickCash loyalty, dining booking, clothes catalog, admin dashboard, and delivery partner hooks.
+  - Schema & Migration validation: `FlywayMigrationTest`.
+  - Domain tests: `StoreFulfillmentServiceTest`, `FinancialLedgerServiceTest`, `PaymentReconciliationServiceTest`, `DataPipelineServiceTest`, `AnalyticsEtlControllerTest`, `CorrelationIdFilterIntegrationTest`.
+- **Frontend Test Suite (Vitest / Testing Library / v8 Coverage)**:
+  - **123 / 123 tests passing across 68 test files (100% PASS)**.
+  - Full coverage for storefront, cart drawer, checkout, QuickCash loyalty, dining booking, clothes catalog, admin dashboard, and delivery partner portals.
 
 ---
 
 ## 🚀 Quick Start (Local Development)
 
 ### Prerequisites
-- Java 21 JDK
-- Node.js 18+ and npm
-- Docker & Docker Compose (optional)
+- **Java 21 JDK** (Eclipse Temurin or OpenJDK 21)
+- **Node.js 20+ or 22** and **npm 10+**
+- **Docker & Docker Compose** (optional)
 
-### 1. Run Full Stack via Docker Compose
+### 1. Fresh Clone Verification (End-to-End)
+```bash
+# Clone the repository
+git clone https://github.com/riya292100/new.git quickcart
+cd quickcart
+
+# 1. Install & Test Frontend
+cd frontend
+npm ci
+npm run format:check
+npm run lint
+npm run test
+npm run build
+
+# 2. Build & Test Backend
+cd ../backend
+./mvnw clean test -Dspring.profiles.active=test
+```
+
+### 2. Run Full Stack via Docker Compose
 ```bash
 docker compose up --build
 ```
 - **Storefront & PWA**: `http://localhost:5173` (or `http://localhost:80`)
 - **Backend API**: `http://localhost:8081` (or `http://localhost:8080`)
 - **Swagger / OpenAPI Documentation**: `http://localhost:8081/swagger-ui.html`
-- **H2 Web Console (dev mode)**: `http://localhost:8081/h2-console`
-- **PostgreSQL**: `localhost:5432`
-- **Redis**: `localhost:6379`
-
-### 2. Run Locally from Source
-
-#### Backend (Spring Boot 3)
-```bash
-cd backend
-./mvnw spring-boot:run
-```
-
-#### Frontend (React + Vite)
-```bash
-cd frontend
-npm install
-npm run dev
-```
+- **Actuator Health & Metrics**: `http://localhost:8081/actuator/health`
 
 ---
 
 ## 🔑 Default Seeded Demo Credentials
 
-| Role | Email | Password | Access Capabilities |
+Configurable via environment variables or `.env`:
+
+| Role | Email | Default Password | Access Capabilities |
 |---|---|---|---|
 | **Admin** | `admin@quickcart.com` | `Admin@123` | Full admin control, financial ledger, store management, inventory, coupons, drivers |
 | **Store Manager** | `manager@quickcart.com` | `Admin@123` | Dark store inventory adjustments, fulfillment capacity, dispatch operations |

@@ -198,4 +198,36 @@ public class DataPipelineService {
     public List<DataQualityReport> getLatestDataQualityReports() {
         return dataQualityReportRepository.findLatestReports(PageRequest.of(0, 10));
     }
+
+    /**
+     * Generates a comprehensive analytical export summary aggregating sales metrics,
+     * product velocities, and data quality assurance statuses.
+     */
+    public String generateAnalyticsExportReport() {
+        List<HourlySalesAggregate> recentSales = getRecentSalesAggregates();
+        List<ProductDemandAggregate> topDemand = getTopDemandProducts();
+        List<DataQualityReport> audits = getLatestDataQualityReports();
+
+        BigDecimal totalRevenue = recentSales.stream()
+                .map(HourlySalesAggregate::getTotalRevenue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        long totalOrders = recentSales.stream()
+                .mapToLong(HourlySalesAggregate::getTotalOrders)
+                .sum();
+        long totalItems = recentSales.stream()
+                .mapToLong(HourlySalesAggregate::getTotalItemsSold)
+                .sum();
+
+        StringBuilder csv = new StringBuilder();
+        csv.append("metric,value,timestamp\n");
+        csv.append(String.format("total_revenue,%.2f,%s\n", totalRevenue, LocalDateTime.now()));
+        csv.append(String.format("total_orders,%d,%s\n", totalOrders, LocalDateTime.now()));
+        csv.append(String.format("total_items_sold,%d,%s\n", totalItems, LocalDateTime.now()));
+        csv.append(String.format("top_demand_sku_count,%d,%s\n", topDemand.size(), LocalDateTime.now()));
+        csv.append(String.format("latest_audit_status,%s,%s\n",
+                audits.isEmpty() ? "NO_AUDIT" : audits.get(0).getStatus(), LocalDateTime.now()));
+
+        return csv.toString();
+    }
 }
+

@@ -1,7 +1,10 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useDeliveryPartner } from '../hooks/useDeliveryPartner';
-import { Bike, CheckCircle2, XCircle, MapPin, Phone, Package, RefreshCw, Zap } from 'lucide-react';
+import { RefreshCw, Zap } from 'lucide-react';
+import DriverStatsGrid from '../components/delivery/DriverStatsGrid';
+import AssignedOrderCard from '../components/delivery/AssignedOrderCard';
+import EmptyOrdersState from '../components/delivery/EmptyOrdersState';
 
 const DeliveryPartnerPortal = () => {
   const { user } = useAuth();
@@ -76,79 +79,7 @@ const DeliveryPartnerPortal = () => {
       </div>
 
       {/* Driver Stats Grid */}
-      <div className="qc-stat-grid">
-        <div className="qc-stat-tile">
-          <div>
-            <div
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: '700',
-                color: '#64748b',
-                textTransform: 'uppercase',
-              }}
-            >
-              Total Deliveries
-            </div>
-            <div
-              style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', margin: '4px 0' }}
-            >
-              {profile?.totalDeliveries || 142}
-            </div>
-            <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: '600' }}>
-              ⚡ 100% on-time rate
-            </div>
-          </div>
-        </div>
-
-        <div className="qc-stat-tile">
-          <div>
-            <div
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: '700',
-                color: '#64748b',
-                textTransform: 'uppercase',
-              }}
-            >
-              Partner Rating
-            </div>
-            <div
-              style={{ fontSize: '1.8rem', fontWeight: '800', color: '#f59e0b', margin: '4px 0' }}
-            >
-              ⭐ {profile?.rating || '4.9'}
-            </div>
-            <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Top Tier Express Driver</div>
-          </div>
-        </div>
-
-        <div className="qc-stat-tile">
-          <div>
-            <div
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: '700',
-                color: '#64748b',
-                textTransform: 'uppercase',
-              }}
-            >
-              Vehicle & License
-            </div>
-            <div
-              style={{
-                fontSize: '1.1rem',
-                fontWeight: '800',
-                color: '#0f172a',
-                margin: '8px 0 4px',
-              }}
-            >
-              {profile?.vehicleNumber || 'DL-01-QC-8821'}
-            </div>
-            <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
-              {profile?.vehicleType || 'HERO_ELECTRIC_NYX'}
-            </div>
-          </div>
-        </div>
-      </div>
+      <DriverStatsGrid profile={profile} />
 
       {/* Assigned Orders Feed */}
       <div>
@@ -160,194 +91,19 @@ const DeliveryPartnerPortal = () => {
           <div className="skeleton" style={{ height: '200px', borderRadius: '20px' }} />
         ) : assignedOrders.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {assignedOrders.map((order) => {
-              const isDelivered = order.status === 'DELIVERED';
-              const isCancelled = order.status === 'CANCELLED';
-              return (
-                <div key={order.id} className="qc-order-card">
-                  {/* Order Banner */}
-                  <div className="qc-order-header">
-                    <div>
-                      <span style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a' }}>
-                        Order #{order.orderNumber}
-                      </span>
-                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                        Estimated Delivery:{' '}
-                        {new Date(order.estimatedDeliveryTime).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </div>
-                    </div>
-
-                    <span
-                      className={`badge ${isDelivered ? 'badge-featured' : isCancelled ? 'badge-discount' : 'badge-deal'}`}
-                    >
-                      {order.status}
-                    </span>
-                  </div>
-
-                  {/* Customer Info & Destination */}
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                      gap: '16px',
-                      background: '#f8fafc',
-                      padding: '16px',
-                      borderRadius: '16px',
-                      marginBottom: '16px',
-                    }}
-                  >
-                    <div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          fontWeight: '700',
-                          color: '#64748b',
-                          textTransform: 'uppercase',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Customer Details
-                      </div>
-                      <div style={{ fontWeight: '700', color: '#0f172a' }}>
-                        {order.customerName}
-                      </div>
-                      <a
-                        href={`tel:${order.customerPhone}`}
-                        style={{
-                          fontSize: '0.85rem',
-                          color: '#059669',
-                          textDecoration: 'none',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          marginTop: '4px',
-                        }}
-                      >
-                        <Phone size={14} /> {order.customerPhone}
-                      </a>
-                    </div>
-
-                    <div>
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          fontWeight: '700',
-                          color: '#64748b',
-                          textTransform: 'uppercase',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Delivery Destination
-                      </div>
-                      <div style={{ fontSize: '0.85rem', color: '#334155', lineHeight: '1.4' }}>
-                        <MapPin
-                          size={14}
-                          color="#059669"
-                          style={{ display: 'inline', marginRight: '4px' }}
-                        />
-                        {order.address?.streetAddress}, {order.address?.city} -{' '}
-                        {order.address?.pincode}
-                      </div>
-                      {order.deliveryInstructions && (
-                        <div
-                          style={{
-                            fontSize: '0.78rem',
-                            color: '#d97706',
-                            marginTop: '4px',
-                            fontWeight: '600',
-                          }}
-                        >
-                          Instructions: "{order.deliveryInstructions}"
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Items Summary */}
-                  <div style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '20px' }}>
-                    Items ({order.items?.length}):{' '}
-                    <strong>
-                      {order.items?.map((i) => `${i.productName} (x${i.quantity})`).join(', ')}
-                    </strong>{' '}
-                    • Total: <strong style={{ color: '#059669' }}>₹{order.totalAmount}</strong> (
-                    {order.paymentMethod})
-                  </div>
-
-                  {/* Driver Action Workflow Buttons */}
-                  {!isDelivered && !isCancelled && (
-                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                      {order.status === 'ORDER_PLACED' || order.status === 'CONFIRMED' ? (
-                        <>
-                          <button
-                            onClick={() => acceptOrder(order.id)}
-                            disabled={actionLoading}
-                            className="btn btn-primary"
-                            style={{ flex: 1 }}
-                          >
-                            <CheckCircle2 size={18} /> Accept Delivery
-                          </button>
-                          <button
-                            onClick={() => rejectOrder(order.id)}
-                            disabled={actionLoading}
-                            className="btn btn-danger"
-                          >
-                            <XCircle size={18} /> Reject
-                          </button>
-                        </>
-                      ) : order.status === 'PREPARING' ? (
-                        <button
-                          onClick={() => updateOrderStatus(order.id, 'PACKED')}
-                          disabled={actionLoading}
-                          className="btn btn-primary btn-block"
-                        >
-                          <Package size={18} /> Mark Bag Packed & Ready at Store
-                        </button>
-                      ) : order.status === 'PACKED' ? (
-                        <button
-                          onClick={() => updateOrderStatus(order.id, 'OUT_FOR_DELIVERY')}
-                          disabled={actionLoading}
-                          className="btn btn-accent btn-block"
-                          style={{ fontWeight: '800' }}
-                        >
-                          <Bike size={18} /> Pick Up & Start "Out for Delivery"
-                        </button>
-                      ) : order.status === 'OUT_FOR_DELIVERY' ? (
-                        <button
-                          onClick={() => updateOrderStatus(order.id, 'DELIVERED')}
-                          disabled={actionLoading}
-                          className="btn btn-primary btn-block btn-lg"
-                          style={{ fontWeight: '800' }}
-                        >
-                          <CheckCircle2 size={22} /> Confirm Delivered to Customer
-                        </button>
-                      ) : null}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+            {assignedOrders.map((order) => (
+              <AssignedOrderCard
+                key={order.id}
+                order={order}
+                actionLoading={actionLoading}
+                onAcceptOrder={acceptOrder}
+                onRejectOrder={rejectOrder}
+                onUpdateOrderStatus={updateOrderStatus}
+              />
+            ))}
           </div>
         ) : (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '60px 20px',
-              background: '#ffffff',
-              borderRadius: '20px',
-              border: '1px solid #e2e8f0',
-            }}
-          >
-            <Bike size={48} color="#cbd5e1" style={{ margin: '0 auto 16px' }} />
-            <h3 style={{ fontSize: '1.2rem', color: '#0f172a', marginBottom: '6px' }}>
-              No active deliveries assigned
-            </h3>
-            <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
-              New orders placed in your delivery radius will pop up here instantly.
-            </p>
-          </div>
+          <EmptyOrdersState />
         )}
       </div>
     </div>
