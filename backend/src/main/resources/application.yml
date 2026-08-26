@@ -3,6 +3,9 @@ spring:
     name: quickcart-backend
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+  threads:
+    virtual:
+      enabled: true # Java 21 Project Loom Virtual Threads for ultra-high concurrency
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
