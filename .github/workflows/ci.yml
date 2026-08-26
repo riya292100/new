@@ -193,6 +193,6 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Fullstack Polyglot Docker Stack
-        run: docker compose build
+        run: docker compose build --progress=plain
 
 
