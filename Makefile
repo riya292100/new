@@ -15,10 +15,18 @@ test:
 test-python:
 	cd services/ai-demand-engine && pytest
 
+test-go:
+	cd services/telemetry-service && go test -v -race ./...
+
+test-rust:
+	cd services/flash-sale-engine && cargo test
+
 test-all:
 	npm --prefix frontend run coverage
-	cd backend && mvn clean test -Dspring.profiles.active=test
+	cd backend && mvn test -Dspring.profiles.active=test
 	cd services/ai-demand-engine && pytest
+	cd services/telemetry-service && go test -v ./...
+	cd services/flash-sale-engine && cargo test
 
 lint:
 	npm --prefix frontend run lint

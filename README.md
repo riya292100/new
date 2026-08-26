@@ -6,6 +6,7 @@
 [![CodeQL Security](https://github.com/riya292100/new/actions/workflows/codeql.yml/badge.svg)](https://github.com/riya292100/new/actions/workflows/codeql.yml)
 [![Latest Release](https://img.shields.io/github/v/release/riya292100/new?color=blue&label=release)](https://github.com/riya292100/new/releases)
 [![Java 21](https://img.shields.io/badge/Java-21%20LTS-orange.svg?logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
+[![Rust](https://img.shields.io/badge/Rust-1.80+-DEA584.svg?logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.3-brightgreen.svg?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Go 1.22](https://img.shields.io/badge/Go-1.22-00ADD8.svg?logo=go&logoColor=white)](https://golang.org/)
@@ -21,7 +22,7 @@
 
 <p align="center">
   <b>Enterprise-grade, polyglot quick-commerce delivery platform</b><br>
-  Built with <b>Java 21 / Spring Boot 3</b> (Core & Financial Ledger), <b>Python</b> (AI Demand & Dynamic Pricing), <b>Go</b> (Spatial Driver Telemetry), and <b>React 18 / TypeScript</b> (Storefront PWA).
+  Built with <b>Java 21 / Spring Boot 3</b> (Core & Ledger), <b>Rust</b> (Flash Sale Allocation & Cryptographic Signing), <b>Python</b> (AI Demand & Dynamic Pricing), <b>Go</b> (Spatial Driver Telemetry), and <b>React 18 / TypeScript</b> (Storefront PWA).
 </p>
 
 [Explore API Docs](http://localhost:8081/swagger-ui.html) • [Report Bug](https://github.com/riya292100/new/issues/new?template=bug_report.yml) • [Request Feature](https://github.com/riya292100/new/issues/new?template=feature_request.yml) • [Contributing Guide](CONTRIBUTING.md)
@@ -47,6 +48,12 @@ flowchart TD
         StoreFulfillment["Dark Store Geo-Fulfillment Engine"]
     end
 
+    subgraph RustFlashSaleService["🦀 Flash Sale & Signing Engine (Rust / Actix-Web)"]
+        CASAllocator["Lock-Free Atomic CAS Stock Allocator"]
+        HMACSigner["HMAC-SHA256 Receipt Integrity Signer"]
+        RateLimiter["Microsecond Quota & Token Throttle"]
+    end
+
     subgraph PythonAIService["🧠 AI Demand & Pricing Engine (Python / FastAPI)"]
         DemandML["Velocity & Safety Stock Forecaster"]
         SurgeOptimizer["Dynamic Price Elasticity Engine"]
@@ -66,8 +73,10 @@ flowchart TD
     end
 
     ClientLayer -->|REST / JWT| CoreBackend
+    ClientLayer -->|Flash Deals & Receipts| RustFlashSaleService
     ClientLayer -->|Live GPS Telemetry| GoTelemetryService
     CoreBackend -->|REST Analytics| PythonAIService
+    RustFlashSaleService -->|HMAC Verified Token| CoreBackend
     GoTelemetryService -->|Spatial Telemetry| Redis
     GoTelemetryService -->|Order Updates| Kafka
     CoreBackend --> Postgres
@@ -82,6 +91,7 @@ flowchart TD
 | Service | Language & Stack | Port | Purpose / Capabilities |
 |---|---|---|---|
 | **Core API Gateway** | **Java 21 / Spring Boot 3** | `8080` / `8081` | Authentication, multi-store dark store routing, pessimistic inventory locks, and immutable double-entry ledgers. |
+| **Flash Sale Engine** | **Rust 1.80+ / Actix-Web** | `8086` | Sub-millisecond atomic CAS flash sale token reservation and HMAC-SHA256 digital receipt integrity signing. |
 | **AI Demand Engine** | **Python 3.12 / FastAPI** | `8082` | Exponential smoothing demand forecasting, safety stock reorder point estimation, dynamic surge price elasticity, and cart co-occurrence recommendations. |
 | **Spatial Telemetry** | **Go 1.22+ / Golang** | `8085` | High-throughput concurrent rider GPS ingestion, sub-millisecond Haversine proximity searches, and ETA calculations. |
 | **Storefront & PWA** | **React 18 / TypeScript / Vite** | `5173` / `80` | Hyperlocal catalog, cart drawer, QuickCash loyalty, table bookings, customer support tickets, and live driver tracking. |
@@ -93,11 +103,11 @@ flowchart TD
 | Test Suite | Metric / Scope | Result |
 |---|---|---|
 | **Java Backend (Maven / JUnit 5)** | 95 tests across all services | **95 / 95 PASSED (100% BUILD SUCCESS)** |
-| **Inventory Concurrency Stress Test** | 100 concurrent threads on 20 stock | **20 Succeeded, 80 Rejected (0 Overselling)** |
+| **Rust Flash Sale Engine (cargo test)** | Atomic CAS claims & HMAC-SHA256 verification | **Verified & Passing** |
 | **Python AI Engine (pytest)** | 7 unit tests (Math, Models, REST) | **7 / 7 PASSED (100% PASS)** |
 | **Go Telemetry Service (go test)** | Spatial algorithms & concurrent sync tests | **Verified & Passing** |
 | **Frontend Unit Tests (Vitest)** | 68 test files, 123 tests | **123 / 123 PASSED (100% PASS)** |
-| **CI/CD GitHub Actions Workflow** | Multi-language parallel test runners | **All Jobs Passing in CI** |
+| **CI/CD GitHub Actions Workflow** | 6 multi-language parallel test runners | **All Jobs Passing in CI** |
 
 ---
 
@@ -105,6 +115,7 @@ flowchart TD
 
 ### 📋 Prerequisites
 * **Java 21 JDK**
+* **Rust 1.80+** (or Docker)
 * **Python 3.10+** (or Docker)
 * **Node.js 20+ or 22** and **npm 10+**
 * **Docker & Docker Compose** (recommended)
@@ -115,7 +126,7 @@ flowchart TD
 git clone https://github.com/riya292100/new.git quickcart
 cd quickcart
 
-# Spin up all 5 microservices & databases
+# Spin up all 6 polyglot microservices & databases
 docker compose up --build
 ```
 
@@ -124,18 +135,22 @@ docker compose up --build
 # Terminal 1: Java Backend (Port 8081)
 cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 
-# Terminal 2: Python AI Demand Engine (Port 8082)
+# Terminal 2: Rust Flash Sale Engine (Port 8086)
+cd services/flash-sale-engine && cargo run
+
+# Terminal 3: Python AI Demand Engine (Port 8082)
 cd services/ai-demand-engine && uvicorn app.main:app --port 8082
 
-# Terminal 3: Go Spatial Telemetry Service (Port 8085)
+# Terminal 4: Go Spatial Telemetry Service (Port 8085)
 cd services/telemetry-service && go run main.go
 
-# Terminal 4: React Storefront (Port 5173)
+# Terminal 5: React Storefront (Port 5173)
 cd frontend && npm run dev
 ```
 
 * **Frontend Storefront**: [http://localhost:5173/](http://localhost:5173/)
 * **Java Backend REST API**: [http://localhost:8081](http://localhost:8081)
+* **Rust Flash Sale Health**: [http://localhost:8086/healthz](http://localhost:8086/healthz)
 * **Python AI Engine Docs**: [http://localhost:8082/docs](http://localhost:8082/docs)
 * **Go Telemetry Health**: [http://localhost:8085/healthz](http://localhost:8085/healthz)
 * **Swagger API Explorer**: [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)

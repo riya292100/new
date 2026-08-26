@@ -1,0 +1,22 @@
+[package]
+name = "flash-sale-engine"
+version = "1.0.0"
+edition = "2021"
+authors = ["Riya Gope <riya292100@github.com>"]
+description = "Ultra-low-latency Rust Flash Sale & Cryptographic Receipt Integrity Engine for QuickCart"
+
+[dependencies]
+actix-web = "4.9.0"
+actix-cors = "0.7.0"
+tokio = { version = "1.40.0", features = ["full"] }
+serde = { version = "1.0.210", features = ["derive"] }
+serde_json = "1.0.128"
+chrono = { version = "0.4.38", features = ["serde"] }
+hmac = "0.12.1"
+sha2 = "0.10.8"
+hex = "0.4.3"
+parking_lot = "0.12.3"
+uuid = { version = "1.10.0", features = ["v4", "serde"] }
+
+[dev-dependencies]
+actix-rt = "2.10.0"

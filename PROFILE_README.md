@@ -18,9 +18,9 @@
 ---
 
 ### 🌟 About Me
-- 🔭 **Currently Building**: [**QuickCart**](https://github.com/riya292100/new) — Enterprise polyglot quick-commerce platform engineered with **Java 21 / Spring Boot 3** (Transactional Core), **Python FastAPI** (AI Demand & Pricing Engine), and **Go** (Spatial Driver Telemetry).
-- ⚡ **Core Strengths**: Distributed Systems, Hexagonal Architecture, High-Concurrency Locking, Geospatial Indexing, PostgreSQL & Redis Optimization, Microservice Orchestration.
-- 💬 **Ask Me About**: Java 21, Python, Go (Golang), React 18, TypeScript, Docker, Kafka, Thread-Safe Concurrency, and Distributed Observability.
+- 🔭 **Currently Building**: [**QuickCart**](https://github.com/riya292100/new) — Enterprise polyglot quick-commerce platform engineered with **Java 21 / Spring Boot 3** (Transactional Core), **Rust Actix-Web** (Flash Sale & HMAC Receipt Engine), **Python FastAPI** (AI Demand Engine), and **Go** (Spatial Telemetry).
+- ⚡ **Core Strengths**: Distributed Systems, Zero-GC Latency, Hexagonal Architecture, High-Concurrency Locking, Geospatial Indexing, PostgreSQL & Redis Optimization, Microservice Orchestration.
+- 💬 **Ask Me About**: Java 21, Rust, Python, Go (Golang), React 18, TypeScript, Docker, Kafka, Thread-Safe Concurrency, and Distributed Observability.
 - 🌱 **Continuous Learning**: Event-Driven Architectures, Kubernetes clustering, and AI-assisted engineering workflows.
 
 ---
@@ -31,6 +31,7 @@
 
 #### ⚙️ Polyglot Backend & Microservices
 ![Java](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust_1.80-DEA584?style=for-the-badge&logo=rust&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot_3-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
 ![Python](https://img.shields.io/badge/Python_3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)

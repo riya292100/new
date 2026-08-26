@@ -132,6 +132,18 @@ services:
     networks:
       - quickcart-net
 
+  # Rust Flash Sale & Cryptographic Receipt Signing Engine
+  flash-sale-engine:
+    build:
+      context: ./services/flash-sale-engine
+      dockerfile: Dockerfile
+    container_name: quickcart-flash-sale-engine
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    networks:
+      - quickcart-net
+
 volumes:
   postgres_data:
     driver: local

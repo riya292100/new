@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.8.0] - 2026-08-26
+
+### Added
+- **Rust Flash Sale & Cryptographic Receipt Engine** (`services/flash-sale-engine`):
+  - High-performance, zero-garbage-collection Rust microservice built on **Actix-Web** and **Tokio**.
+  - **Lock-Free Atomic CAS Inventory Claiming**: Sub-millisecond atomic token allocation and remaining stock decrementing (`src/allocator.rs`).
+  - **Per-User Quota & Anti-Bot Throttle**: Thread-safe per-user claim limits preventing stock monopolization.
+  - **HMAC-SHA256 Cryptographic Receipt Signing**: Digital invoice integrity signer producing tamper-proof signature proofs (`src/signer.rs`).
+  - **Pre-Seeded Flash Sale Catalog**: Seeded 80% discount flash deals with automated expiration timelines.
+  - **Unit Test Suite**: Full cargo test suite verifying atomic claims, quota enforcement, and cryptographic verification (`src/tests.rs`).
+  - **Multi-Stage Docker & CI/CD**: Optimized Alpine container image and GitHub Actions `rust-ci` workflow running `cargo test --verbose` and `cargo check`.
+
+---
+
 ## [1.7.0] - 2026-08-26
 
 ### Added
