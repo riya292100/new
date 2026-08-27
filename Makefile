@@ -1,16 +1,30 @@
-.PHONY: all dev build test test-all lint format docker-up docker-down
+.PHONY: all install dev build build-all test test-frontend test-backend test-python test-go test-rust test-all lint format docker-up docker-down
 
-all: test-all build
+all: install test-all build-all
+
+install:
+	npm --prefix frontend ci
+	cd services/ai-demand-engine && pip install -r requirements.lock
 
 dev:
 	npm --prefix frontend run dev
 
 build:
 	npm --prefix frontend run build
+
+build-all:
+	npm --prefix frontend run build
 	cd backend && mvn clean package -DskipTests
+	cd services/telemetry-service && go build -v -o telemetry-server main.go
 
 test:
 	npm --prefix frontend run test
+
+test-frontend:
+	npm --prefix frontend run coverage
+
+test-backend:
+	cd backend && mvn test -Dspring.profiles.active=test
 
 test-python:
 	cd services/ai-demand-engine && pytest
@@ -26,7 +40,6 @@ test-all:
 	cd backend && mvn test -Dspring.profiles.active=test
 	cd services/ai-demand-engine && pytest
 	cd services/telemetry-service && go test -v ./...
-	cd services/flash-sale-engine && cargo test
 
 lint:
 	npm --prefix frontend run lint
