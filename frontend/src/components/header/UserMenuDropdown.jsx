@@ -94,27 +94,15 @@ const UserMenuDropdown = ({ user, logout, openAuthModal, isAdmin, isDeliveryPart
             <strong style={{ color: '#0f172a' }}>{user.email}</strong>
           </div>
 
-          <Link
-            to="/profile"
-            onClick={() => setUserDropdownOpen(false)}
-            style={dropdownLinkStyle}
-          >
+          <Link to="/profile" onClick={() => setUserDropdownOpen(false)} style={dropdownLinkStyle}>
             <User size={15} color="#059669" /> My Profile
           </Link>
 
-          <Link
-            to="/orders"
-            onClick={() => setUserDropdownOpen(false)}
-            style={dropdownLinkStyle}
-          >
+          <Link to="/orders" onClick={() => setUserDropdownOpen(false)} style={dropdownLinkStyle}>
             <Package size={15} color="#059669" /> Order History
           </Link>
 
-          <Link
-            to="/bookings"
-            onClick={() => setUserDropdownOpen(false)}
-            style={dropdownLinkStyle}
-          >
+          <Link to="/bookings" onClick={() => setUserDropdownOpen(false)} style={dropdownLinkStyle}>
             <Utensils size={15} color="#059669" /> Table Bookings
           </Link>
 

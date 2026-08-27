@@ -52,16 +52,9 @@ const ClothDetailModal = ({ product, onClose }) => {
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
-      <div
-        className={`glass-card ${styles.modal}`}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={`glass-card ${styles.modal}`} onClick={(e) => e.stopPropagation()}>
         {/* Close button */}
-        <button
-          onClick={onClose}
-          className={styles.closeBtn}
-          aria-label="Close Modal"
-        >
+        <button onClick={onClose} className={styles.closeBtn} aria-label="Close Modal">
           <X size={20} />
         </button>
 
@@ -104,13 +97,9 @@ const ClothDetailModal = ({ product, onClose }) => {
 
           {/* Right: Garment Specifications & Actions */}
           <div>
-            <div className={styles.brandLabel}>
-              {product.brand || 'QuickFashion Original'}
-            </div>
+            <div className={styles.brandLabel}>{product.brand || 'QuickFashion Original'}</div>
 
-            <h2 className={styles.title}>
-              {product.name}
-            </h2>
+            <h2 className={styles.title}>{product.name}</h2>
 
             {/* Rating */}
             <div className={styles.ratingRow}>
@@ -128,14 +117,10 @@ const ClothDetailModal = ({ product, onClose }) => {
                 ₹{product.sellingPrice ?? product.price ?? 499}
               </span>
               {product.mrp && product.mrp > (product.sellingPrice ?? product.price ?? 499) && (
-                <span className={styles.mrp}>
-                  ₹{product.mrp}
-                </span>
+                <span className={styles.mrp}>₹{product.mrp}</span>
               )}
               {product.discountPercentage > 0 && (
-                <span className="badge badge-discount">
-                  {product.discountPercentage}% OFF
-                </span>
+                <span className="badge badge-discount">{product.discountPercentage}% OFF</span>
               )}
             </div>
 

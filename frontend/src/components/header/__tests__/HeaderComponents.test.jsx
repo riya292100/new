@@ -57,13 +57,7 @@ describe('Header Subcomponents', () => {
   describe('UserMenuDropdown', () => {
     it('renders Sign In button when unauthenticated', () => {
       const handleOpenAuth = vi.fn();
-      render(
-        <UserMenuDropdown
-          user={null}
-          logout={vi.fn()}
-          openAuthModal={handleOpenAuth}
-        />
-      );
+      render(<UserMenuDropdown user={null} logout={vi.fn()} openAuthModal={handleOpenAuth} />);
       const btn = screen.getByText('Sign In');
       expect(btn).toBeInTheDocument();
       fireEvent.click(btn);
@@ -102,18 +96,14 @@ describe('Header Subcomponents', () => {
   describe('CartNavButton', () => {
     it('renders empty cart label when total items is 0', () => {
       const handleOpenCart = vi.fn();
-      render(
-        <CartNavButton totalItems={0} totalPrice={0} onOpenCart={handleOpenCart} />
-      );
+      render(<CartNavButton totalItems={0} totalPrice={0} onOpenCart={handleOpenCart} />);
       expect(screen.getByText('My Cart')).toBeInTheDocument();
       fireEvent.click(screen.getByRole('button'));
       expect(handleOpenCart).toHaveBeenCalledTimes(1);
     });
 
     it('renders item badge and total price when cart has items', () => {
-      render(
-        <CartNavButton totalItems={3} totalPrice={450} onOpenCart={vi.fn()} />
-      );
+      render(<CartNavButton totalItems={3} totalPrice={450} onOpenCart={vi.fn()} />);
       expect(screen.getByText('3')).toBeInTheDocument();
       expect(screen.getByText('₹450')).toBeInTheDocument();
     });

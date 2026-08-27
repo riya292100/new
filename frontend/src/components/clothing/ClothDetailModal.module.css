@@ -37,7 +37,9 @@
   cursor: pointer;
   color: #64748b;
   z-index: 10;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .closeBtn:hover {

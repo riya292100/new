@@ -27,8 +27,7 @@ const ClothGarmentSpecs = ({
           }}
         >
           <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#0f172a' }}>
-            Select Size:{' '}
-            <span style={{ color: '#059669', fontWeight: '800' }}>{selectedSize}</span>
+            Select Size: <span style={{ color: '#059669', fontWeight: '800' }}>{selectedSize}</span>
           </span>
           <button
             type="button"

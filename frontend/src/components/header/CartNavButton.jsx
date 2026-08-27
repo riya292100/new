@@ -41,9 +41,7 @@ const CartNavButton = ({ totalItems, totalPrice, onOpenCart }) => {
           </span>
         )}
       </div>
-      <span style={{ fontWeight: '700' }}>
-        {totalItems > 0 ? `₹${totalPrice}` : 'My Cart'}
-      </span>
+      <span style={{ fontWeight: '700' }}>{totalItems > 0 ? `₹${totalPrice}` : 'My Cart'}</span>
     </button>
   );
 };

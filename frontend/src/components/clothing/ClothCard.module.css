@@ -1,0 +1,203 @@
+.cardContainer {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.topBadges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+.deliveryBadge {
+  font-size: 0.62rem;
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.garmentImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.cardContainer:hover .garmentImage {
+  transform: scale(1.05);
+}
+
+.metaSection {
+  margin-bottom: 8px;
+}
+
+.brandRatingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.brandText {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.ratingTag {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.72rem;
+  background: #f8fafc;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-weight: 600;
+}
+
+.productName {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.3;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sizeSelectorRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.sizeLabel {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-right: 2px;
+}
+
+.sizePill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sizePillActive {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+.priceActionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.priceGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.currentPrice {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.originalPrice {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.unitQuantityText {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.addBtn {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 8px;
+}
+
+.qtyControls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.qtyBtn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.qtyValue {
+  font-size: 0.85rem;
+  font-weight: 700;
+  min-width: 16px;
+  text-align: center;
+}
