@@ -56,9 +56,10 @@ class RefreshTokenServiceTest {
     }
 
     @Test
-    @DisplayName("Should create refresh token for user")
+    @DisplayName("Should create refresh token for user when none exists")
     void shouldCreateRefreshToken() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(refreshTokenRepository.findByUser(testUser)).thenReturn(Optional.empty());
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(i -> i.getArgument(0));
 
         RefreshToken created = refreshTokenService.createRefreshToken(1L);
@@ -67,6 +68,21 @@ class RefreshTokenServiceTest {
         assertNotNull(created.getToken());
         assertEquals(testUser, created.getUser());
         assertFalse(created.getRevoked());
+    }
+
+    @Test
+    @DisplayName("Should reuse and update existing refresh token for user")
+    void shouldUpdateExistingRefreshToken() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(refreshTokenRepository.findByUser(testUser)).thenReturn(Optional.of(testToken));
+        when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(i -> i.getArgument(0));
+
+        RefreshToken updated = refreshTokenService.createRefreshToken(1L);
+
+        assertNotNull(updated);
+        assertEquals(testToken.getId(), updated.getId());
+        assertEquals(testUser, updated.getUser());
+        assertFalse(updated.getRevoked());
     }
 
     @Test
