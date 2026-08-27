@@ -37,6 +37,11 @@ quickcart:
     taxRate: 0.05
     cashbackPercentage: 5.0
     welcomeBonusAmount: 100.0
+  demo:
+    admin-password: TestAdmin@123
+    driver-password: TestDriver@123
+    customer-password: TestCustomer@123
+    seeding-enabled: true
 
 management:
   health:

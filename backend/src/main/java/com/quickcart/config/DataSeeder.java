@@ -20,6 +20,18 @@ public class DataSeeder implements CommandLineRunner {
     @Value("${quickcart.demo.seeding-enabled:true}")
     private boolean seedingEnabled;
 
+    @Value("${quickcart.demo.admin-password:}")
+    private String adminPassword;
+
+    @Value("${quickcart.demo.driver-password:}")
+    private String driverPassword;
+
+    @Value("${quickcart.demo.customer-password:}")
+    private String customerPassword;
+
+    @Value("${spring.profiles.active:dev}")
+    private String activeProfile;
+
     private final StoreAndRestaurantSeeder storeAndRestaurantSeeder;
     private final UserDataSeeder userDataSeeder;
     private final ProductCatalogSeeder productCatalogSeeder;
@@ -30,6 +42,16 @@ public class DataSeeder implements CommandLineRunner {
         if (!seedingEnabled) {
             logger.info("Demo data seeding is disabled by configuration.");
             return;
+        }
+
+        // Security check: Guard against missing credentials when seeding is enabled in non-test environments
+        if ((adminPassword == null || adminPassword.isBlank() ||
+             driverPassword == null || driverPassword.isBlank() ||
+             customerPassword == null || customerPassword.isBlank()) &&
+            !"test".equalsIgnoreCase(activeProfile)) {
+            throw new IllegalStateException(
+                "Security Exception: Data seeding is enabled, but DEMO_ADMIN_PASSWORD, DEMO_DRIVER_PASSWORD, or DEMO_CUSTOMER_PASSWORD environment variables are missing. Refusing to seed demo accounts without explicitly configured credentials."
+            );
         }
 
         userDataSeeder.seedRoles();

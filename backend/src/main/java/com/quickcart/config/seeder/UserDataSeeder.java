@@ -16,13 +16,13 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class UserDataSeeder {
 
-    @Value("${quickcart.demo.admin-password:Admin@123}")
+    @Value("${quickcart.demo.admin-password:}")
     private String adminPassword;
 
-    @Value("${quickcart.demo.driver-password:Driver@123}")
+    @Value("${quickcart.demo.driver-password:}")
     private String driverPassword;
 
-    @Value("${quickcart.demo.customer-password:Customer@123}")
+    @Value("${quickcart.demo.customer-password:}")
     private String customerPassword;
 
     private final RoleRepository roleRepository;
