@@ -48,6 +48,9 @@ class OrderServiceTest {
     @Mock private OrderStateHistoryRepository orderStateHistoryRepository;
     @Mock private DomainEventPublisher domainEventPublisher;
     @Mock private IdempotencyKeyRepository idempotencyKeyRepository;
+    @org.mockito.Spy private com.quickcart.service.order.OrderDtoMapper orderDtoMapper = new com.quickcart.service.order.OrderDtoMapper();
+    @Mock private com.quickcart.service.order.OrderLifecycleHandler orderLifecycleHandler;
+    @Mock private com.quickcart.logging.StructuredAuditLogger auditLogger;
 
     @InjectMocks
     private OrderService orderService;
@@ -188,9 +191,7 @@ class OrderServiceTest {
 
         assertNotNull(response);
         assertEquals(OrderStatus.CANCELLED, order.getStatus());
-        verify(inventoryService).releaseReservedStock(eq(1L), eq(100L), eq(2), eq("QC101"));
-        verify(walletService).refundForOrder(eq(testUser), eq(BigDecimal.valueOf(10)), eq("QC101"));
-        verify(notificationService).createNotification(eq(1L), anyString(), anyString(), eq("ORDER"), eq("QC101"));
+        verify(orderLifecycleHandler).handleCancelled(eq(order));
     }
 
     @Test
@@ -210,7 +211,7 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("updateOrderStatus - delivered status commits inventory and credits cashback")
+    @DisplayName("updateOrderStatus - delivered status delegates to lifecycle handler")
     void updateOrderStatus_Delivered_Success() {
         Order order = Order.builder()
                 .id(103L)
@@ -231,10 +232,7 @@ class OrderServiceTest {
 
         assertNotNull(response);
         assertEquals(OrderStatus.DELIVERED, order.getStatus());
-        assertNotNull(order.getDeliveredAt());
-        verify(inventoryService).commitDeductionForOrder(eq(1L), eq(100L), eq(2), eq("QC103"));
-        verify(walletService).creditCashbackForOrder(eq(testUser), eq(order));
-        verify(domainEventPublisher).publish(any());
+        verify(orderLifecycleHandler).handleDelivered(eq(order));
     }
 
     @Test

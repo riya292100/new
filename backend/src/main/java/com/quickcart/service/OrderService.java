@@ -2,27 +2,32 @@ package com.quickcart.service;
 
 import com.quickcart.dto.*;
 import com.quickcart.entity.*;
+import com.quickcart.event.DomainEventPublisher;
+import com.quickcart.event.OrderEvents;
 import com.quickcart.exception.BadRequestException;
 import com.quickcart.exception.ResourceNotFoundException;
+import com.quickcart.logging.StructuredAuditLogger;
 import com.quickcart.repository.*;
+import com.quickcart.service.order.OrderDtoMapper;
+import com.quickcart.service.order.OrderLifecycleHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Enterprise Transactional Order Service.
+ * Orchestrates checkout processing, stock reservations, idempotent replaying, and order queries.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,38 +36,24 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final AddressRepository addressRepository;
-    private final ProductRepository productRepository;
     private final PaymentRepository paymentRepository;
     private final CouponRepository couponRepository;
     private final CouponUsageRepository couponUsageRepository;
     private final DeliveryPartnerRepository deliveryPartnerRepository;
     private final DeliveryAssignmentRepository deliveryAssignmentRepository;
-    private final DarkStoreRepository darkStoreRepository;
     private final CartService cartService;
-    private final CouponService couponService;
     private final AuthService authService;
     private final OrderTrackingWebSocketService webSocketService;
     private final WalletService walletService;
     private final InventoryService inventoryService;
-    private final NotificationService notificationService;
-    private final PaymentGatewayService paymentGatewayService;
     private final PricingService pricingService;
     private final StoreFulfillmentService storeFulfillmentService;
     private final OrderStateHistoryRepository orderStateHistoryRepository;
-    private final com.quickcart.event.DomainEventPublisher domainEventPublisher;
+    private final DomainEventPublisher domainEventPublisher;
     private final IdempotencyKeyRepository idempotencyKeyRepository;
-
-    @Value("${quickcart.app.freeDeliveryThreshold:199.0}")
-    private double freeDeliveryThreshold;
-
-    @Value("${quickcart.app.baseDeliveryFee:25.0}")
-    private double baseDeliveryFee;
-
-    @Value("${quickcart.app.platformFee:5.0}")
-    private double platformFee;
-
-    @Value("${quickcart.app.taxRate:0.05}")
-    private double taxRate;
+    private final OrderDtoMapper orderDtoMapper;
+    private final OrderLifecycleHandler orderLifecycleHandler;
+    private final StructuredAuditLogger auditLogger;
 
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
@@ -71,7 +62,7 @@ public class OrderService {
             throw new BadRequestException("User must be authenticated to place an order");
         }
 
-        // 1. Idempotency Check
+        // 1. Idempotency Replay Check
         if (request.getIdempotencyKey() != null && !request.getIdempotencyKey().isBlank()) {
             Optional<IdempotencyKey> existingKey = idempotencyKeyRepository.findByIdempotencyKeyAndUserId(
                     request.getIdempotencyKey().trim(), currentUser.getId());
@@ -81,7 +72,7 @@ public class OrderService {
                         .filter(o -> request.getIdempotencyKey().trim().equals(o.getIdempotencyKey()))
                         .findFirst();
                 if (matchedOrder.isPresent()) {
-                    return mapToDto(matchedOrder.get());
+                    return orderDtoMapper.mapToDto(matchedOrder.get());
                 }
             }
         }
@@ -94,16 +85,12 @@ public class OrderService {
         Address address = addressRepository.findByIdAndUserId(request.getAddressId(), currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Address not found with id: " + request.getAddressId()));
 
-        // Assign optimal fulfillment dark store using multi-store fulfillment engine
         DarkStore store = storeFulfillmentService.selectOptimalStore(address.getLatitude(), address.getLongitude(), cart.getItems());
         Long storeId = store != null ? store.getId() : null;
-
-        // Increment store workload
         if (storeId != null) {
             storeFulfillmentService.adjustStoreLoad(storeId, 1);
         }
 
-        // Validate active promo coupon if provided
         Coupon coupon = null;
         if (request.getCouponCode() != null && !request.getCouponCode().isBlank()) {
             coupon = couponRepository.findByCodeIgnoreCaseAndIsActiveTrue(request.getCouponCode().trim()).orElse(null);
@@ -111,20 +98,17 @@ public class OrderService {
 
         // 2. Authoritative Server-Side Pricing Engine
         PricingCalculation pricing = pricingService.calculate(cart.getItems(), coupon, request.getWalletAmountToRedeem());
-
         BigDecimal tipAmount = request.getTipAmount() != null ? request.getTipAmount().max(BigDecimal.ZERO) : BigDecimal.ZERO;
         BigDecimal finalTotal = pricing.getFinalPayableAmount().add(tipAmount);
-
-        // Generate Order Number
         String orderNumber = "QC" + System.currentTimeMillis() % 100000000;
 
-        // Apply QuickCash Wallet points deduction if calculated
+        // Apply QuickCash Wallet deduction
         BigDecimal walletDeduction = pricing.getWalletDiscount();
         if (walletDeduction.compareTo(BigDecimal.ZERO) > 0) {
             walletService.debitForOrder(currentUser, walletDeduction, orderNumber);
         }
 
-        // 3. Transactional Stock Reservation with Pessimistic Locking
+        // 3. Transactional Stock Reservation
         for (CartItem item : cart.getItems()) {
             Product product = item.getProduct();
             inventoryService.reserveStockForOrder(storeId, product.getId(), item.getQuantity(), orderNumber);
@@ -134,14 +118,12 @@ public class OrderService {
         if (coupon != null && pricing.getCouponDiscount().compareTo(BigDecimal.ZERO) > 0) {
             coupon.setTimesUsed(coupon.getTimesUsed() + 1);
             couponRepository.save(coupon);
-
-            CouponUsage usage = CouponUsage.builder()
+            couponUsageRepository.save(CouponUsage.builder()
                     .coupon(coupon)
                     .user(currentUser)
                     .orderNumber(orderNumber)
                     .discountApplied(pricing.getCouponDiscount())
-                    .build();
-            couponUsageRepository.save(usage);
+                    .build());
         }
 
         Order order = Order.builder()
@@ -171,17 +153,8 @@ public class OrderService {
         for (CartItem item : cart.getItems()) {
             Product product = item.getProduct();
             BigDecimal lineTotal = product.getSellingPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
-            OrderItem orderItem = new OrderItem(
-                    savedOrder,
-                    product,
-                    product.getName(),
-                    product.getImageUrl(),
-                    product.getUnitQuantity(),
-                    item.getQuantity(),
-                    product.getSellingPrice(),
-                    lineTotal
-            );
-            orderItems.add(orderItem);
+            orderItems.add(new OrderItem(savedOrder, product, product.getName(), product.getImageUrl(),
+                    product.getUnitQuantity(), item.getQuantity(), product.getSellingPrice(), lineTotal));
         }
         orderItemRepository.saveAll(orderItems);
         savedOrder.setItems(orderItems);
@@ -198,16 +171,15 @@ public class OrderService {
         paymentRepository.save(payment);
         savedOrder.setPayment(payment);
 
-        // Assign available Delivery Partner if one exists
+        // Assign available Delivery Partner
         List<DeliveryPartner> availablePartners = deliveryPartnerRepository.findByIsAvailableTrue();
         if (!availablePartners.isEmpty()) {
-            DeliveryPartner partner = availablePartners.get(0);
-            DeliveryAssignment assignment = new DeliveryAssignment(savedOrder, partner);
+            DeliveryAssignment assignment = new DeliveryAssignment(savedOrder, availablePartners.get(0));
             deliveryAssignmentRepository.save(assignment);
             savedOrder.setDeliveryAssignment(assignment);
         }
 
-        // Save idempotency key record if present
+        // Save idempotency key record
         if (request.getIdempotencyKey() != null && !request.getIdempotencyKey().isBlank()) {
             idempotencyKeyRepository.save(IdempotencyKey.builder()
                     .idempotencyKey(request.getIdempotencyKey().trim())
@@ -218,10 +190,8 @@ public class OrderService {
                     .build());
         }
 
-        // Clear user cart
         cartService.clearCart(currentUser);
 
-        // Save initial state history
         orderStateHistoryRepository.save(OrderStateHistory.builder()
                 .order(savedOrder)
                 .fromStatus(null)
@@ -230,10 +200,10 @@ public class OrderService {
                 .reason("Order placed successfully")
                 .build());
 
-        OrderResponse response = mapToDto(savedOrder);
+        OrderResponse response = orderDtoMapper.mapToDto(savedOrder);
 
-        // 4. Publish Domain Events & Real-time notifications
-        domainEventPublisher.publish(com.quickcart.event.OrderEvents.OrderCreatedEvent.builder()
+        // Publish Domain Events & Real-time WebSocket broadcasts
+        domainEventPublisher.publish(OrderEvents.OrderCreatedEvent.builder()
                 .orderId(savedOrder.getId())
                 .orderNumber(orderNumber)
                 .customerId(currentUser.getId())
@@ -243,8 +213,12 @@ public class OrderService {
                 .itemCount(orderItems.size())
                 .build());
 
-        // Broadcast new order creation via WebSocket
         webSocketService.broadcastOrderStatusUpdate(response);
+        auditLogger.logEvent("ORDER_LIFECYCLE", "ORDER_CREATED", "SUCCESS", Map.of(
+                "orderNumber", orderNumber,
+                "amount", finalTotal,
+                "customerId", currentUser.getId()
+        ));
 
         return response;
     }
@@ -252,7 +226,7 @@ public class OrderService {
     public List<OrderResponse> getUserOrders() {
         User currentUser = authService.getCurrentUserEntity();
         return orderRepository.findByUserIdOrderByCreatedAtDesc(currentUser.getId()).stream()
-                .map(this::mapToDto)
+                .map(orderDtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -260,7 +234,7 @@ public class OrderService {
         User currentUser = authService.getCurrentUserEntity();
         Pageable pageable = PageRequest.of(page, size);
         return orderRepository.findByUserIdOrderByCreatedAtDesc(currentUser.getId(), pageable)
-                .map(this::mapToDto);
+                .map(orderDtoMapper::mapToDto);
     }
 
     public OrderResponse getOrderById(Long id) {
@@ -278,19 +252,19 @@ public class OrderService {
             throw new BadRequestException("Unauthorized access to this order.");
         }
 
-        return mapToDto(order);
+        return orderDtoMapper.mapToDto(order);
     }
 
     public List<OrderResponse> getAllOrdersAdmin() {
-        return orderRepository.findAll(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt")).stream()
-                .map(this::mapToDto)
+        return orderRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
+                .map(orderDtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public OrderResponse getOrderByOrderNumber(String orderNumber) {
         Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with order number: " + orderNumber));
-        return mapToDto(order);
+        return orderDtoMapper.mapToDto(order);
     }
 
     @Transactional
@@ -304,80 +278,16 @@ public class OrderService {
         }
 
         order.setStatus(newStatus);
-        Long storeId = order.getStore() != null ? order.getStore().getId() : null;
 
         if (newStatus == OrderStatus.DELIVERED) {
-            order.setDeliveredAt(LocalDateTime.now());
-            if (order.getPayment() != null) {
-                order.getPayment().setPaymentStatus(PaymentStatus.COMPLETED);
-            }
-            if (order.getDeliveryAssignment() != null) {
-                order.getDeliveryAssignment().setStatus("DELIVERED");
-                order.getDeliveryAssignment().setDeliveredAt(LocalDateTime.now());
-            }
-
-            // Commit deduction for inventory
-            for (OrderItem item : order.getItems()) {
-                if (item.getProduct() != null) {
-                    inventoryService.commitDeductionForOrder(storeId, item.getProduct().getId(), item.getQuantity(), order.getOrderNumber());
-                }
-            }
-
-            // Credit 5% loyalty cashback to customer wallet
-            walletService.creditCashbackForOrder(order.getUser(), order);
-
-            domainEventPublisher.publish(com.quickcart.event.OrderEvents.OrderDeliveredEvent.builder()
-                    .orderId(order.getId())
-                    .orderNumber(order.getOrderNumber())
-                    .customerId(order.getUser().getId())
-                    .partnerId(order.getDeliveryAssignment() != null && order.getDeliveryAssignment().getPartner() != null ? order.getDeliveryAssignment().getPartner().getId() : null)
-                    .build());
-
-            notificationService.createNotification(
-                    order.getUser().getId(),
-                    "Order Delivered!",
-                    "Order #" + order.getOrderNumber() + " was delivered. Enjoy your groceries!",
-                    "ORDER",
-                    order.getOrderNumber()
-            );
+            orderLifecycleHandler.handleDelivered(order);
         } else if (newStatus == OrderStatus.CANCELLED) {
-            // Restore product stock and release inventory reservation
-            for (OrderItem item : order.getItems()) {
-                if (item.getProduct() != null) {
-                    inventoryService.releaseReservedStock(storeId, item.getProduct().getId(), item.getQuantity(), order.getOrderNumber());
-                    Product p = item.getProduct();
-                    p.setStockQuantity(p.getStockQuantity() + item.getQuantity());
-                    productRepository.save(p);
-                }
-            }
-
-            // Refund wallet deduction if any
-            if (order.getWalletDiscountAmount() != null && order.getWalletDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
-                walletService.refundForOrder(order.getUser(), order.getWalletDiscountAmount(), order.getOrderNumber());
-            }
-
-            // Refund payment if paid via online gateway
-            if (order.getPayment() != null && order.getPayment().getPaymentStatus() == PaymentStatus.COMPLETED) {
-                paymentGatewayService.initiateRefund(order.getOrderNumber(), order.getTotalAmount(), "Order cancelled");
-            }
-
-            if (order.getDeliveryAssignment() != null) {
-                order.getDeliveryAssignment().setStatus("CANCELLED");
-            }
-
-            notificationService.createNotification(
-                    order.getUser().getId(),
-                    "Order Cancelled",
-                    "Order #" + order.getOrderNumber() + " has been cancelled.",
-                    "ORDER",
-                    order.getOrderNumber()
-            );
+            orderLifecycleHandler.handleCancelled(order);
         }
 
         Order updatedOrder = orderRepository.save(order);
-        OrderResponse response = mapToDto(updatedOrder);
+        OrderResponse response = orderDtoMapper.mapToDto(updatedOrder);
 
-        // Record State History Timeline Entry
         String actor = "SYSTEM";
         try {
             if (authService.getCurrentAuthenticatedUser() != null) {
@@ -387,17 +297,7 @@ public class OrderService {
             // Keep default SYSTEM actor
         }
 
-        orderStateHistoryRepository.save(OrderStateHistory.builder()
-                .order(updatedOrder)
-                .fromStatus(oldStatus)
-                .toStatus(newStatus)
-                .actor(actor)
-                .reason("Transitioned from " + oldStatus + " to " + newStatus)
-                .build());
-
-        // Broadcast order status change
-        webSocketService.broadcastOrderStatusUpdate(response);
-
+        orderLifecycleHandler.recordTransition(updatedOrder, oldStatus, newStatus, actor, response);
         log.info("Order #{} state transitioned from {} to {}", order.getOrderNumber(), oldStatus, newStatus);
         return response;
     }
@@ -441,70 +341,6 @@ public class OrderService {
     }
 
     public OrderResponse mapToDto(Order order) {
-        List<OrderItemResponse> itemResponses = order.getItems().stream()
-                .map(item -> new OrderItemResponse(
-                        item.getId(),
-                        item.getProduct() != null ? item.getProduct().getId() : null,
-                        item.getProductName(),
-                        item.getProductImage(),
-                        item.getUnitQuantity(),
-                        item.getQuantity(),
-                        item.getUnitPrice(),
-                        item.getTotalPrice()
-                ))
-                .collect(Collectors.toList());
-
-        AddressDto addressDto = null;
-        if (order.getAddress() != null) {
-            Address a = order.getAddress();
-            addressDto = new AddressDto(
-                    a.getId(), a.getLabel(), a.getReceiverName(), a.getReceiverPhone(),
-                    a.getStreetAddress(), a.getApartmentUnit(), a.getLandmark(),
-                    a.getCity(), a.getState(), a.getPincode(), a.getLatitude(),
-                    a.getLongitude(), a.getIsDefault()
-            );
-        }
-
-        PaymentResponseDto paymentDto = null;
-        if (order.getPayment() != null) {
-            Payment p = order.getPayment();
-            paymentDto = PaymentResponseDto.builder()
-                    .id(p.getId())
-                    .orderId(order.getId())
-                    .orderNumber(order.getOrderNumber())
-                    .transactionId(p.getTransactionId())
-                    .paymentMethod(p.getPaymentMethod())
-                    .paymentStatus(p.getPaymentStatus())
-                    .amount(p.getAmount())
-                    .currency(p.getCurrency())
-                    .createdAt(p.getCreatedAt())
-                    .build();
-        }
-
-        BigDecimal itemTotal = order.getItemTotal() != null ? order.getItemTotal() : (order.getTotalAmount() != null ? order.getTotalAmount() : BigDecimal.ZERO);
-        BigDecimal cashbackEarned = itemTotal.multiply(BigDecimal.valueOf(0.05)).setScale(2, RoundingMode.HALF_UP);
-
-        return new OrderResponse(
-                order.getId(),
-                order.getOrderNumber(),
-                order.getStatus(),
-                itemTotal,
-                order.getDeliveryFee(),
-                order.getPlatformFee(),
-                order.getTaxAmount(),
-                order.getDiscountAmount(),
-                order.getWalletDiscountAmount() != null ? order.getWalletDiscountAmount() : BigDecimal.ZERO,
-                cashbackEarned,
-                order.getTipAmount(),
-                order.getTotalAmount(),
-                order.getCouponCode(),
-                order.getDeliveryInstructions(),
-                order.getEstimatedDeliveryTime(),
-                order.getDeliveredAt(),
-                itemResponses,
-                addressDto,
-                paymentDto,
-                order.getCreatedAt()
-        );
+        return orderDtoMapper.mapToDto(order);
     }
 }
