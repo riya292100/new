@@ -9,6 +9,7 @@ import CartNavButton from './header/CartNavButton';
 import { useLocation } from '../context/LocationContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import styles from './Header.module.css';
 
 const Header = () => {
   const { selectedLocation, setLocationModalOpen } = useLocation();
@@ -16,19 +17,10 @@ const Header = () => {
   const { user, logout, openAuthModal, isAdmin, isDeliveryPartner } = useAuth();
 
   return (
-    <header className="glass-header" style={{ position: 'sticky', top: 0, zIndex: 900 }}>
-      <div
-        className="container"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 16px',
-          gap: '16px',
-        }}
-      >
+    <header className={`glass-header ${styles.header}`}>
+      <div className={`container ${styles.container}`}>
         {/* Brand & Location Trigger */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexShrink: 0 }}>
+        <div className={styles.brandGroup}>
           <BrandLogo />
           <LocationPickerTrigger
             selectedLocation={selectedLocation}
@@ -37,21 +29,13 @@ const Header = () => {
         </div>
 
         {/* Center: Search Autocomplete & Shortcuts */}
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '16px',
-          }}
-        >
+        <div className={styles.centerGroup}>
           <SearchAutocomplete />
           <NavCategoryLinks />
         </div>
 
         {/* Right Actions: User Profile & Cart Button */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+        <div className={styles.rightGroup}>
           <UserMenuDropdown
             user={user}
             logout={logout}

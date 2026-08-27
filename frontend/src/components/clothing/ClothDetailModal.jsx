@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { X, Star, Zap, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import ClothGarmentSpecs from './ClothGarmentSpecs';
+import styles from './ClothDetailModal.module.css';
 
 const ClothDetailModal = ({ product, onClose }) => {
   const { addToCart, setCartDrawerOpen } = useCart();
@@ -50,129 +51,51 @@ const ClothDetailModal = ({ product, onClose }) => {
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(15, 23, 42, 0.65)',
-        backdropFilter: 'blur(6px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        padding: '16px',
-      }}
-      onClick={onClose}
-    >
+    <div className={styles.backdrop} onClick={onClose}>
       <div
-        className="glass-card"
-        style={{
-          background: '#ffffff',
-          borderRadius: '24px',
-          maxWidth: '750px',
-          width: '100%',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          position: 'relative',
-          padding: '24px',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-        }}
+        className={`glass-card ${styles.modal}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '16px',
-            right: '16px',
-            background: '#f1f5f9',
-            border: 'none',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: '#64748b',
-            zIndex: 10,
-          }}
+          className={styles.closeBtn}
           aria-label="Close Modal"
         >
           <X size={20} />
         </button>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.1fr', gap: '24px' }}>
+        <div className={styles.grid}>
           {/* Left: Garment Photography */}
           <div>
-            <div
-              style={{
-                width: '100%',
-                height: '320px',
-                borderRadius: '16px',
-                overflow: 'hidden',
-                background: '#f8fafc',
-                marginBottom: '12px',
-                border: '1px solid #e2e8f0',
-              }}
-            >
+            <div className={styles.imageWrapper}>
               <img
                 src={selectedImage || product.imageUrl}
                 alt={product.name}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                className={styles.mainImage}
               />
             </div>
 
             {/* Thumbnail Row */}
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div className={styles.thumbnailRow}>
               {images.map((img, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => setSelectedImage(img)}
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    border: selectedImage === img ? '2px solid #059669' : '1px solid #e2e8f0',
-                    padding: 0,
-                    background: 'transparent',
-                    cursor: 'pointer',
-                  }}
+                  className={`${styles.thumbnailBtn} ${selectedImage === img ? styles.thumbnailBtnActive : ''}`}
                 >
-                  <img
-                    src={img}
-                    alt=""
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
+                  <img src={img} alt="" className={styles.thumbnailImg} />
                 </button>
               ))}
             </div>
 
             {/* Fast Delivery Badge */}
-            <div
-              style={{
-                marginTop: '16px',
-                padding: '12px',
-                borderRadius: '12px',
-                background: '#ecfdf5',
-                border: '1px solid #a7f3d0',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-              }}
-            >
+            <div className={styles.deliveryBadge}>
               <Zap size={20} color="#059669" />
               <div>
-                <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#065f46' }}>
-                  ⚡ Instant 15-Min Delivery
-                </div>
-                <div style={{ fontSize: '0.74rem', color: '#047857' }}>
+                <div className={styles.badgeTitle}>⚡ Instant 15-Min Delivery</div>
+                <div className={styles.badgeSubtitle}>
                   Delivered fresh &amp; pressed directly from your nearest QuickCart hub
                 </div>
               </div>
@@ -181,86 +104,36 @@ const ClothDetailModal = ({ product, onClose }) => {
 
           {/* Right: Garment Specifications & Actions */}
           <div>
-            <div
-              style={{
-                fontSize: '0.78rem',
-                fontWeight: '700',
-                color: '#059669',
-                textTransform: 'uppercase',
-                marginBottom: '4px',
-              }}
-            >
+            <div className={styles.brandLabel}>
               {product.brand || 'QuickFashion Original'}
             </div>
 
-            <h2
-              style={{
-                fontSize: '1.35rem',
-                fontWeight: '800',
-                color: '#0f172a',
-                lineHeight: '1.25',
-                marginBottom: '8px',
-              }}
-            >
+            <h2 className={styles.title}>
               {product.name}
             </h2>
 
             {/* Rating */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                marginBottom: '16px',
-              }}
-            >
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  background: '#ecfdf5',
-                  color: '#059669',
-                  padding: '2px 8px',
-                  borderRadius: '6px',
-                  fontWeight: '700',
-                  fontSize: '0.82rem',
-                }}
-              >
+            <div className={styles.ratingRow}>
+              <span className={styles.ratingTag}>
                 <Star size={13} fill="#059669" /> {product.rating || '4.8'}
               </span>
-              <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+              <span className={styles.reviewsText}>
                 ({product.ratingCount || product.reviewCount || 120} verified customer reviews)
               </span>
             </div>
 
             {/* Price Box */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'baseline',
-                gap: '10px',
-                marginBottom: '16px',
-                paddingBottom: '16px',
-                borderBottom: '1px solid #f1f5f9',
-              }}
-            >
-              <span style={{ fontSize: '1.65rem', fontWeight: '900', color: '#0f172a' }}>
+            <div className={styles.priceBox}>
+              <span className={styles.sellingPrice}>
                 ₹{product.sellingPrice ?? product.price ?? 499}
               </span>
               {product.mrp && product.mrp > (product.sellingPrice ?? product.price ?? 499) && (
-                <span
-                  style={{
-                    fontSize: '1rem',
-                    color: '#94a3b8',
-                    textDecoration: 'line-through',
-                  }}
-                >
+                <span className={styles.mrp}>
                   ₹{product.mrp}
                 </span>
               )}
               {product.discountPercentage > 0 && (
-                <span className="badge badge-discount" style={{ fontSize: '0.82rem' }}>
+                <span className="badge badge-discount">
                   {product.discountPercentage}% OFF
                 </span>
               )}
@@ -280,22 +153,11 @@ const ClothDetailModal = ({ product, onClose }) => {
             />
 
             {/* Add to Cart CTA */}
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div className={styles.ctaRow}>
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="btn btn-primary"
-                style={{
-                  flex: 1,
-                  padding: '12px 20px',
-                  fontSize: '0.95rem',
-                  fontWeight: '700',
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                }}
+                className={`btn btn-primary ${styles.addToCartBtn}`}
               >
                 <ShoppingBag size={18} /> Add Size {selectedSize} to Cart
               </button>
@@ -306,13 +168,7 @@ const ClothDetailModal = ({ product, onClose }) => {
                   setCartDrawerOpen(true);
                   onClose();
                 }}
-                className="btn btn-accent"
-                style={{
-                  padding: '12px 20px',
-                  fontSize: '0.95rem',
-                  fontWeight: '700',
-                  borderRadius: '12px',
-                }}
+                className={`btn btn-accent ${styles.buyNowBtn}`}
               >
                 Buy Now
               </button>
