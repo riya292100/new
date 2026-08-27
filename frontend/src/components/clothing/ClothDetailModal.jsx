@@ -1,22 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  X,
-  Star,
-  Check,
-  Zap,
-  ShieldCheck,
-  Truck,
-  RotateCcw,
-  Sparkles,
-  Ruler,
-  ShoppingBag,
-} from 'lucide-react';
+import { X, Star, Zap, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import ClothGarmentSpecs from './ClothGarmentSpecs';
 
 const ClothDetailModal = ({ product, onClose }) => {
-  const { addToCart, updateQuantity, getItemQuantity, getItemCartId, setCartDrawerOpen } =
-    useCart();
+  const { addToCart, setCartDrawerOpen } = useCart();
 
   const availableSizes =
     product?.sizes && Array.isArray(product.sizes)
@@ -40,9 +29,6 @@ const ClothDetailModal = ({ product, onClose }) => {
   const [showSizeChart, setShowSizeChart] = useState(false);
 
   if (!product) return null;
-
-  const quantity = getItemQuantity(product?.id);
-  const cartItemId = getItemCartId(product?.id);
 
   const images = product?.galleryImages?.length
     ? [product.imageUrl, ...product.galleryImages]
@@ -115,6 +101,7 @@ const ClothDetailModal = ({ product, onClose }) => {
             color: '#64748b',
             zIndex: 10,
           }}
+          aria-label="Close Modal"
         >
           <X size={20} />
         </button>
@@ -186,13 +173,13 @@ const ClothDetailModal = ({ product, onClose }) => {
                   ⚡ Instant 15-Min Delivery
                 </div>
                 <div style={{ fontSize: '0.74rem', color: '#047857' }}>
-                  Delivered fresh & pressed directly from your nearest QuickCart hub
+                  Delivered fresh &amp; pressed directly from your nearest QuickCart hub
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right: Garment Specifications & Size Selection */}
+          {/* Right: Garment Specifications & Actions */}
           <div>
             <div
               style={{
@@ -279,182 +266,18 @@ const ClothDetailModal = ({ product, onClose }) => {
               )}
             </div>
 
-            {/* Interactive Size Selector */}
-            <div style={{ marginBottom: '16px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '8px',
-                }}
-              >
-                <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#0f172a' }}>
-                  Select Size:{' '}
-                  <span style={{ color: '#059669', fontWeight: '800' }}>{selectedSize}</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setShowSizeChart(!showSizeChart)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#059669',
-                    fontSize: '0.78rem',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                >
-                  <Ruler size={13} /> {showSizeChart ? 'Hide Size Guide' : 'Size Guide'}
-                </button>
-              </div>
-
-              {/* Size Chart Popup */}
-              {showSizeChart && (
-                <div
-                  style={{
-                    background: '#f8fafc',
-                    borderRadius: '10px',
-                    padding: '10px',
-                    border: '1px solid #e2e8f0',
-                    marginBottom: '10px',
-                    fontSize: '0.75rem',
-                  }}
-                >
-                  <table style={{ width: '100%', textAlign: 'center', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr style={{ color: '#64748b', borderBottom: '1px solid #cbd5e1' }}>
-                        <th style={{ padding: '4px' }}>Size</th>
-                        <th style={{ padding: '4px' }}>Chest (in)</th>
-                        <th style={{ padding: '4px' }}>Length (in)</th>
-                        <th style={{ padding: '4px' }}>Waist (in)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td style={{ padding: '4px', fontWeight: '700' }}>S</td>
-                        <td style={{ padding: '4px' }}>38"</td>
-                        <td style={{ padding: '4px' }}>27"</td>
-                        <td style={{ padding: '4px' }}>30"</td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: '4px', fontWeight: '700' }}>M</td>
-                        <td style={{ padding: '4px' }}>40"</td>
-                        <td style={{ padding: '4px' }}>28"</td>
-                        <td style={{ padding: '4px' }}>32"</td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: '4px', fontWeight: '700' }}>L</td>
-                        <td style={{ padding: '4px' }}>42"</td>
-                        <td style={{ padding: '4px' }}>29"</td>
-                        <td style={{ padding: '4px' }}>34"</td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: '4px', fontWeight: '700' }}>XL</td>
-                        <td style={{ padding: '4px' }}>44"</td>
-                        <td style={{ padding: '4px' }}>30"</td>
-                        <td style={{ padding: '4px' }}>36"</td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: '4px', fontWeight: '700' }}>XXL</td>
-                        <td style={{ padding: '4px' }}>46"</td>
-                        <td style={{ padding: '4px' }}>31"</td>
-                        <td style={{ padding: '4px' }}>38"</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {/* Size Pills */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {availableSizes.map((size) => {
-                  const isSelected = selectedSize === size;
-                  return (
-                    <button
-                      key={size}
-                      type="button"
-                      onClick={() => setSelectedSize(size)}
-                      style={{
-                        padding: '8px 14px',
-                        fontSize: '0.85rem',
-                        fontWeight: '700',
-                        borderRadius: '10px',
-                        border: isSelected ? '2px solid #059669' : '1px solid #cbd5e1',
-                        background: isSelected ? '#ecfdf5' : '#ffffff',
-                        color: isSelected ? '#065f46' : '#1e293b',
-                        cursor: 'pointer',
-                        transition: 'all 0.15s ease',
-                      }}
-                    >
-                      {size}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Color Swatches */}
-            <div style={{ marginBottom: '16px' }}>
-              <div
-                style={{
-                  fontSize: '0.85rem',
-                  fontWeight: '700',
-                  color: '#0f172a',
-                  marginBottom: '8px',
-                }}
-              >
-                Color: <span style={{ color: '#059669', fontWeight: '800' }}>{selectedColor}</span>
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {availableColors.map((color) => {
-                  const isSelected = selectedColor === color;
-                  return (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setSelectedColor(color)}
-                      style={{
-                        padding: '6px 12px',
-                        fontSize: '0.78rem',
-                        fontWeight: '600',
-                        borderRadius: '8px',
-                        border: isSelected ? '1.5px solid #059669' : '1px solid #e2e8f0',
-                        background: isSelected ? '#f0fdf4' : '#f8fafc',
-                        color: isSelected ? '#15803d' : '#475569',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {color}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Fabric & Fit Specifications */}
-            <div
-              style={{
-                background: '#f8fafc',
-                borderRadius: '12px',
-                padding: '12px',
-                marginBottom: '20px',
-                fontSize: '0.82rem',
-                color: '#334155',
-              }}
-            >
-              <div style={{ fontWeight: '700', color: '#0f172a', marginBottom: '6px' }}>
-                Fabric & Care:
-              </div>
-              <ul style={{ paddingLeft: '18px', margin: 0, lineHeight: '1.5' }}>
-                <li>{product.fabric || '100% Breathable Combed Cotton'}</li>
-                <li>{product.fit || 'Regular Fit · Pre-Shrunk Material'}</li>
-                <li>Easy 7-day doorstep exchange & return guarantee</li>
-              </ul>
-            </div>
+            {/* Garment Specifications & Size Selector */}
+            <ClothGarmentSpecs
+              availableSizes={availableSizes}
+              selectedSize={selectedSize}
+              setSelectedSize={setSelectedSize}
+              availableColors={availableColors}
+              selectedColor={selectedColor}
+              setSelectedColor={setSelectedColor}
+              showSizeChart={showSizeChart}
+              setShowSizeChart={setShowSizeChart}
+              product={product}
+            />
 
             {/* Add to Cart CTA */}
             <div style={{ display: 'flex', gap: '10px' }}>
