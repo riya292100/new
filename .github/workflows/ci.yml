@@ -94,6 +94,10 @@ jobs:
       - name: Make Maven Wrapper Executable
         run: chmod +x ./backend/mvnw || true
 
+      - name: Run Backend Checkstyle Lint
+        working-directory: ./backend
+        run: mvn -B checkstyle:check
+
       - name: Run Backend Tests (JUnit 5 & JaCoCo)
         working-directory: ./backend
         run: |

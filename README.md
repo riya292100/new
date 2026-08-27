@@ -99,14 +99,15 @@ npm run test:coverage
 * **Status**: `70 test files, 135 tests passing (100% PASS)`
 * **Enforced Gates**: `Lines >= 70%, Statements >= 70%, Branches >= 60%, Functions >= 70%`
 
-#### ☕ Java Backend (Spring Boot 3 / JUnit 5 / JaCoCo)
+#### ☕ Java Backend (Spring Boot 3 / JUnit 5 / JaCoCo / Checkstyle)
 ```bash
 npm run test:backend
 # or standalone (offline-friendly in-memory test profile):
 cd backend && ./mvnw -B test -Dspring.profiles.active=test
 ```
-* **Status**: `107 unit & integration tests passing (100% PASS)`
-* **Test Engine**: Explicitly declared `org.junit.jupiter` (5.10.2), `mockito-junit-jupiter` (5.11.0), and `assertj-core` (3.25.3)
+* **Status**: `119 unit & integration tests passing (100% PASS)`
+* **Code Quality & Linting**: `Checkstyle` enforced (`backend/checkstyle.xml`, 0 violations)
+* **Architecture & Telemetry**: Detailed in [`docs/BACKEND_ARCHITECTURE.md`](docs/BACKEND_ARCHITECTURE.md) (Structured JSON audit logs, MDC correlation tracking, ErrorTracker)
 * **Coverage**: JaCoCo report generated automatically at `backend/target/site/jacoco/index.html`
 
 #### 🧠 Python AI Demand Engine (FastAPI / pytest)
