@@ -481,13 +481,14 @@ public class OrderService {
                     .build();
         }
 
-        BigDecimal cashbackEarned = order.getItemTotal().multiply(BigDecimal.valueOf(0.05)).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal itemTotal = order.getItemTotal() != null ? order.getItemTotal() : (order.getTotalAmount() != null ? order.getTotalAmount() : BigDecimal.ZERO);
+        BigDecimal cashbackEarned = itemTotal.multiply(BigDecimal.valueOf(0.05)).setScale(2, RoundingMode.HALF_UP);
 
         return new OrderResponse(
                 order.getId(),
                 order.getOrderNumber(),
                 order.getStatus(),
-                order.getItemTotal(),
+                itemTotal,
                 order.getDeliveryFee(),
                 order.getPlatformFee(),
                 order.getTaxAmount(),
