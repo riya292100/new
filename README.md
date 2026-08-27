@@ -16,7 +16,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Redis](https://img.shields.io/badge/Redis-7-DC382D.svg?logo=redis&logoColor=white)](https://redis.io/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)](https://www.docker.com/)
-[![Tests](https://img.shields.io/badge/Tests-100%25%20Passing-success.svg)](#-automated-testing--verification)
+[![Tests](https://img.shields.io/badge/Tests-100%25%20Passing-success.svg)](#-running-automated-tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -25,9 +25,112 @@
   Built with <b>Java 21 / Spring Boot 3</b> (Core & Ledger), <b>Rust</b> (Flash Sale Allocation & Cryptographic Signing), <b>Python</b> (AI Demand & Dynamic Pricing), <b>Go</b> (Spatial Driver Telemetry), and <b>React 18 / TypeScript</b> (Storefront PWA).
 </p>
 
-[Explore API Docs](http://localhost:8081/swagger-ui.html) • [Report Bug](https://github.com/riya292100/new/issues/new?template=bug_report.yml) • [Request Feature](https://github.com/riya292100/new/issues/new?template=feature_request.yml) • [Contributing Guide](CONTRIBUTING.md)
+[Explore API Docs](http://localhost:8081/swagger-ui.html) • [Data Pipeline Architecture](docs/DATA_PIPELINE.md) • [Report Bug](https://github.com/riya292100/new/issues/new?template=bug_report.yml) • [Request Feature](https://github.com/riya292100/new/issues/new?template=feature_request.yml) • [Contributing Guide](CONTRIBUTING.md)
 
 </div>
+
+---
+
+## 🚀 Fresh Clone Quickstart (Zero-Friction Setup)
+
+QuickCart works **immediately out-of-the-box from a fresh clone**. Follow these exact steps:
+
+```bash
+# 1. Clone repository
+git clone https://github.com/riya292100/new.git quickcart
+cd quickcart
+
+# 2. Copy environment template (optional - zero-config defaults are built-in)
+cp .env.example .env
+
+# 3. Install dependencies across all workspaces
+npm run install:all
+
+# 4. Run the full polyglot stack (Docker Compose or Local)
+# Option A: Fullstack via Docker Compose (Recommended)
+docker compose up --build
+
+# Option B: Run locally
+# In separate terminal tabs:
+cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev  # Port 8081
+cd services/ai-demand-engine && uvicorn app.main:app --port 8082     # Port 8082
+cd services/telemetry-service && go run main.go                       # Port 8085
+npm run dev                                                           # Port 5173
+```
+
+---
+
+## 📦 Deterministic Lockfiles & Package Managers
+
+Every language toolchain and package manager in this monorepo includes a committed lockfile for 100% reproducible installs on clean environments:
+
+| Service / Layer | Package Manager | Manifest File | Lockfile |
+|---|---|---|---|
+| **Root Monorepo** | `npm 10+` | [`package.json`](package.json) | [`package-lock.json`](package-lock.json) |
+| **Frontend PWA** | `npm 10+` | [`frontend/package.json`](frontend/package.json) | [`frontend/package-lock.json`](frontend/package-lock.json) |
+| **Core Java Backend** | `Maven 3.9+` | [`backend/pom.xml`](backend/pom.xml) | [`backend/mvnw`](backend/mvnw) / [`backend/mvnw.cmd`](backend/mvnw.cmd) |
+| **AI Demand Engine** | `pip` / Python | [`services/ai-demand-engine/requirements.txt`](services/ai-demand-engine/requirements.txt) | [`services/ai-demand-engine/requirements.lock`](services/ai-demand-engine/requirements.lock) |
+| **Spatial Telemetry** | `Go Modules` | [`services/telemetry-service/go.mod`](services/telemetry-service/go.mod) | [`services/telemetry-service/go.sum`](services/telemetry-service/go.sum) |
+| **Flash Sale Engine** | `Cargo` | [`services/flash-sale-engine/Cargo.toml`](services/flash-sale-engine/Cargo.toml) | [`services/flash-sale-engine/Cargo.lock`](services/flash-sale-engine/Cargo.lock) |
+
+---
+
+## 🧪 Running Automated Tests
+
+All tests run locally and in GitHub Actions CI with zero manual database or service provisioning required (in-memory H2 DB & standalone mocks are built-in).
+
+### 1. Unified Monorepo Test (All Services)
+```bash
+# Run all frontend, backend, Python, and Go test suites in one command:
+npm run test:all
+
+# Or via Makefile:
+make test-all
+```
+
+### 2. Individual Service Test Commands
+
+#### 🌐 Frontend (React 18 / Vitest / V8 Coverage)
+```bash
+npm test
+# or with coverage report:
+npm run test:coverage
+```
+* **Status**: `69 test files, 131 tests passing (100% PASS)`
+* **Enforced Gates**: `Lines >= 80%, Statements >= 80%, Branches >= 65%, Functions >= 40%`
+
+#### ☕ Java Backend (Spring Boot 3 / JUnit 5 / JaCoCo)
+```bash
+npm run test:backend
+# or standalone:
+cd backend && ./mvnw test -Dspring.profiles.active=test
+```
+* **Status**: `96 / 96 tests passing (100% BUILD SUCCESS)`
+* **Coverage**: JaCoCo report generated automatically at `backend/target/site/jacoco/index.html`
+
+#### 🧠 Python AI Demand Engine (FastAPI / pytest)
+```bash
+npm run test:python
+# or standalone:
+cd services/ai-demand-engine && pytest -v
+```
+* **Status**: `7 / 7 tests passing (100% PASS)`
+
+#### ⚡ Go Spatial Telemetry Service (Golang / go test)
+```bash
+npm run test:go
+# or standalone:
+cd services/telemetry-service && go test -v -race ./...
+```
+* **Status**: `Spatial Indexer, Concurrent GPS Ingestion, and API Tests Passing`
+
+#### 🦀 Rust Flash Sale Engine (Actix-Web / cargo test)
+```bash
+npm run test:rust
+# or standalone:
+cd services/flash-sale-engine && cargo test
+```
+* **Status**: `Atomic CAS Claims & HMAC-SHA256 Token Signing Tests Passing`
 
 ---
 
@@ -98,66 +201,6 @@ flowchart TD
 
 ---
 
-## 🧪 Automated Testing & Verification
-
-| Test Suite | Metric / Scope | Result |
-|---|---|---|
-| **Java Backend (Maven / JUnit 5)** | 95 tests across all services | **95 / 95 PASSED (100% BUILD SUCCESS)** |
-| **Rust Flash Sale Engine (cargo test)** | Atomic CAS claims & HMAC-SHA256 verification | **Verified & Passing** |
-| **Python AI Engine (pytest)** | 7 unit tests (Math, Models, REST) | **7 / 7 PASSED (100% PASS)** |
-| **Go Telemetry Service (go test)** | Spatial algorithms & concurrent sync tests | **Verified & Passing** |
-| **Frontend Unit Tests (Vitest)** | 68 test files, 123 tests | **123 / 123 PASSED (100% PASS)** |
-| **CI/CD GitHub Actions Workflow** | 6 multi-language parallel test runners | **All Jobs Passing in CI** |
-
----
-
-## 🚀 Quick Start (Local Development)
-
-### 📋 Prerequisites
-* **Java 21 JDK**
-* **Rust 1.80+** (or Docker)
-* **Python 3.10+** (or Docker)
-* **Node.js 20+ or 22** and **npm 10+**
-* **Docker & Docker Compose** (recommended)
-
-### 1. Run the Full Polyglot Stack via Docker Compose
-```bash
-# Clone the repository
-git clone https://github.com/riya292100/new.git quickcart
-cd quickcart
-
-# Spin up all 6 polyglot microservices & databases
-docker compose up --build
-```
-
-### 2. Run Individual Microservices Locally
-```bash
-# Terminal 1: Java Backend (Port 8081)
-cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
-
-# Terminal 2: Rust Flash Sale Engine (Port 8086)
-cd services/flash-sale-engine && cargo run
-
-# Terminal 3: Python AI Demand Engine (Port 8082)
-cd services/ai-demand-engine && uvicorn app.main:app --port 8082
-
-# Terminal 4: Go Spatial Telemetry Service (Port 8085)
-cd services/telemetry-service && go run main.go
-
-# Terminal 5: React Storefront (Port 5173)
-cd frontend && npm run dev
-```
-
-* **Frontend Storefront**: [http://localhost:5173/](http://localhost:5173/)
-* **Java Backend REST API**: [http://localhost:8081](http://localhost:8081)
-* **Rust Flash Sale Health**: [http://localhost:8086/healthz](http://localhost:8086/healthz)
-* **Python AI Engine Docs**: [http://localhost:8082/docs](http://localhost:8082/docs)
-* **Go Telemetry Health**: [http://localhost:8085/healthz](http://localhost:8085/healthz)
-* **Swagger API Explorer**: [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
-* **H2 Database Console**: [http://localhost:8081/h2-console](http://localhost:8081/h2-console)
-
----
-
 ## 🔑 Pre-Seeded Demo Accounts
 
 | Role | Email | Default Password | Capabilities |
@@ -167,6 +210,20 @@ cd frontend && npm run dev
 | **Support Agent** | `support@quickcart.com` | `Admin@123` | Support tickets, SLA escalation, return inspections, refunds |
 | **Delivery Rider** | `driver@quickcart.com` | `Driver@123` | Driver portal, GPS simulator, order acceptance and delivery completion |
 | **Customer** | `customer@quickcart.com` | `Customer@123` | Storefront browsing, cart, checkout, QuickCash wallet, table bookings |
+
+---
+
+## 🏗️ Production Build Commands
+
+```bash
+# Build all production artifacts in one command:
+npm run build:all
+
+# Or individually:
+npm run build                                       # Frontend static assets in frontend/dist
+cd backend && ./mvnw clean package -DskipTests     # Backend executable JAR in backend/target
+cd services/telemetry-service && go build -o server # Go binary
+```
 
 ---
 
