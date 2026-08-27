@@ -102,10 +102,11 @@ npm run test:coverage
 #### ☕ Java Backend (Spring Boot 3 / JUnit 5 / JaCoCo)
 ```bash
 npm run test:backend
-# or standalone:
-cd backend && ./mvnw test -Dspring.profiles.active=test
+# or standalone (offline-friendly in-memory test profile):
+cd backend && ./mvnw -B test -Dspring.profiles.active=test
 ```
-* **Status**: `96 / 96 tests passing (100% BUILD SUCCESS)`
+* **Status**: `103 / 103 JUnit tests passing (100% BUILD SUCCESS)`
+* **Test Engine**: Explicitly declared `org.junit.jupiter` (5.10.2), `mockito-junit-jupiter` (5.11.0), and `assertj-core` (3.25.3)
 * **Coverage**: JaCoCo report generated automatically at `backend/target/site/jacoco/index.html`
 
 #### 🧠 Python AI Demand Engine (FastAPI / pytest)
