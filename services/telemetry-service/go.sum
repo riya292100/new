@@ -1,0 +1,2 @@
+// Go checksum lockfile for telemetry-service
+// Dependencies are currently standard library (Go 1.22+)
