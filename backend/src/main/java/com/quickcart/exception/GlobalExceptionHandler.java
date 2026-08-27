@@ -1,6 +1,8 @@
 package com.quickcart.exception;
 
 import com.quickcart.dto.ApiResponse;
+import com.quickcart.logging.ErrorTracker;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -17,45 +19,47 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Enterprise Global Exception Handler
- * Formats standard API error responses and prevents sensitive stack trace leakage.
+ * Enterprise Global Exception Handler.
+ * Formats standard API error responses, connects to ErrorTracker, and prevents sensitive stack trace leakage.
  */
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private final ErrorTracker errorTracker;
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        logger.warn("Resource not found: {}", ex.getMessage());
+        errorTracker.trackBusinessWarning("RESOURCE_NOT_FOUND", ex.getMessage(), Map.of("resource", ex.getMessage()));
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiResponse<Void>> handleBadRequestException(BadRequestException ex) {
-        logger.warn("Bad request received: {}", ex.getMessage());
+        errorTracker.trackBusinessWarning("BAD_REQUEST", ex.getMessage(), Map.of("reason", ex.getMessage()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiResponse<Void>> handleUnauthorizedException(UnauthorizedException ex) {
-        logger.warn("Unauthorized access attempt: {}", ex.getMessage());
+        errorTracker.trackBusinessWarning("UNAUTHORIZED", ex.getMessage(), Map.of("reason", ex.getMessage()));
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse<Void>> handleBadCredentialsException(BadCredentialsException ex) {
-        logger.warn("Authentication failed: Invalid credentials provided");
+        errorTracker.trackBusinessWarning("BAD_CREDENTIALS", "Invalid credentials provided", Map.of());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.error("Invalid email or password."));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(AccessDeniedException ex) {
-        logger.warn("Access denied for current security context: {}", ex.getMessage());
+        errorTracker.trackBusinessWarning("FORBIDDEN", ex.getMessage(), Map.of());
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ApiResponse.error("Access denied: You do not have permission to perform this action."));
     }
@@ -66,7 +70,7 @@ public class GlobalExceptionHandler {
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.put(error.getField(), error.getDefaultMessage());
         }
-        logger.warn("Validation error on request payload: {}", errors);
+        errorTracker.trackBusinessWarning("VALIDATION_FAILURE", "Payload validation failed", new HashMap<>(errors));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiResponse<>(false, "Validation failed", errors));
     }
@@ -74,7 +78,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGlobalException(Exception ex) {
         String correlationId = MDC.get("correlationId");
-        logger.error("Unhandled internal server exception [CorrelationId: {}]: ", correlationId, ex);
+        errorTracker.trackException("INTERNAL_SERVER_ERROR", ex.getMessage(), ex, Map.of("correlationId", correlationId != null ? correlationId : "none"));
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error("An unexpected internal server error occurred. Please contact support."));
     }
