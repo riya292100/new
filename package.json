@@ -3,6 +3,9 @@
   "version": "1.3.0",
   "private": true,
   "description": "QuickCart - Enterprise 10-Minute Hyperlocal Fullstack Quick-Commerce Delivery Application",
+  "workspaces": [
+    "frontend"
+  ],
   "scripts": {
     "dev": "npm --prefix frontend run dev",
     "install:all": "npm --prefix frontend ci",
@@ -11,11 +14,12 @@
     "test": "npm --prefix frontend run test",
     "test:frontend": "npm --prefix frontend run test",
     "test:coverage": "npm --prefix frontend run coverage",
-    "test:backend": "cd backend && (mvnw -B test -Dspring.profiles.active=test || mvn -B test -Dspring.profiles.active=test)",
-    "test:python": "cd services/ai-demand-engine && (python -m pytest || pytest)",
-    "test:go": "cd services/telemetry-service && go test -v ./...",
-    "test:rust": "cd services/flash-sale-engine && (cargo test || echo \"Rust toolchain optional locally\")",
-    "test:all": "npm --prefix frontend run test && cd backend && (mvnw -B test -Dspring.profiles.active=test || mvn -B test -Dspring.profiles.active=test) && cd services/ai-demand-engine && (python -m pytest || pytest) && cd services/telemetry-service && go test -v ./...",
+    "coverage": "npm --prefix frontend run coverage",
+    "test:backend": "cd backend && (mvnw.cmd -B test -Dspring.profiles.active=test || ./mvnw -B test -Dspring.profiles.active=test || mvn -B test -Dspring.profiles.active=test) && cd ..",
+    "test:python": "cd services/ai-demand-engine && (python -m pytest || pytest) && cd ../..",
+    "test:go": "cd services/telemetry-service && go test -v ./... && cd ../..",
+    "test:rust": "cd services/flash-sale-engine && (cargo test || echo \"Rust toolchain optional locally\") && cd ../..",
+    "test:all": "npm --prefix frontend run test && cd backend && (mvnw.cmd -B test -Dspring.profiles.active=test || ./mvnw -B test -Dspring.profiles.active=test || mvn -B test -Dspring.profiles.active=test) && cd ../services/ai-demand-engine && (python -m pytest || pytest) && cd ../telemetry-service && go test -v ./... && cd ../..",
     "lint": "npm --prefix frontend run lint",
     "typecheck": "npm --prefix frontend run typecheck",
     "format": "npm --prefix frontend run format",
