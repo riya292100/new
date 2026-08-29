@@ -1,43 +1,108 @@
 /* ==========================================================================
-   QuickCart Modular Component Styles
+   QuickCart Modular Component Styles & Design Tokens Integration
    ========================================================================== */
 
 /* Standard Card Containers */
 .qc-card {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 24px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  background: var(--color-bg-white, #ffffff);
+  border-radius: var(--radius-xl, 20px);
+  padding: var(--space-lg, 24px);
+  border: 1px solid var(--color-border, #e2e8f0);
+  box-shadow: var(--shadow-sm, 0 4px 12px rgba(0, 0, 0, 0.03));
 }
 
 .qc-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: var(--space-md, 18px);
 }
 
 .qc-card-title {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--color-text-main, #0f172a);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm, 8px);
 }
 
-/* User & Profile Elements */
-.qc-avatar-circle {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #ecfdf5;
+/* Modal Dialog Layouts */
+.qc-modal-container {
+  width: 100%;
+  max-width: 480px;
+  border-radius: var(--radius-2xl, 24px);
+  padding: var(--space-lg, 28px);
+  background: var(--color-bg-white, #ffffff);
+  position: relative;
+  box-shadow: var(--shadow-xl, 0 20px 40px rgba(0, 0, 0, 0.08));
+}
+
+.qc-modal-container-lg {
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: var(--radius-2xl, 24px);
+  padding: var(--space-lg, 28px);
+  background: var(--color-bg-white, #ffffff);
+  position: relative;
+}
+
+.qc-modal-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--color-bg-muted, #f1f5f9);
+  border: none;
+  border-radius: var(--radius-full, 50%);
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #059669;
+  cursor: pointer;
+  z-index: 10;
+  transition: var(--transition-fast, 0.15s ease);
+}
+
+.qc-modal-close-btn:hover {
+  background: var(--color-border, #e2e8f0);
+}
+
+.qc-modal-icon-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg, 16px);
+  background: var(--color-primary-bg, #ecfdf5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+}
+
+/* User & Profile Elements */
+.qc-profile-card {
+  background: var(--color-bg-white, #ffffff);
+  border-radius: var(--radius-xl, 20px);
+  padding: var(--space-lg, 24px);
+  border: 1px solid var(--color-border, #e2e8f0);
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg, 20px);
+  flex-wrap: wrap;
+}
+
+.qc-avatar-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: var(--radius-full, 50%);
+  overflow: hidden;
+  background: var(--color-primary-bg, #ecfdf5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary, #059669);
   font-size: 1.6rem;
   font-weight: bold;
 }
@@ -45,9 +110,9 @@
 .qc-avatar-circle-sm {
   width: 38px;
   height: 38px;
-  border-radius: 10px;
-  background: #ecfdf5;
-  color: #059669;
+  border-radius: var(--radius-sm, 10px);
+  background: var(--color-primary-bg, #ecfdf5);
+  color: var(--color-primary, #059669);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,38 +124,111 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 16px;
+  margin-bottom: var(--space-md, 16px);
 }
 
 .qc-form-label {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--color-text-body, #334155);
+}
+
+.qc-address-form-container {
+  background: var(--color-bg-light, #f8fafc);
+  padding: 18px;
+  border-radius: var(--radius-lg, 16px);
+  border: 1px solid var(--color-border, #e2e8f0);
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qc-address-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  border-radius: var(--radius-md, 12px);
+  background: var(--color-bg-light, #f8fafc);
+  border: 1px solid var(--color-border-light, #f1f5f9);
+  transition: var(--transition-fast, 0.15s ease);
+}
+
+.qc-address-item-row:hover {
+  border-color: var(--color-border-dark, #cbd5e1);
+}
+
+.qc-address-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-xs, 8px);
+  background: var(--color-bg-white, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary, #059669);
+  flex-shrink: 0;
 }
 
 /* Metric / Stat Tiles */
 .qc-stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: var(--space-md, 16px);
+  margin-bottom: var(--space-lg, 24px);
 }
 
 .qc-stat-tile {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid #e2e8f0;
+  background: var(--color-bg-white, #ffffff);
+  border-radius: var(--radius-lg, 16px);
+  padding: var(--space-lg, 20px);
+  border: 1px solid var(--color-border, #e2e8f0);
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-md, 16px);
+}
+
+/* Drawer Component Classes */
+.qc-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  background: var(--color-bg-white, #ffffff);
+}
+
+.qc-drawer-footer {
+  border-top: 1px solid var(--color-border, #e2e8f0);
+  background: var(--color-bg-white, #ffffff);
+  padding: 16px 20px;
+}
+
+.qc-drawer-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--color-text-muted, #64748b);
+}
+
+.qc-drawer-empty-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: var(--radius-full, 50%);
+  background: var(--color-bg-muted, #f1f5f9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  color: var(--color-text-light, #94a3b8);
 }
 
 /* Delivery Timeline Step */
 .qc-timeline-node {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: var(--radius-full, 50%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,18 +239,18 @@
 
 /* Order & Delivery Cards */
 .qc-order-card {
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  padding: 20px;
-  margin-bottom: 16px;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  background: var(--color-bg-white, #ffffff);
+  border-radius: var(--radius-lg, 16px);
+  border: 1px solid var(--color-border, #e2e8f0);
+  padding: var(--space-lg, 20px);
+  margin-bottom: var(--space-md, 16px);
+  transition: var(--transition-normal, 0.2s ease);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.04));
 }
 
 .qc-order-card:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  border-color: #cbd5e1;
+  box-shadow: var(--shadow-md, 0 6px 16px rgba(0, 0, 0, 0.08));
+  border-color: var(--color-border-dark, #cbd5e1);
 }
 
 .qc-order-header {
@@ -120,18 +258,59 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: 14px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-border-light, #f1f5f9);
   margin-bottom: 14px;
 }
 
 /* Driver Portal Hero Banner */
 .qc-driver-hero {
   background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
-  border-radius: 24px;
+  border-radius: var(--radius-2xl, 24px);
   padding: 28px;
   color: #ffffff;
-  margin-bottom: 24px;
-  box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.4);
+  margin-bottom: var(--space-lg, 24px);
+  box-shadow: var(--shadow-lg, 0 10px 25px -5px rgba(5, 150, 105, 0.4));
+}
+
+.qc-driver-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg, 24px);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Error Boundary Fallback */
+.qc-error-boundary-wrap {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.qc-error-boundary-card {
+  max-width: 520px;
+  width: 100%;
+  background: var(--color-bg-white, #ffffff);
+  border-radius: var(--radius-2xl, 24px);
+  padding: 36px 28px;
+  text-align: center;
+  box-shadow: var(--shadow-xl, 0 20px 40px rgba(0, 0, 0, 0.08));
+  border: 1px solid var(--color-border-light, #f1f5f9);
+}
+
+.qc-error-icon-box {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-xl, 20px);
+  background: var(--color-danger-bg, #fef2f2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  color: var(--color-danger, #ef4444);
 }
 
 /* Tip Selector Widget */
@@ -144,20 +323,20 @@
 .qc-tip-btn {
   flex: 1;
   padding: 10px;
-  border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
-  background: #ffffff;
+  border-radius: var(--radius-md, 12px);
+  border: 1.5px solid var(--color-border, #e2e8f0);
+  background: var(--color-bg-white, #ffffff);
   font-weight: 700;
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--color-text-body, #334155);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-normal, 0.2s ease);
 }
 
 .qc-tip-btn.active {
-  border-color: #059669;
-  background: #ecfdf5;
-  color: #059669;
+  border-color: var(--color-primary, #059669);
+  background: var(--color-primary-bg, #ecfdf5);
+  color: var(--color-primary, #059669);
   box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
 }
 
@@ -167,35 +346,33 @@
   align-items: center;
   gap: 4px;
   padding: 4px 10px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full, 9999px);
   font-size: 0.75rem;
   font-weight: 700;
-  background: #f1f5f9;
+  background: var(--color-bg-muted, #f1f5f9);
   color: #475569;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border, #e2e8f0);
 }
 
 .qc-nutrition-badge.organic {
-  background: #ecfdf5;
-  color: #059669;
-  border-color: #a7f3d0;
+  background: var(--color-primary-bg, #ecfdf5);
+  color: var(--color-primary, #059669);
+  border-color: var(--color-primary-border, #a7f3d0);
 }
 
 .qc-nutrition-badge.vegan {
-  background: #f0fdf4;
-  color: #16a34a;
-  border-color: #bbf7d0;
+  background: var(--color-success-bg, #f0fdf4);
+  color: var(--color-success, #16a34a);
+  border-color: var(--color-success-border, #bbf7d0);
 }
 
 .qc-nutrition-badge.protein {
-  background: #eff6ff;
-  color: #2563eb;
-  border-color: #bfdbfe;
+  background: var(--color-info-bg, #eff6ff);
+  color: var(--color-info, #2563eb);
+  border-color: var(--color-info-border, #bfdbfe);
 }
 
-/* ==========================================================================
-   QuickCart Dining & Restaurant Discovery Styles
-   ========================================================================== */
+/* Dining & Restaurant Discovery Styles */
 .qc-dining-hero {
   background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%);
   border-radius: 28px;
@@ -208,12 +385,12 @@
 }
 
 .qc-dining-card {
-  background: #ffffff;
-  border-radius: 20px;
+  background: var(--color-bg-white, #ffffff);
+  border-radius: var(--radius-xl, 20px);
   overflow: hidden;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--color-border, #e2e8f0);
+  box-shadow: var(--shadow-sm, 0 4px 12px rgba(0, 0, 0, 0.04));
+  transition: var(--transition-smooth, 0.25s cubic-bezier(0.4, 0, 0.2, 1));
   display: flex;
   flex-direction: column;
 }
@@ -221,41 +398,41 @@
 .qc-dining-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-  border-color: #cbd5e1;
+  border-color: var(--color-border-dark, #cbd5e1);
 }
 
 .qc-cuisine-pill {
   padding: 8px 18px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full, 9999px);
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
-  border: 1.5px solid #e2e8f0;
-  background: #ffffff;
+  transition: var(--transition-normal, 0.2s ease);
+  border: 1.5px solid var(--color-border, #e2e8f0);
+  background: var(--color-bg-white, #ffffff);
   color: #475569;
 }
 
 .qc-cuisine-pill:hover {
-  border-color: #059669;
-  color: #059669;
+  border-color: var(--color-primary, #059669);
+  color: var(--color-primary, #059669);
   background: #f0fdf4;
 }
 
 .qc-cuisine-pill.active {
-  background: #059669;
+  background: var(--color-primary, #059669);
   color: #ffffff;
-  border-color: #059669;
+  border-color: var(--color-primary, #059669);
   box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
 }
 
 .qc-booking-card {
-  background: #ffffff;
-  border-radius: 18px;
-  border: 1px solid #e2e8f0;
+  background: var(--color-bg-white, #ffffff);
+  border-radius: var(--radius-lg, 18px);
+  border: 1px solid var(--color-border, #e2e8f0);
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.04));
   display: flex;
   flex-direction: column;
   gap: 12px;

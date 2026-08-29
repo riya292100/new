@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authApi } from '../services/api';
 import { useToast } from './ToastContext';
 import { DEMO_USERS } from '../utils/demoConfig';
+import logger from '../utils/logger';
 
 export const AuthContext = createContext(null);
 
@@ -22,10 +23,14 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           const res = await authApi.getMe();
+          // Interceptor already unwraps response.data — res IS the payload
           if (res?.data) {
             setUser(res.data);
+          } else if (res?.id) {
+            setUser(res);
           }
         } catch (err) {
+          logger.warn('AuthContext', 'Stored session token expired or invalid', err);
           localStorage.removeItem('quickcart_token');
           setUser(null);
         }
@@ -36,42 +41,58 @@ export const AuthProvider = ({ children }) => {
             email: DEMO_USERS.customer.email,
             password: DEMO_USERS.customer.password,
           });
-          if (demoRes?.data) {
-            localStorage.setItem('quickcart_token', demoRes.data.token);
+          // Interceptor unwraps — demoRes is the payload directly
+          const payload = demoRes?.data ?? demoRes;
+          if (payload?.token) {
+            localStorage.setItem('quickcart_token', payload.token);
             setUser({
-              id: demoRes.data.id,
-              fullName: demoRes.data.fullName,
-              email: demoRes.data.email,
-              phone: demoRes.data.phone,
-              avatarUrl: demoRes.data.avatarUrl,
-              roles: demoRes.data.roles,
+              id: payload.id,
+              fullName: payload.fullName,
+              email: payload.email,
+              phone: payload.phone,
+              avatarUrl: payload.avatarUrl,
+              roles: payload.roles,
             });
           }
         } catch (e) {
-          console.error('Error:', e);
+          logger.info('AuthContext', 'Demo auto-login bypassed or offline backend', e);
         }
       }
       setLoading(false);
     };
 
+    // Listen for 401 events dispatched by the API interceptor
+    const handle401 = () => {
+      setUser(null);
+      setAuthModalOpen(true);
+      setAuthModalMode('login');
+    };
+    window.addEventListener('quickcart:unauthorized', handle401);
+
     initAuth();
+
+    return () => {
+      window.removeEventListener('quickcart:unauthorized', handle401);
+    };
   }, []);
 
   const login = async (email, password) => {
     try {
       const res = await authApi.login({ email, password });
-      if (res?.data) {
-        localStorage.setItem('quickcart_token', res.data.token);
+      // Interceptor unwraps response.data — res IS the payload
+      const payload = res?.data ?? res;
+      if (payload?.token) {
+        localStorage.setItem('quickcart_token', payload.token);
         const userData = {
-          id: res.data.id,
-          fullName: res.data.fullName,
-          email: res.data.email,
-          phone: res.data.phone,
-          avatarUrl: res.data.avatarUrl,
-          roles: res.data.roles,
+          id: payload.id,
+          fullName: payload.fullName,
+          email: payload.email,
+          phone: payload.phone,
+          avatarUrl: payload.avatarUrl,
+          roles: payload.roles,
         };
         setUser(userData);
-        addToast(`Welcome back, ${res.data.fullName}!`, 'success');
+        addToast(`Welcome back, ${payload.fullName}!`, 'success');
         setAuthModalOpen(false);
         return userData;
       }
@@ -84,18 +105,20 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const res = await authApi.register(userData);
-      if (res?.data) {
-        localStorage.setItem('quickcart_token', res.data.token);
+      // Interceptor unwraps response.data — res IS the payload
+      const payload = res?.data ?? res;
+      if (payload?.token) {
+        localStorage.setItem('quickcart_token', payload.token);
         const userObj = {
-          id: res.data.id,
-          fullName: res.data.fullName,
-          email: res.data.email,
-          phone: res.data.phone,
-          avatarUrl: res.data.avatarUrl,
-          roles: res.data.roles,
+          id: payload.id,
+          fullName: payload.fullName,
+          email: payload.email,
+          phone: payload.phone,
+          avatarUrl: payload.avatarUrl,
+          roles: payload.roles,
         };
         setUser(userObj);
-        addToast(`Account created! Welcome to QuickCart, ${res.data.fullName}`, 'success');
+        addToast(`Account created! Welcome to QuickCart, ${payload.fullName}`, 'success');
         setAuthModalOpen(false);
         return userObj;
       }

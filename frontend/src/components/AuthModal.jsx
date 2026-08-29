@@ -3,7 +3,7 @@ import { X, Zap, UserPlus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { DEMO_USERS } from '../utils/demoConfig';
-import { validateEmail, validatePassword, validatePhone, sanitizeInput } from '../utils/validation';
+import { validateSchema, loginSchema, registerSchema, sanitizeInput } from '../utils/validation';
 import logger from '../utils/logger';
 import LoginForm from './auth/LoginForm';
 import RegisterForm from './auth/RegisterForm';
@@ -27,27 +27,21 @@ const AuthModal = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Input validations
-    const emailVal = validateEmail(email);
-    if (!emailVal.isValid) {
-      addToast(emailVal.error, 'error');
-      return;
-    }
-
-    const passVal = validatePassword(password);
-    if (!passVal.isValid) {
-      addToast(passVal.error, 'error');
-      return;
-    }
-
-    if (!isLogin) {
-      const phoneVal = validatePhone(phone);
-      if (!phoneVal.isValid) {
-        addToast(phoneVal.error, 'error');
+    if (isLogin) {
+      const valResult = validateSchema(loginSchema, { email, password });
+      if (!valResult.isValid) {
+        addToast(Object.values(valResult.errors)[0], 'error');
         return;
       }
-      if (!fullName.trim()) {
-        addToast('Full name is required', 'error');
+    } else {
+      const valResult = validateSchema(registerSchema, {
+        fullName,
+        email,
+        phone,
+        password,
+      });
+      if (!valResult.isValid) {
+        addToast(Object.values(valResult.errors)[0], 'error');
         return;
       }
     }
@@ -66,7 +60,7 @@ const AuthModal = () => {
         });
       }
     } catch (err) {
-      logger.error('Authentication Error:', err);
+      logger.error('AuthModal', 'Authentication submission failure', err);
       const msg = err?.message || 'Authentication failed. Please check your credentials.';
       addToast(msg, 'error');
     } finally {
@@ -84,52 +78,19 @@ const AuthModal = () => {
 
   return (
     <div className="modal-overlay" onClick={closeAuthModal}>
-      <div
-        className="glass-card"
-        style={{
-          width: '100%',
-          maxWidth: '460px',
-          borderRadius: '24px',
-          padding: '28px',
-          background: '#ffffff',
-          position: 'relative',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="glass-card qc-modal-container" onClick={(e) => e.stopPropagation()}>
         <button
+          type="button"
+          aria-label="Close authentication modal"
           onClick={closeAuthModal}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: '#f1f5f9',
-            border: 'none',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-          }}
+          className="qc-modal-close-btn"
         >
           <X size={18} color="#64748b" />
         </button>
 
         {/* Modal Header */}
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <div
-            style={{
-              width: '52px',
-              height: '52px',
-              borderRadius: '16px',
-              background: '#ecfdf5',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 12px',
-            }}
-          >
+          <div className="qc-modal-icon-badge">
             {isLogin ? <Zap size={26} color="#059669" /> : <UserPlus size={26} color="#059669" />}
           </div>
           <h2 style={{ fontSize: '1.45rem', color: '#0f172a', fontWeight: '800' }}>

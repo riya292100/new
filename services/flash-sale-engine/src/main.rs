@@ -22,6 +22,21 @@ async fn health_check(data: web::Data<FlashSaleManager>) -> impl Responder {
     HttpResponse::Ok().json(health)
 }
 
+#[get("/health")]
+async fn health_alias(data: web::Data<FlashSaleManager>) -> impl Responder {
+    health_check(data).await
+}
+
+#[get("/ready")]
+async fn ready_check(data: web::Data<FlashSaleManager>) -> impl Responder {
+    health_check(data).await
+}
+
+#[get("/readyz")]
+async fn readyz_check(data: web::Data<FlashSaleManager>) -> impl Responder {
+    health_check(data).await
+}
+
 #[get("/api/v1/flash-sale/deals")]
 async fn list_deals(data: web::Data<FlashSaleManager>) -> impl Responder {
     let deals = data.get_all_deals();
@@ -68,6 +83,9 @@ async fn main() -> std::io::Result<()> {
             .wrap(cors)
             .app_data(manager.clone())
             .service(health_check)
+            .service(health_alias)
+            .service(ready_check)
+            .service(readyz_check)
             .service(list_deals)
             .service(claim_deal)
             .service(sign_receipt)

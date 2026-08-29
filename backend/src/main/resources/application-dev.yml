@@ -26,6 +26,11 @@ spring:
   cache:
     type: ${CACHE_TYPE:none} # in local standalone dev, defaults to none unless Redis is running
 
+management:
+  health:
+    redis:
+      enabled: false # Redis not required in local dev; exclude from health aggregate
+
 quickcart:
   demo:
     admin-password: ${DEMO_ADMIN_PASSWORD:${QUICKCART_DEMO_ADMIN_PASSWORD:Admin@123}}

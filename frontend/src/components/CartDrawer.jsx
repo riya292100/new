@@ -37,16 +37,7 @@ const CartDrawer = () => {
     <div className="drawer-overlay" onClick={() => setCartDrawerOpen(false)}>
       <div className="drawer-content" onClick={(e) => e.stopPropagation()}>
         {/* Drawer Header */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '18px 20px',
-            borderBottom: '1px solid #e2e8f0',
-            background: '#ffffff',
-          }}
-        >
+        <div className="qc-drawer-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <ShoppingBag size={22} color="#059669" />
             <div>
@@ -60,17 +51,8 @@ const CartDrawer = () => {
             type="button"
             aria-label="Close cart drawer"
             onClick={() => setCartDrawerOpen(false)}
-            style={{
-              background: '#f1f5f9',
-              border: 'none',
-              borderRadius: '50%',
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-            }}
+            className="qc-modal-close-btn"
+            style={{ position: 'static' }}
           >
             <X size={18} color="#64748b" />
           </button>
@@ -91,20 +73,8 @@ const CartDrawer = () => {
               ))}
             </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748b' }}>
-              <div
-                style={{
-                  width: '70px',
-                  height: '70px',
-                  borderRadius: '50%',
-                  background: '#f1f5f9',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 16px',
-                  color: '#94a3b8',
-                }}
-              >
+            <div className="qc-drawer-empty-state">
+              <div className="qc-drawer-empty-icon">
                 <ShoppingBag size={32} />
               </div>
               <h4 style={{ fontSize: '1.1rem', color: '#0f172a', marginBottom: '6px' }}>
@@ -127,13 +97,7 @@ const CartDrawer = () => {
 
         {/* Bill Summary & Sticky Checkout Footer */}
         {cart.items && cart.items.length > 0 && (
-          <div
-            style={{
-              borderTop: '1px solid #e2e8f0',
-              background: '#ffffff',
-              padding: '16px 20px',
-            }}
-          >
+          <div className="qc-drawer-footer">
             <CartBillSummary
               cart={cart}
               appliedCoupon={appliedCoupon}

@@ -4,6 +4,8 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { addressApi, orderApi } from '../services/api';
+import { validateSchema, addressSchema, checkoutSchema } from '../utils/validation';
+import logger from '../utils/logger';
 import { Clock } from 'lucide-react';
 import CheckoutAddressSelector from '../components/checkout/CheckoutAddressSelector';
 import CheckoutPaymentMethods from '../components/checkout/CheckoutPaymentMethods';
@@ -55,12 +57,18 @@ const CheckoutPage = () => {
         }
       })
       .catch((err) => {
-        console.error('Failed to fetch user addresses:', err);
+        logger.error('CheckoutPage', 'Failed to fetch user addresses', err);
       });
   }, [user, navigate]);
 
   const handleCreateAddress = async (e) => {
     e.preventDefault();
+    const valResult = validateSchema(addressSchema, newAddress);
+    if (!valResult.isValid) {
+      addToast(Object.values(valResult.errors)[0], 'error');
+      return;
+    }
+
     try {
       const res = await addressApi.createAddress(newAddress);
       if (res?.data) {
@@ -70,13 +78,18 @@ const CheckoutPage = () => {
         addToast('Delivery address saved', 'success');
       }
     } catch (err) {
+      logger.error('CheckoutPage', 'Failed to save new address', err);
       addToast(err.message || 'Failed to save address', 'error');
     }
   };
 
   const handlePlaceOrder = async () => {
-    if (!selectedAddressId) {
-      addToast('Please select or add a delivery address', 'error');
+    const checkoutValidation = validateSchema(checkoutSchema, {
+      addressId: selectedAddressId,
+      paymentMethod,
+    });
+    if (!checkoutValidation.isValid) {
+      addToast(Object.values(checkoutValidation.errors)[0], 'error');
       return;
     }
 
@@ -104,6 +117,7 @@ const CheckoutPage = () => {
         navigate(`/track/${res.data.orderNumber}`);
       }
     } catch (err) {
+      logger.error('CheckoutPage', 'Failed to place order', err);
       addToast(err.message || 'Failed to place order. Please retry.', 'error');
     } finally {
       setPlacingOrder(false);

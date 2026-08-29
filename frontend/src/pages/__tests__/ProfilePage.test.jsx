@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import ProfilePage from '../ProfilePage';
@@ -29,6 +29,7 @@ describe('ProfilePage Component (Isolated Unit Tests)', () => {
   ];
 
   beforeEach(() => {
+    vi.clearAllMocks();
     vi.spyOn(AuthContextModule, 'useAuth').mockReturnValue({
       user: mockUser,
       isAuthenticated: true,
@@ -53,5 +54,50 @@ describe('ProfilePage Component (Isolated Unit Tests)', () => {
       expect(screen.getByText(/Saved Addresses \(1\)/i)).toBeInTheDocument();
       expect(screen.getByText(/123 Palm Grove Lane/i)).toBeInTheDocument();
     });
+  });
+
+  it('opens and closes the address creation form', async () => {
+    render(
+      <MemoryRouter>
+        <ToastProvider>
+          <ProfilePage />
+        </ToastProvider>
+      </MemoryRouter>
+    );
+
+    const toggleBtn = screen.getByText(/Add Address/i);
+    fireEvent.click(toggleBtn);
+
+    expect(screen.getByPlaceholderText(/Street Address, Building Name/i)).toBeInTheDocument();
+    expect(screen.getByText('Save Address')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('Cancel'));
+    expect(screen.queryByPlaceholderText(/Street Address, Building Name/i)).not.toBeInTheDocument();
+  });
+
+  it('handles address deletion when confirmed', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const deleteSpy = vi
+      .spyOn(api.addressApi, 'deleteAddress')
+      .mockResolvedValue({ data: { success: true } });
+
+    render(
+      <MemoryRouter>
+        <ToastProvider>
+          <ProfilePage />
+        </ToastProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/123 Palm Grove Lane/i)).toBeInTheDocument();
+    });
+
+    const deleteBtn = screen.getByLabelText(/Delete Home address/i);
+    await act(async () => {
+      fireEvent.click(deleteBtn);
+    });
+
+    expect(deleteSpy).toHaveBeenCalledWith(501);
   });
 });

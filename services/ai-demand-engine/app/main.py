@@ -62,7 +62,10 @@ def forecast_demand(req: DemandForecastRequest):
 
     ma_velocity = calculate_moving_average_velocity(req.sales_history)
     ses_forecast = calculate_exponential_smoothing(req.sales_history)
-    reorder_info = estimate_reorder_point(ma_velocity, lead_time_days=req.lead_time_days)
+    try:
+        reorder_info = estimate_reorder_point(ma_velocity, lead_time_days=req.lead_time_days)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return DemandForecastResponse(
         product_id=req.product_id,

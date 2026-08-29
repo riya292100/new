@@ -6,6 +6,22 @@ export default defineConfig({
   define: {
     global: 'window',
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React core — cached until React itself changes
+          'vendor-react': ['react', 'react-dom'],
+          // Router — separate from React so navigation updates don't bust react cache
+          'vendor-router': ['react-router-dom'],
+          // WebSocket / STOMP — only loaded on pages that need live tracking
+          'vendor-stomp': ['@stomp/stompjs', 'sockjs-client'],
+          // Lucide icons — large icon library, rarely changes
+          'vendor-icons': ['lucide-react'],
+        },
+      },
+    },
+  },
   server: {
     host: '0.0.0.0',
     port: 5173,

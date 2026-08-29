@@ -1,5 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import logger from '../utils/logger';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -13,61 +15,62 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     this.setState({ errorInfo });
-    // In production, log to an error monitoring service (e.g. Sentry)
-    if (import.meta.env.VITE_SENTRY_DSN) {
-      // Simulate Sentry integration
-      console.error('Sending error to Sentry [DSN configured]:', error);
-    } else {
-      console.error('Uncaught error (Sentry not configured):', error);
+
+    // Report structured error to centralized logger
+    logger.error('ErrorBoundary', 'Uncaught component error in render tree', error, {
+      componentStack: errorInfo?.componentStack,
+    });
+
+    // Optional error tracking integration (e.g. Sentry) when DSN is configured
+    const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
+    if (sentryDsn && typeof window !== 'undefined' && window.Sentry) {
+      try {
+        window.Sentry.captureException(error, { extra: errorInfo });
+      } catch (err) {
+        logger.warn('ErrorBoundary', 'Failed to dispatch error to Sentry', err);
+      }
+    }
+
+    if (this.props.onError) {
+      this.props.onError(error, errorInfo);
     }
   }
 
   handleReload = () => {
-    window.location.reload();
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
   };
 
   handleGoHome = () => {
-    this.setState({ hasError: false, error: null });
-    window.location.href = '/';
+    this.setState({ hasError: false, error: null, errorInfo: null });
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+    }
+  };
+
+  handleReset = () => {
+    this.setState({ hasError: false, error: null, errorInfo: null });
+    if (this.props.onReset) {
+      this.props.onReset();
+    }
   };
 
   render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        return typeof this.props.fallback === 'function'
+          ? this.props.fallback({
+              error: this.state.error,
+              resetError: this.handleReset,
+            })
+          : this.props.fallback;
+      }
+
       return (
-        <div
-          style={{
-            minHeight: '70vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '24px',
-          }}
-        >
-          <div
-            style={{
-              maxWidth: '520px',
-              width: '100%',
-              background: '#ffffff',
-              borderRadius: '24px',
-              padding: '36px 28px',
-              textAlign: 'center',
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.08)',
-              border: '1px solid #f1f5f9',
-            }}
-          >
-            <div
-              style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '20px',
-                background: '#fef2f2',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 20px',
-                color: '#ef4444',
-              }}
-            >
+        <div className="qc-error-boundary-wrap">
+          <div className="qc-error-boundary-card">
+            <div className="qc-error-icon-box">
               <AlertTriangle size={32} />
             </div>
 
@@ -75,7 +78,7 @@ class ErrorBoundary extends React.Component {
               style={{
                 fontSize: '1.5rem',
                 fontWeight: '800',
-                color: '#0f172a',
+                color: 'var(--color-text-main, #0f172a)',
                 marginBottom: '8px',
               }}
             >
@@ -84,7 +87,7 @@ class ErrorBoundary extends React.Component {
             <p
               style={{
                 fontSize: '0.92rem',
-                color: '#64748b',
+                color: 'var(--color-text-muted, #64748b)',
                 marginBottom: '28px',
                 lineHeight: 1.6,
               }}
@@ -95,38 +98,18 @@ class ErrorBoundary extends React.Component {
 
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               <button
+                type="button"
                 onClick={this.handleReload}
-                style={{
-                  background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '12px',
-                  padding: '12px 20px',
-                  fontWeight: '700',
-                  fontSize: '0.9rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  cursor: 'pointer',
-                }}
+                className="btn btn-primary"
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
               >
                 <RefreshCw size={16} /> Reload Page
               </button>
               <button
+                type="button"
                 onClick={this.handleGoHome}
-                style={{
-                  background: '#f1f5f9',
-                  color: '#334155',
-                  border: 'none',
-                  borderRadius: '12px',
-                  padding: '12px 20px',
-                  fontWeight: '700',
-                  fontSize: '0.9rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  cursor: 'pointer',
-                }}
+                className="btn btn-outline"
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
               >
                 <Home size={16} /> Back to Store
               </button>
@@ -139,5 +122,12 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+ErrorBoundary.propTypes = {
+  children: PropTypes.node.isRequired,
+  fallback: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  onError: PropTypes.func,
+  onReset: PropTypes.func,
+};
 
 export default ErrorBoundary;

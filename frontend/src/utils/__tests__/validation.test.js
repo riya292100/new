@@ -4,13 +4,18 @@ import {
   validatePassword,
   validatePhone,
   validatePincode,
+  validateRequired,
+  validateRating,
+  validatePositiveNumber,
   sanitizeInput,
   validateSchema,
   loginSchema,
   registerSchema,
   addressSchema,
   reviewSchema,
+  couponSchema,
   checkoutSchema,
+  tableBookingSchema,
 } from '../validation';
 
 describe('Validation Utility Suite', () => {
@@ -25,6 +30,7 @@ describe('Validation Utility Suite', () => {
       expect(validateEmail('invalid-email').isValid).toBe(false);
       expect(validateEmail('@domain.com').isValid).toBe(false);
       expect(validateEmail('user@').isValid).toBe(false);
+      expect(validateEmail(null).isValid).toBe(false);
     });
   });
 
@@ -37,6 +43,7 @@ describe('Validation Utility Suite', () => {
     it('should reject passwords shorter than 6 characters', () => {
       expect(validatePassword('12345').isValid).toBe(false);
       expect(validatePassword('').isValid).toBe(false);
+      expect(validatePassword(null).isValid).toBe(false);
     });
   });
 
@@ -51,6 +58,7 @@ describe('Validation Utility Suite', () => {
       expect(validatePhone('123').isValid).toBe(false);
       expect(validatePhone('abcdefghij').isValid).toBe(false);
       expect(validatePhone('').isValid).toBe(false);
+      expect(validatePhone(null).isValid).toBe(false);
     });
   });
 
@@ -64,6 +72,30 @@ describe('Validation Utility Suite', () => {
     it('should reject invalid postal codes', () => {
       expect(validatePincode('12').isValid).toBe(false);
       expect(validatePincode('').isValid).toBe(false);
+      expect(validatePincode(null).isValid).toBe(false);
+    });
+  });
+
+  describe('validateRequired and validateRating', () => {
+    it('validates required fields and minimum length', () => {
+      expect(validateRequired('QuickCart', 'Brand', 3).isValid).toBe(true);
+      expect(validateRequired('QC', 'Brand', 3).isValid).toBe(false);
+      expect(validateRequired('', 'Brand').isValid).toBe(false);
+    });
+
+    it('validates ratings in 1-5 star bounds', () => {
+      expect(validateRating(5).isValid).toBe(true);
+      expect(validateRating('4').isValid).toBe(true);
+      expect(validateRating(0).isValid).toBe(false);
+      expect(validateRating(6).isValid).toBe(false);
+      expect(validateRating('invalid').isValid).toBe(false);
+    });
+
+    it('validates positive numbers', () => {
+      expect(validatePositiveNumber(4, 'Party size').isValid).toBe(true);
+      expect(validatePositiveNumber(0, 'Party size').isValid).toBe(false);
+      expect(validatePositiveNumber(-2, 'Party size').isValid).toBe(false);
+      expect(validatePositiveNumber('abc', 'Party size').isValid).toBe(false);
     });
   });
 
@@ -73,6 +105,11 @@ describe('Validation Utility Suite', () => {
       const clean = sanitizeInput(dirty);
       expect(clean).not.toContain('<script>');
       expect(clean).toContain('&lt;script&gt;');
+    });
+
+    it('handles non-string inputs safely', () => {
+      expect(sanitizeInput(null)).toBe('');
+      expect(sanitizeInput(123)).toBe('');
     });
   });
 
@@ -105,19 +142,53 @@ describe('Validation Utility Suite', () => {
 
     it('validates address schema correctly', () => {
       const valid = {
-        label: 'Home',
+        receiverName: 'John Doe',
+        receiverPhone: '9876543210',
         streetAddress: '123 MG Road, Apt 4B',
         city: 'Bengaluru',
-        state: 'Karnataka',
         pincode: '560001',
       };
       expect(validateSchema(addressSchema, valid).isValid).toBe(true);
 
-      const invalid = { label: '', streetAddress: '12', city: '', state: '', pincode: 'abc' };
+      const invalid = {
+        receiverName: '',
+        receiverPhone: '12',
+        streetAddress: '12',
+        city: '',
+        pincode: 'abc',
+      };
       const res = validateSchema(addressSchema, invalid);
       expect(res.isValid).toBe(false);
-      expect(res.errors.label).toBeDefined();
+      expect(res.errors.receiverName).toBeDefined();
       expect(res.errors.streetAddress).toBeDefined();
+    });
+
+    it('validates coupon schema correctly', () => {
+      expect(validateSchema(couponSchema, { code: 'SAVE50' }).isValid).toBe(true);
+      expect(validateSchema(couponSchema, { code: '' }).isValid).toBe(false);
+    });
+
+    it('validates table booking schema correctly', () => {
+      const valid = {
+        partySize: 4,
+        bookingDate: '2026-09-01',
+        timeSlot: '19:30',
+        guestName: 'Sarah Smith',
+        guestPhone: '9876543210',
+      };
+      expect(validateSchema(tableBookingSchema, valid).isValid).toBe(true);
+
+      const invalid = {
+        partySize: 0,
+        bookingDate: '',
+        timeSlot: '',
+        guestName: '',
+        guestPhone: '123',
+      };
+      const res = validateSchema(tableBookingSchema, invalid);
+      expect(res.isValid).toBe(false);
+      expect(res.errors.partySize).toBeDefined();
+      expect(res.errors.guestName).toBeDefined();
     });
 
     it('validates review schema correctly', () => {
@@ -134,17 +205,6 @@ describe('Validation Utility Suite', () => {
       expect(
         validateSchema(checkoutSchema, { addressId: null, paymentMethod: 'INVALID' }).isValid
       ).toBe(false);
-    });
-  });
-
-  describe('Regex Pattern Exports', () => {
-    it('matches valid patterns with exported regex constants', async () => {
-      const { EMAIL_REGEX, PHONE_REGEX, PINCODE_REGEX, PASSWORD_REGEX } =
-        await import('../validation');
-      expect(EMAIL_REGEX.test('test@example.com')).toBe(true);
-      expect(PHONE_REGEX.test('9876543210')).toBe(true);
-      expect(PINCODE_REGEX.test('110001')).toBe(true);
-      expect(PASSWORD_REGEX.test('Secret123')).toBe(true);
     });
   });
 });

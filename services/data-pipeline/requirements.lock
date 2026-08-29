@@ -1,0 +1,8 @@
+# Deterministic lockfile for QuickCart Data Engineering & dbt Pipeline
+dbt-core==1.8.6
+dbt-postgres==1.8.2
+dbt-extractor==0.5.1
+sqlfluff==3.1.1
+pytest==8.3.2
+pydantic==2.8.2
+pydantic-core==2.20.1

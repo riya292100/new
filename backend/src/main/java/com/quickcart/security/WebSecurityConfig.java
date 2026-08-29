@@ -84,7 +84,13 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public Endpoints
                         .requestMatchers("/api/auth/**", "/api/v1/auth/**").permitAll()
-                        .requestMatchers("/health/**", "/api/health/**", "/api/v1/health/**").permitAll()
+                        .requestMatchers(
+                                "/health", "/health/**",
+                                "/api/health", "/api/health/**",
+                                "/api/v1/health", "/api/v1/health/**",
+                                "/actuator/health", "/actuator/health/**",
+                                "/actuator/info"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**", "/api/v1/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/brands/**", "/api/v1/brands/**").permitAll()

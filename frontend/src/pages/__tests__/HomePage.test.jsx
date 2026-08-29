@@ -30,6 +30,8 @@ describe('HomePage Component (Isolated Unit Tests)', () => {
   ];
 
   beforeEach(() => {
+    vi.clearAllMocks();
+
     vi.spyOn(AuthContextModule, 'useAuth').mockReturnValue({
       user: { fullName: 'Demo User' },
       isAuthenticated: true,
@@ -42,13 +44,13 @@ describe('HomePage Component (Isolated Unit Tests)', () => {
       getItemQuantity: vi.fn().mockReturnValue(0),
       getItemCartId: vi.fn().mockReturnValue(null),
     });
+  });
 
+  it('renders hero banner, categories, and featured product sections on successful fetch', async () => {
     vi.spyOn(api.catalogApi, 'getCategories').mockResolvedValue(mockCategories);
     vi.spyOn(api.catalogApi, 'getFeaturedProducts').mockResolvedValue(mockProducts);
     vi.spyOn(api.catalogApi, 'getDailyDeals').mockResolvedValue(mockProducts);
-  });
 
-  it('renders hero banner, categories, and featured product sections', async () => {
     render(
       <MemoryRouter>
         <HomePage />
@@ -61,6 +63,42 @@ describe('HomePage Component (Isolated Unit Tests)', () => {
     await waitFor(() => {
       const mangoes = screen.getAllByText(/Fresh Alphonso Mangoes/i);
       expect(mangoes.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('handles empty category and product responses gracefully without crashing', async () => {
+    vi.spyOn(api.catalogApi, 'getCategories').mockResolvedValue([]);
+    vi.spyOn(api.catalogApi, 'getFeaturedProducts').mockResolvedValue([]);
+    vi.spyOn(api.catalogApi, 'getDailyDeals').mockResolvedValue([]);
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Instant Delivery in 10–30 Minutes/i)).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Fresh Alphonso Mangoes/i)).not.toBeInTheDocument();
+    });
+  });
+
+  it('handles API rejection gracefully by falling back to safe empty state', async () => {
+    vi.spyOn(api.catalogApi, 'getCategories').mockRejectedValue(new Error('Network offline'));
+    vi.spyOn(api.catalogApi, 'getFeaturedProducts').mockRejectedValue(new Error('Network offline'));
+    vi.spyOn(api.catalogApi, 'getDailyDeals').mockRejectedValue(new Error('Network offline'));
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Instant Delivery in 10–30 Minutes/i)).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Fresh Alphonso Mangoes/i)).not.toBeInTheDocument();
     });
   });
 });

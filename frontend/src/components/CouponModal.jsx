@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { X, Tag, Check, Copy, Sparkles, Percent } from 'lucide-react';
 import { couponApi } from '../services/api';
 import { useCart } from '../context/CartContext';
+import { validateSchema, couponSchema } from '../utils/validation';
+import logger from '../utils/logger';
 
 const CouponModal = () => {
   const { couponModalOpen, setCouponModalOpen, applyCoupon, appliedCoupon } = useCart();
@@ -16,7 +18,7 @@ const CouponModal = () => {
           if (res?.data) setCoupons(res.data);
         })
         .catch((err) => {
-          console.error('Failed to fetch coupons:', err);
+          logger.error('CouponModal', 'Failed to fetch available coupons', err);
         });
     }
   }, [couponModalOpen]);
@@ -25,8 +27,10 @@ const CouponModal = () => {
 
   const handleCustomApply = (e) => {
     e.preventDefault();
-    if (customCode.trim()) {
-      applyCoupon(customCode.trim().toUpperCase());
+    const cleanCode = customCode.trim().toUpperCase();
+    const valResult = validateSchema(couponSchema, { code: cleanCode });
+    if (valResult.isValid) {
+      applyCoupon(cleanCode);
     }
   };
 

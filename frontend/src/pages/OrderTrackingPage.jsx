@@ -44,6 +44,24 @@ const OrderTrackingPage = () => {
     );
   }
 
+  if (fetchError && !order) {
+    return (
+      <div className="container" style={{ padding: '60px 16px', textAlign: 'center' }}>
+        <div className="alert alert-error" style={{ maxWidth: '480px', margin: '0 auto 16px' }}>
+          Unable to load live tracking details.
+        </div>
+        <button
+          type="button"
+          onClick={refresh}
+          className="btn btn-primary"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+        >
+          <RefreshCw size={16} /> Retry Tracking
+        </button>
+      </div>
+    );
+  }
+
   if (!order) {
     return (
       <div className="container" style={{ padding: '60px 16px', textAlign: 'center' }}>

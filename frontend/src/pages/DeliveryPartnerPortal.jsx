@@ -30,16 +30,7 @@ const DeliveryPartnerPortal = () => {
   return (
     <div className="container" style={{ paddingTop: '24px', paddingBottom: '60px' }}>
       {/* Header Bar */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '24px',
-          flexWrap: 'wrap',
-          gap: '12px',
-        }}
-      >
+      <div className="qc-driver-header-bar">
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span
@@ -47,13 +38,15 @@ const DeliveryPartnerPortal = () => {
                 width: '12px',
                 height: '12px',
                 borderRadius: '50%',
-                background: '#10b981',
-                boxShadow: '0 0 10px #10b981',
+                background: 'var(--color-primary-light, #10b981)',
+                boxShadow: '0 0 10px var(--color-primary-light, #10b981)',
               }}
             />
-            <h1 style={{ fontSize: '1.75rem', color: '#0f172a' }}>Delivery Partner Portal</h1>
+            <h1 style={{ fontSize: '1.75rem', color: 'var(--color-text-main, #0f172a)' }}>
+              Delivery Partner Portal
+            </h1>
           </div>
-          <p style={{ fontSize: '0.88rem', color: '#64748b' }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted, #64748b)' }}>
             Welcome back,{' '}
             <strong>{profile?.user?.fullName || user?.fullName || 'Express Rider'}</strong> •{' '}
             {profile?.vehicleType || 'Electric Scooter'}
@@ -62,6 +55,7 @@ const DeliveryPartnerPortal = () => {
 
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button
+            type="button"
             onClick={handleSimulateGPS}
             className="btn btn-accent btn-sm"
             style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
@@ -69,6 +63,7 @@ const DeliveryPartnerPortal = () => {
             <Zap size={14} /> Broadcast GPS Pulse
           </button>
           <button
+            type="button"
             onClick={refresh}
             className="btn btn-outline btn-sm"
             style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
@@ -83,7 +78,13 @@ const DeliveryPartnerPortal = () => {
 
       {/* Assigned Orders Feed */}
       <div>
-        <h3 style={{ fontSize: '1.3rem', color: '#0f172a', marginBottom: '16px' }}>
+        <h3
+          style={{
+            fontSize: '1.3rem',
+            color: 'var(--color-text-main, #0f172a)',
+            marginBottom: '16px',
+          }}
+        >
           Active & Assigned Deliveries ({assignedOrders.length})
         </h3>
 

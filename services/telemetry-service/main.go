@@ -18,7 +18,10 @@ func main() {
 	handler := tracker.NewAPIHandler(spatialTracker)
 
 	mux := http.NewServeMux()
+	mux.HandleFunc("/health", handler.HealthCheckHandler)
 	mux.HandleFunc("/healthz", handler.HealthCheckHandler)
+	mux.HandleFunc("/ready", handler.HealthCheckHandler)
+	mux.HandleFunc("/readyz", handler.HealthCheckHandler)
 	mux.HandleFunc("/api/v1/telemetry/location", handler.UpdateLocationHandler)
 	mux.HandleFunc("/api/v1/telemetry/nearby-drivers", handler.FindNearbyDriversHandler)
 

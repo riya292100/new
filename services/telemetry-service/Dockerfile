@@ -4,7 +4,7 @@ FROM golang:1.22-alpine AS builder
 WORKDIR /app
 
 COPY go.mod ./
-RUN go mod download || true
+RUN go mod download
 
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o telemetry-server main.go
@@ -13,6 +13,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o telemetry-server main.
 FROM alpine:3.19
 
 WORKDIR /app
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser:appgroup
+
 COPY --from=builder /app/telemetry-server /app/telemetry-server
 
 EXPOSE 8085

@@ -53,6 +53,11 @@ __pycache__/
 *.so
 .Python
 .pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.ruff_cache/
+
 
 # Go
 *.exe

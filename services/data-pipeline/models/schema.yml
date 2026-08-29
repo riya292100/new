@@ -1,0 +1,115 @@
+version: 2
+
+sources:
+  - name: quickcart_raw
+    schema: public
+    tables:
+      - name: orders
+        description: "Raw order transactional records"
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
+          - name: order_number
+            tests:
+              - unique
+              - not_null
+          - name: status
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['CONFIRMED', 'PACKING', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED']
+
+      - name: order_items
+        description: "Line items associated with each order"
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
+          - name: order_id
+            tests:
+              - not_null
+              - relationships:
+                  to: source('quickcart_raw', 'orders')
+                  field: id
+          - name: quantity
+            tests:
+              - not_null
+
+      - name: products
+        description: "Product catalog inventory definitions"
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
+          - name: name
+            tests:
+              - not_null
+          - name: selling_price
+            tests:
+              - not_null
+
+      - name: dark_stores
+        description: "Micro-fulfillment dark store centers"
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
+          - name: code
+            tests:
+              - unique
+              - not_null
+
+models:
+  - name: stg_orders
+    description: "Cleaned and conformed orders staging view"
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: order_number
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_order_fulfillment
+    description: "Fact table recording order completion SLAs and financial metrics"
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: total_amount
+        tests:
+          - not_null
+
+  - name: fct_hourly_demand
+    description: "Aggregated hourly demand metrics by store and product"
+    columns:
+      - name: order_hour
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: total_quantity_sold
+        tests:
+          - not_null
+
+  - name: dim_products
+    description: "Product dimension with stock health enrichment"
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+      - name: stock_health_status
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['IN_STOCK', 'LOW_STOCK', 'OUT_OF_STOCK']

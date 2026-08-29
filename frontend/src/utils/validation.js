@@ -9,7 +9,7 @@ export const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 // Phone number regex pattern (supports 10-digit formats with optional country codes)
 export const PHONE_REGEX = /^(\+?\d{1,4}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
 
-// PIN / Postal code regex (4 to 6 alphanumeric characters)
+// PIN / Postal code regex (4 to 8 alphanumeric characters)
 export const PINCODE_REGEX = /^[A-Za-z0-9\s-]{4,8}$/;
 
 // Password validation regex (minimum 6 chars, alphanumeric)
@@ -122,6 +122,20 @@ export const validateRating = (rating) => {
 };
 
 /**
+ * Validate positive number
+ * @param {number|string} val
+ * @param {string} fieldName
+ * @returns {{ isValid: boolean, error: string|null }}
+ */
+export const validatePositiveNumber = (val, fieldName = 'Amount') => {
+  const num = Number(val);
+  if (isNaN(num) || num <= 0) {
+    return { isValid: false, error: `${fieldName} must be a positive number` };
+  }
+  return { isValid: true, error: null };
+};
+
+/**
  * Declarative Schema Validation Engine
  * Runs field-level validator chains against payload object.
  * @param {Object} schema
@@ -161,10 +175,10 @@ export const registerSchema = {
 };
 
 export const addressSchema = {
-  label: [(v) => validateRequired(v, 'Address label (e.g. Home, Work)', 2)],
+  receiverName: [(v) => validateRequired(v, 'Receiver name', 2)],
+  receiverPhone: [(v) => validatePhone(v)],
   streetAddress: [(v) => validateRequired(v, 'Street address', 5)],
   city: [(v) => validateRequired(v, 'City', 2)],
-  state: [(v) => validateRequired(v, 'State', 2)],
   pincode: [(v) => validatePincode(v)],
 };
 
@@ -190,4 +204,12 @@ export const checkoutSchema = {
         ? { isValid: true, error: null }
         : { isValid: false, error: 'Valid payment method required' },
   ],
+};
+
+export const tableBookingSchema = {
+  partySize: [(v) => validatePositiveNumber(v, 'Party size')],
+  bookingDate: [(v) => validateRequired(v, 'Booking date')],
+  timeSlot: [(v) => validateRequired(v, 'Time slot')],
+  guestName: [(v) => validateRequired(v, 'Guest name', 2)],
+  guestPhone: [(v) => validatePhone(v)],
 };

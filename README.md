@@ -10,7 +10,6 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.3-brightgreen.svg?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Go 1.22](https://img.shields.io/badge/Go-1.22-00ADD8.svg?logo=go&logoColor=white)](https://golang.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb.svg?logo=react&logoColor=white)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646cff.svg?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
@@ -18,14 +17,13 @@
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)](https://www.docker.com/)
 [![Tests](https://img.shields.io/badge/Tests-100%25%20Passing-success.svg)](#-running-automated-tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 <p align="center">
   <b>Enterprise-grade, polyglot quick-commerce delivery platform</b><br>
-  Built with <b>Java 21 / Spring Boot 3</b> (Core & Ledger), <b>Rust</b> (Flash Sale Allocation & Cryptographic Signing), <b>Python</b> (AI Demand & Dynamic Pricing), <b>Go</b> (Spatial Driver Telemetry), and <b>React 18 / TypeScript</b> (Storefront PWA).
+  Built with <b>Java 21 / Spring Boot 3</b> (Core & Ledger), <b>Rust</b> (Flash Sale Allocation & Cryptographic Signing), <b>Python</b> (AI Demand & Dynamic Pricing), <b>Go</b> (Spatial Driver Telemetry), and <b>React 18</b> (Storefront PWA).
 </p>
 
-[Explore API Docs](http://localhost:8081/swagger-ui.html) • [Data Pipeline Architecture](docs/DATA_PIPELINE.md) • [Report Bug](https://github.com/riya292100/new/issues/new?template=bug_report.yml) • [Request Feature](https://github.com/riya292100/new/issues/new?template=feature_request.yml) • [Contributing Guide](CONTRIBUTING.md)
+[Architecture Guide](docs/architecture.md) • [Development Setup](docs/development.md) • [Testing Strategy](docs/testing.md) • [Deployment Guide](docs/deployment.md) • [Security Policy](docs/security.md) • [Troubleshooting](docs/troubleshooting.md) • [Data Engineering](docs/data-engineering.md)
 
 </div>
 
@@ -33,14 +31,14 @@
 
 ## 🚀 Fresh Clone Quickstart (Zero-Friction Setup)
 
-QuickCart works **immediately out-of-the-box from a fresh clone**. Follow these exact steps:
+QuickCart works **immediately out-of-the-box from a clean fresh clone**. Follow these steps:
 
 ```bash
 # 1. Clone repository
 git clone https://github.com/riya292100/new.git quickcart
 cd quickcart
 
-# 2. Copy environment template (optional - zero-config defaults are built-in)
+# 2. Copy environment template
 cp .env.example .env
 
 # 3. Install dependencies across all workspaces
@@ -51,8 +49,8 @@ npm run install:all
 docker compose up --build
 
 # Option B: Run locally
-# In separate terminal tabs:
-cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev  # Port 8081
+# In separate terminals:
+cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev  # Port 8080
 cd services/ai-demand-engine && uvicorn app.main:app --port 8082     # Port 8082
 cd services/telemetry-service && go run main.go                       # Port 8085
 npm run dev                                                           # Port 5173
@@ -62,7 +60,7 @@ npm run dev                                                           # Port 517
 
 ## 📦 Deterministic Lockfiles & Package Managers
 
-Every language toolchain and package manager in this monorepo includes a committed lockfile for 100% reproducible installs on clean environments:
+Every language toolchain and package manager in this monorepo includes a committed lockfile for 100% reproducible installs:
 
 | Service / Layer | Package Manager | Manifest File | Lockfile |
 |---|---|---|---|
@@ -81,42 +79,45 @@ All tests run locally and in GitHub Actions CI with zero manual database or serv
 
 ### 1. Unified Monorepo Test (All Services)
 ```bash
-# Run all frontend, backend, Python, and Go test suites in one command:
 npm run test:all
-
-# Or via Makefile:
-make test-all
 ```
 
 ### 2. Individual Service Test Commands
 
-#### 🌐 Frontend (React 18 / Vitest / V8 Coverage)
+#### 🌐 Frontend (React 18 / Vitest / V8 Coverage / ESLint / Prettier)
 ```bash
 npm test
-# or with coverage report:
 npm run test:coverage
 ```
-* **Status**: `70 test files, 135 tests passing (100% PASS)`
-* **Enforced Gates**: `Lines >= 70%, Statements >= 70%, Branches >= 60%, Functions >= 70%`
+* **Status**: `73 test files, 169 tests passing (100% PASS)`
+* **Enforced Threshold Gates**: `Lines >= 70%, Statements >= 70%, Branches >= 60%, Functions >= 70%`
+* **Static Analysis**: ESLint (0 errors, 0 warnings), Prettier 100% compliant
 
 #### ☕ Java Backend (Spring Boot 3 / JUnit 5 / JaCoCo / Checkstyle)
 ```bash
 npm run test:backend
-# or standalone (offline-friendly in-memory test profile):
-cd backend && ./mvnw -B test -Dspring.profiles.active=test
+# or standalone (in-memory test profile with zero external dependencies):
+cd backend && ./mvnw clean test -Dspring.profiles.active=test
 ```
 * **Status**: `119 unit & integration tests passing (100% PASS)`
 * **Code Quality & Linting**: `Checkstyle` enforced (`backend/checkstyle.xml`, 0 violations)
-* **Architecture & Telemetry**: Detailed in [`docs/BACKEND_ARCHITECTURE.md`](docs/BACKEND_ARCHITECTURE.md) (Structured JSON audit logs, MDC correlation tracking, ErrorTracker)
-* **Coverage**: JaCoCo report generated automatically at `backend/target/site/jacoco/index.html`
+* **Architecture & Telemetry**: Detailed in [`docs/architecture.md`](docs/architecture.md)
 
-#### 🧠 Python AI Demand Engine (FastAPI / pytest)
+#### 🧠 Python AI Demand Engine (FastAPI / pytest / pytest-cov)
 ```bash
 npm run test:python
 # or standalone:
-cd services/ai-demand-engine && pytest -v
+cd services/ai-demand-engine && python -m pytest tests -v --cov=app
 ```
-* **Status**: `7 / 7 tests passing (100% PASS)`
+* **Status**: `38 tests passing (100% PASS), 97% code coverage`
+
+#### 📊 Python Data Pipeline & Quality Validation
+```bash
+npm run test:data-pipeline
+# or standalone:
+cd services/data-pipeline && python -m pytest tests -v
+```
+* **Status**: `7 tests passing (100% PASS)`
 
 #### ⚡ Go Spatial Telemetry Service (Golang / go test)
 ```bash
@@ -124,7 +125,7 @@ npm run test:go
 # or standalone:
 cd services/telemetry-service && go test -v -race ./...
 ```
-* **Status**: `Spatial Indexer, Concurrent GPS Ingestion, and API Tests Passing`
+* **Status**: `Haversine Distance, Concurrent Spatial Tracker, and API Tests Passing (100% PASS)`
 
 #### 🦀 Rust Flash Sale Engine (Actix-Web / cargo test)
 ```bash
@@ -136,11 +137,35 @@ cd services/flash-sale-engine && cargo test
 
 ---
 
+## 🩺 System Health & Observability Endpoints
+
+All core health probes and metric endpoints return structured system status:
+
+| Service | Health Endpoint | Expected HTTP Status |
+|---|---|---|
+| **Java Backend** | `GET /actuator/health` | `200 OK` (`{"status":"UP"}`) |
+| **Java Info** | `GET /actuator/info` | `200 OK` |
+| **Python AI Engine** | `GET /healthz`, `GET /readyz` | `200 OK` |
+| **Go Telemetry** | `GET /healthz`, `GET /readyz` | `200 OK` |
+| **Rust Flash Sale** | `GET /healthz`, `GET /readyz` | `200 OK` |
+| **Frontend Web** | `GET /` | `200 OK` |
+
+Automated smoke testing script:
+```bash
+# POSIX (Linux / macOS / CI)
+bash scripts/smoke-test.sh
+
+# Windows PowerShell
+powershell -ExecutionPolicy Bypass -File scripts/smoke-test.ps1
+```
+
+---
+
 ## 🏛️ Polyglot Microservice Architecture
 
 ```mermaid
 flowchart TD
-    subgraph ClientLayer["🌐 Client & Frontends (React 18 + TypeScript)"]
+    subgraph ClientLayer["🌐 Client & Frontends (React 18 + Modular Services)"]
         PWA["PWA Storefront & Shopping Hub"]
         AdminPortal["Store Manager Command Portal"]
         DriverApp["Rider Live GPS Dispatch Portal"]
@@ -156,7 +181,6 @@ flowchart TD
     subgraph RustFlashSaleService["🦀 Flash Sale & Signing Engine (Rust / Actix-Web)"]
         CASAllocator["Lock-Free Atomic CAS Stock Allocator"]
         HMACSigner["HMAC-SHA256 Receipt Integrity Signer"]
-        RateLimiter["Microsecond Quota & Token Throttle"]
     end
 
     subgraph PythonAIService["🧠 AI Demand & Pricing Engine (Python / FastAPI)"]
@@ -199,13 +223,15 @@ flowchart TD
 | **Flash Sale Engine** | **Rust 1.80+ / Actix-Web** | `8086` | Sub-millisecond atomic CAS flash sale token reservation and HMAC-SHA256 digital receipt integrity signing. |
 | **AI Demand Engine** | **Python 3.12 / FastAPI** | `8082` | Exponential smoothing demand forecasting, safety stock reorder point estimation, dynamic surge price elasticity, and cart co-occurrence recommendations. |
 | **Spatial Telemetry** | **Go 1.22+ / Golang** | `8085` | High-throughput concurrent rider GPS ingestion, sub-millisecond Haversine proximity searches, and ETA calculations. |
-| **Storefront & PWA** | **React 18 / TypeScript / Vite** | `5173` / `80` | Hyperlocal catalog, cart drawer, QuickCash loyalty, table bookings, customer support tickets, and live driver tracking. |
+| **Storefront & PWA** | **React 18 / Vite** | `5173` / `80` | Hyperlocal catalog, cart drawer, QuickCash loyalty, table bookings, customer support tickets, and live driver tracking. |
 
 ---
 
-## 🔑 Pre-Seeded Demo Accounts
+## 🔑 Pre-Seeded Demo Accounts (Development Only)
 
-| Role | Email | Default Password | Capabilities |
+In development environments, default accounts are seeded for rapid verification:
+
+| Role | Email | Default Password (Dev) | Capabilities |
 |---|---|---|---|
 | **Admin** | `admin@quickcart.com` | `Admin@123` | Full administrative control, financial ledger, dark stores, inventory |
 | **Store Manager** | `manager@quickcart.com` | `Admin@123` | Store-level inventory updates, dispatch operations, workload management |
@@ -213,26 +239,21 @@ flowchart TD
 | **Delivery Rider** | `driver@quickcart.com` | `Driver@123` | Driver portal, GPS simulator, order acceptance and delivery completion |
 | **Customer** | `customer@quickcart.com` | `Customer@123` | Storefront browsing, cart, checkout, QuickCash wallet, table bookings |
 
----
-
-## 🏗️ Production Build Commands
-
-```bash
-# Build all production artifacts in one command:
-npm run build:all
-
-# Or individually:
-npm run build                                       # Frontend static assets in frontend/dist
-cd backend && ./mvnw clean package -DskipTests     # Backend executable JAR in backend/target
-cd services/telemetry-service && go build -o server # Go binary
-```
+> [!IMPORTANT]
+> In production environments (`SPRING_PROFILES_ACTIVE=prod`), all credentials and JWT secrets must be set through environment variables (`DEMO_ADMIN_PASSWORD`, `JWT_SECRET`, etc.).
 
 ---
 
-## 🤝 Contributing & Standards
+## 📚 Technical Documentation Suite
 
-Contributions, issues, and feature requests are welcome!
-Please check [CONTRIBUTING.md](CONTRIBUTING.md) and [CODING_STANDARDS.md](CODING_STANDARDS.md) for conventions.
+Explore the comprehensive technical documentation in the [`docs/`](docs/) directory:
+- [System Architecture](docs/architecture.md)
+- [Development Setup](docs/development.md)
+- [Testing & Quality Assurance](docs/testing.md)
+- [Deployment & Docker Orchestration](docs/deployment.md)
+- [Security & Compliance](docs/security.md)
+- [Troubleshooting & Diagnostics](docs/troubleshooting.md)
+- [Data Engineering & Algorithms](docs/data-engineering.md)
 
 ---
 
