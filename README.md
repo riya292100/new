@@ -29,6 +29,13 @@
 
 ---
 
+## 🌐 Remote Cloud Environment & Live Preview
+
+* **Emergent Cloud IDE Preview URL**: [https://vscode-e01a03eb-31ea-4fd5-b789-791eee6ee17c.preview.emergentagent.com/](https://vscode-e01a03eb-31ea-4fd5-b789-791eee6ee17c.preview.emergentagent.com/)
+* **Session ID / Key**: `a45cbc27`
+
+---
+
 ## 🚀 Fresh Clone Quickstart (Zero-Friction Setup)
 
 QuickCart works **immediately out-of-the-box from a clean fresh clone**. Follow these steps:

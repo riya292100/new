@@ -44,3 +44,11 @@ docker compose ps
 ```bash
 bash scripts/smoke-test.sh
 ```
+
+---
+
+## 4. Remote Cloud & Sandbox Preview Environments
+
+For remote testing and sandbox previews:
+- **Emergent Cloud IDE Preview**: [https://vscode-e01a03eb-31ea-4fd5-b789-791eee6ee17c.preview.emergentagent.com/](https://vscode-e01a03eb-31ea-4fd5-b789-791eee6ee17c.preview.emergentagent.com/)
+- **Session ID / Key**: `a45cbc27`
