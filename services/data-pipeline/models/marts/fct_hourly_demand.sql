@@ -7,10 +7,10 @@ order_items AS (
 )
 
 SELECT
-    DATE_TRUNC('hour', o.order_created_at) AS order_hour,
     o.store_id,
     oi.product_id,
     oi.product_name,
+    DATE_TRUNC('hour', o.order_created_at) AS order_hour,
     COUNT(DISTINCT o.order_id) AS distinct_orders_count,
     SUM(oi.quantity) AS total_quantity_sold,
     SUM(oi.total_price) AS gross_merchandise_value,
@@ -19,7 +19,7 @@ FROM orders AS o
 INNER JOIN order_items AS oi ON o.order_id = oi.order_id
 WHERE o.order_status != 'CANCELLED'
 GROUP BY
-    DATE_TRUNC('hour', o.order_created_at),
     o.store_id,
     oi.product_id,
-    oi.product_name
+    oi.product_name,
+    DATE_TRUNC('hour', o.order_created_at)

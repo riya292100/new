@@ -15,11 +15,11 @@ SELECT
     stock_quantity,
     is_active,
     is_featured,
+    created_at,
+    updated_at,
     CASE
         WHEN stock_quantity <= 0 THEN 'OUT_OF_STOCK'
         WHEN stock_quantity <= 10 THEN 'LOW_STOCK'
         ELSE 'IN_STOCK'
-    END AS stock_health_status,
-    created_at,
-    updated_at
+    END AS stock_health_status
 FROM products

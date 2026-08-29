@@ -1,0 +1,12 @@
+target/
+build/
+dist/
+node_modules/
+.pytest_cache/
+.coverage
+*.py
+*.js
+*.jsx
+*.java
+*.go
+*.rs

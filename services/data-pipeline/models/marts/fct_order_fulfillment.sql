@@ -31,21 +31,19 @@ SELECT
     o.wallet_discount_amount,
     o.tip_amount,
     o.total_amount,
-    COALESCE(oi.total_line_items, 0) AS total_line_items,
-    COALESCE(oi.total_units_ordered, 0) AS total_units_ordered,
     o.order_created_at,
     o.delivered_at,
+    COALESCE(oi.total_line_items, 0) AS total_line_items,
+    COALESCE(oi.total_units_ordered, 0) AS total_units_ordered,
     CASE
         WHEN o.delivered_at IS NOT NULL
-        THEN EXTRACT(EPOCH FROM (o.delivered_at - o.order_created_at)) / 60.0
-        ELSE NULL
+            THEN EXTRACT(EPOCH FROM (o.delivered_at - o.order_created_at)) / 60.0
     END AS fulfillment_duration_minutes,
     CASE
         WHEN o.delivered_at IS NOT NULL AND o.delivered_at <= o.estimated_delivery_time
-        THEN TRUE
+            THEN TRUE
         WHEN o.delivered_at IS NOT NULL
-        THEN FALSE
-        ELSE NULL
+            THEN FALSE
     END AS is_sla_compliant
 FROM orders AS o
 LEFT JOIN order_items AS oi ON o.order_id = oi.order_id

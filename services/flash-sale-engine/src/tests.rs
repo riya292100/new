@@ -1,6 +1,8 @@
 use crate::allocator::FlashSaleManager;
 use crate::models::{ClaimDealRequest, SignReceiptRequest};
 use crate::signer::ReceiptSigner;
+use std::sync::Arc;
+use std::thread;
 
 #[test]
 fn test_deals_seeded_properly() {
@@ -58,6 +60,58 @@ fn test_non_existent_deal_claim() {
     };
     let resp = manager.claim_deal(&req);
     assert!(!resp.success);
+}
+
+#[test]
+fn test_zero_quantity_claim_rejection() {
+    let manager = FlashSaleManager::new();
+    let req = ClaimDealRequest {
+        user_id: 1,
+        deal_id: "DEAL-AVOCADO-80".to_string(),
+        quantity: 0,
+    };
+    let resp = manager.claim_deal(&req);
+    assert!(!resp.success);
+    assert_eq!(resp.quantity, 0);
+}
+
+#[test]
+fn test_concurrent_claims_prevent_overselling() {
+    let manager = Arc::new(FlashSaleManager::new());
+    // DEAL-DARK-ROAST-60 has initial_stock = 30, max_per_user = 1
+    // Spawn 60 concurrent threads with distinct user_ids
+    let mut handles = vec![];
+    for user_id in 1..=60 {
+        let mgr = Arc::clone(&manager);
+        let handle = thread::spawn(move || {
+            let req = ClaimDealRequest {
+                user_id,
+                deal_id: "DEAL-DARK-ROAST-60".to_string(),
+                quantity: 1,
+            };
+            mgr.claim_deal(&req)
+        });
+        handles.push(handle);
+    }
+
+    let mut successful_claims = 0;
+    let mut failed_claims = 0;
+
+    for handle in handles {
+        let resp = handle.join().expect("Thread panicked");
+        if resp.success {
+            successful_claims += 1;
+        } else {
+            failed_claims += 1;
+        }
+    }
+
+    assert_eq!(successful_claims, 30, "Exact stock of 30 should be claimed");
+    assert_eq!(failed_claims, 30, "Excess 30 claims must be rejected");
+
+    let deals = manager.get_all_deals();
+    let dark_roast = deals.iter().find(|d| d.deal_id == "DEAL-DARK-ROAST-60").unwrap();
+    assert_eq!(dark_roast.remaining_stock, 0, "Remaining stock must be exactly 0");
 }
 
 #[test]

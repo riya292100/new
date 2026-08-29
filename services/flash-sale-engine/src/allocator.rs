@@ -28,6 +28,12 @@ pub struct FlashSaleManager {
     start_time: std::time::Instant,
 }
 
+impl Default for FlashSaleManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FlashSaleManager {
     pub fn new() -> Self {
         let manager = Self {
@@ -48,19 +54,22 @@ impl FlashSaleManager {
 
     pub fn get_all_deals(&self) -> Vec<FlashDeal> {
         let deals = self.deals.read();
-        deals.values().map(|d| FlashDeal {
-            deal_id: d.deal_id.clone(),
-            product_id: d.product_id,
-            title: d.title.clone(),
-            discount_percentage: d.discount_percentage,
-            flash_price: d.flash_price,
-            initial_stock: d.initial_stock,
-            remaining_stock: d.remaining_stock.load(Ordering::Relaxed),
-            max_per_user: d.max_per_user,
-            starts_at: d.starts_at.clone(),
-            expires_at: d.expires_at.clone(),
-            is_active: d.is_active,
-        }).collect()
+        deals
+            .values()
+            .map(|d| FlashDeal {
+                deal_id: d.deal_id.clone(),
+                product_id: d.product_id,
+                title: d.title.clone(),
+                discount_percentage: d.discount_percentage,
+                flash_price: d.flash_price,
+                initial_stock: d.initial_stock,
+                remaining_stock: d.remaining_stock.load(Ordering::Relaxed),
+                max_per_user: d.max_per_user,
+                starts_at: d.starts_at.clone(),
+                expires_at: d.expires_at.clone(),
+                is_active: d.is_active,
+            })
+            .collect()
     }
 
     pub fn claim_deal(&self, req: &ClaimDealRequest) -> ClaimDealResponse {
@@ -121,25 +130,26 @@ impl FlashSaleManager {
                     claim_token: None,
                     deal_id: req.deal_id.clone(),
                     quantity: req.quantity,
-                    message: format!("Insufficient flash sale stock. Remaining: {}", current),
+                    message: format!("Insufficient flash sale stock. Remaining: {current}"),
                     remaining_stock: current,
                     claim_timestamp: Utc::now().to_rfc3339(),
                 };
             }
 
             let new_stock = current - req.quantity;
-            if deal.remaining_stock.compare_exchange_weak(
-                current,
-                new_stock,
-                Ordering::Release,
-                Ordering::Relaxed,
-            ).is_ok() {
+            if deal
+                .remaining_stock
+                .compare_exchange_weak(current, new_stock, Ordering::Release, Ordering::Relaxed)
+                .is_ok()
+            {
                 // Record user claim
                 let mut claims = deal.user_claims.write();
                 let current_user_claims = claims.entry(req.user_id).or_insert(0);
                 *current_user_claims += req.quantity;
 
-                let token = format!("CLAIM-{}-{}", req.deal_id, Uuid::new_v4().to_string().chars().take(8).collect::<String>());
+                let uuid_str = Uuid::new_v4().to_string();
+                let short_id = &uuid_str[..8];
+                let token = format!("CLAIM-{}-{}", req.deal_id, short_id);
 
                 return ClaimDealResponse {
                     success: true,

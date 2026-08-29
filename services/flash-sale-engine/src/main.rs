@@ -1,5 +1,5 @@
-mod models;
 mod allocator;
+mod models;
 mod signer;
 #[cfg(test)]
 mod tests;
@@ -10,31 +10,34 @@ use allocator::FlashSaleManager;
 use models::{ClaimDealRequest, HealthResponse, SignReceiptRequest};
 use signer::ReceiptSigner;
 
-#[get("/healthz")]
-async fn health_check(data: web::Data<FlashSaleManager>) -> impl Responder {
-    let health = HealthResponse {
+fn get_health_response(data: &FlashSaleManager) -> HealthResponse {
+    HealthResponse {
         status: "UP".to_string(),
         service: "flash-sale-engine".to_string(),
         version: "1.0.0".to_string(),
         active_deals_count: data.active_deals_count(),
         uptime_seconds: data.uptime_seconds(),
-    };
-    HttpResponse::Ok().json(health)
+    }
+}
+
+#[get("/healthz")]
+async fn health_check(data: web::Data<FlashSaleManager>) -> impl Responder {
+    HttpResponse::Ok().json(get_health_response(&data))
 }
 
 #[get("/health")]
 async fn health_alias(data: web::Data<FlashSaleManager>) -> impl Responder {
-    health_check(data).await
+    HttpResponse::Ok().json(get_health_response(&data))
 }
 
 #[get("/ready")]
 async fn ready_check(data: web::Data<FlashSaleManager>) -> impl Responder {
-    health_check(data).await
+    HttpResponse::Ok().json(get_health_response(&data))
 }
 
 #[get("/readyz")]
 async fn readyz_check(data: web::Data<FlashSaleManager>) -> impl Responder {
-    health_check(data).await
+    HttpResponse::Ok().json(get_health_response(&data))
 }
 
 #[get("/api/v1/flash-sale/deals")]
@@ -70,9 +73,9 @@ async fn sign_receipt(req: web::Json<SignReceiptRequest>) -> impl Responder {
 async fn main() -> std::io::Result<()> {
     let port = std::env::var("PORT").unwrap_or_else(|_| "8086".to_string());
     let host = std::env::var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string());
-    let addr = format!("{}:{}", host, port);
+    let addr = format!("{host}:{port}");
 
-    println!("🦀 Starting QuickCart Flash Sale & Cryptographic Engine on http://{}", addr);
+    println!("🦀 Starting QuickCart Flash Sale & Cryptographic Engine on http://{addr}");
 
     let manager = web::Data::new(FlashSaleManager::new());
 

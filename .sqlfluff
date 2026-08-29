@@ -22,5 +22,8 @@ extended_capitalisation_policy = upper
 [sqlfluff:rules:capitalisation.literals]
 capitalisation_policy = upper
 
+[sqlfluff:rules:references.keywords]
+ignore_words = version,type,name,comment,action,value,key,date,label
+
 [sqlfluff:rules:layout.spacing]
 [sqlfluff:rules:references.consistent]
