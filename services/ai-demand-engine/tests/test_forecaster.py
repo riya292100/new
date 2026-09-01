@@ -72,3 +72,36 @@ def test_api_forecast_demand_endpoint():
     data = response.json()
     assert data["product_id"] == 101
     assert data["reorder_point"] > 0
+
+
+def test_forecaster_network_isolation_guarantee(monkeypatch):
+    """
+    Confirms that mathematical forecasting algorithms (moving average, exponential
+    smoothing, reorder point, surge pricing, recommendations) execute in pure CPU
+    isolation with zero outbound network socket calls.
+    """
+    import socket
+
+    def guarded_socket(*args, **kwargs):
+        raise RuntimeError("Network socket call attempted during isolated algorithmic forecasting test!")
+
+    monkeypatch.setattr(socket, "socket", guarded_socket)
+
+    # Execute all core algorithms under socket ban to prove complete isolation
+    v = calculate_moving_average_velocity([10, 20, 30, 40, 50], window_size=3)
+    assert v == 40.0
+
+    s = calculate_exponential_smoothing([10, 20, 30, 40], alpha=0.3)
+    assert s > 0.0
+
+    rp = estimate_reorder_point(daily_velocity=15.0, lead_time_days=2.0)
+    assert rp["reorder_point"] > 0
+
+    surge = calculate_surge_multiplier(
+        current_store_load=50, max_store_capacity=100, available_riders=10
+    )
+    assert surge["surge_multiplier"] >= 1.0
+
+    recs = rank_frequently_bought_together(target_product_id=1, order_baskets=[[1, 2], [1, 3]])
+    assert len(recs) >= 1
+
