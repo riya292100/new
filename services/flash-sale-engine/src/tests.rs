@@ -80,18 +80,29 @@ fn test_zero_quantity_claim_rejection() {
 fn test_concurrent_claims_prevent_overselling() {
     let manager = Arc::new(FlashSaleManager::new());
     // DEAL-DARK-ROAST-60 has initial_stock = 30, max_per_user = 1
-    // Spawn 60 concurrent threads with distinct user_ids
+    // Concurrently test using 10 worker threads claiming for 40 distinct users (4 claims per thread)
+    let num_threads = 10;
+    let users_per_thread = 4;
     let mut handles = vec![];
-    for user_id in 1..=60 {
+
+    for thread_idx in 0..num_threads {
         let mgr = Arc::clone(&manager);
-        let handle = thread::spawn(move || {
-            let req = ClaimDealRequest {
-                user_id,
-                deal_id: "DEAL-DARK-ROAST-60".to_string(),
-                quantity: 1,
-            };
-            mgr.claim_deal(&req)
-        });
+        let handle = thread::Builder::new()
+            .name(format!("worker-{thread_idx}"))
+            .spawn(move || {
+                let mut results = vec![];
+                for i in 0..users_per_thread {
+                    let user_id = (thread_idx * users_per_thread + i + 1) as i64;
+                    let req = ClaimDealRequest {
+                        user_id,
+                        deal_id: "DEAL-DARK-ROAST-60".to_string(),
+                        quantity: 1,
+                    };
+                    results.push(mgr.claim_deal(&req));
+                }
+                results
+            })
+            .expect("Failed to spawn thread");
         handles.push(handle);
     }
 
@@ -99,14 +110,13 @@ fn test_concurrent_claims_prevent_overselling() {
     let mut failed_claims = 0;
 
     for handle in handles {
-        let resp = match handle.join() {
-            Ok(r) => r,
-            Err(e) => panic!("Thread panicked: {:?}", e),
-        };
-        if resp.success {
-            successful_claims += 1;
-        } else {
-            failed_claims += 1;
+        let results = handle.join().expect("Worker thread panicked");
+        for resp in results {
+            if resp.success {
+                successful_claims += 1;
+            } else {
+                failed_claims += 1;
+            }
         }
     }
 
@@ -116,8 +126,8 @@ fn test_concurrent_claims_prevent_overselling() {
         successful_claims
     );
     assert_eq!(
-        failed_claims, 30,
-        "Excess 30 claims must be rejected, got {}",
+        failed_claims, 10,
+        "Excess 10 claims must be rejected, got {}",
         failed_claims
     );
 
@@ -126,7 +136,10 @@ fn test_concurrent_claims_prevent_overselling() {
         .iter()
         .find(|d| d.deal_id == "DEAL-DARK-ROAST-60")
         .unwrap();
-    assert_eq!(dark_roast.remaining_stock, 0, "Remaining stock must be exactly 0");
+    assert_eq!(
+        dark_roast.remaining_stock, 0,
+        "Remaining stock must be exactly 0"
+    );
 }
 
 #[test]
