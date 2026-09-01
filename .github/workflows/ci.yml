@@ -204,7 +204,14 @@ jobs:
 
       - name: Run Rust Unit & Concurrency Tests
         working-directory: ./services/flash-sale-engine
-        run: cargo test --verbose
+        run: |
+          cargo test --verbose -- --nocapture 2>&1 | tee test_output.log || {
+            echo "### Rust Test Failure" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 100 test_output.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
 
       - name: Run Cargo Clippy (Lint)
         working-directory: ./services/flash-sale-engine

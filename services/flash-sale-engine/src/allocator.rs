@@ -65,7 +65,7 @@ impl FlashSaleManager {
                 discount_percentage: d.discount_percentage,
                 flash_price: d.flash_price,
                 initial_stock: d.initial_stock,
-                remaining_stock: d.remaining_stock.load(Ordering::Relaxed),
+                remaining_stock: d.remaining_stock.load(Ordering::SeqCst),
                 max_per_user: d.max_per_user,
                 starts_at: d.starts_at.clone(),
                 expires_at: d.expires_at.clone(),
@@ -125,7 +125,7 @@ impl FlashSaleManager {
 
         // Atomic Compare-And-Swap (CAS) inventory deduction loop
         loop {
-            let current = deal.remaining_stock.load(Ordering::Acquire);
+            let current = deal.remaining_stock.load(Ordering::SeqCst);
             if current < req.quantity {
                 return ClaimDealResponse {
                     success: false,
@@ -141,7 +141,7 @@ impl FlashSaleManager {
             let new_stock = current - req.quantity;
             if deal
                 .remaining_stock
-                .compare_exchange_weak(current, new_stock, Ordering::Release, Ordering::Relaxed)
+                .compare_exchange(current, new_stock, Ordering::SeqCst, Ordering::SeqCst)
                 .is_ok()
             {
                 // Record user claim

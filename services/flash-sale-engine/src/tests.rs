@@ -99,7 +99,10 @@ fn test_concurrent_claims_prevent_overselling() {
     let mut failed_claims = 0;
 
     for handle in handles {
-        let resp = handle.join().expect("Thread panicked");
+        let resp = match handle.join() {
+            Ok(r) => r,
+            Err(e) => panic!("Thread panicked: {:?}", e),
+        };
         if resp.success {
             successful_claims += 1;
         } else {
@@ -107,8 +110,16 @@ fn test_concurrent_claims_prevent_overselling() {
         }
     }
 
-    assert_eq!(successful_claims, 30, "Exact stock of 30 should be claimed");
-    assert_eq!(failed_claims, 30, "Excess 30 claims must be rejected");
+    assert_eq!(
+        successful_claims, 30,
+        "Exact stock of 30 should be claimed, got {}",
+        successful_claims
+    );
+    assert_eq!(
+        failed_claims, 30,
+        "Excess 30 claims must be rejected, got {}",
+        failed_claims
+    );
 
     let deals = manager.get_all_deals();
     let dark_roast = deals
