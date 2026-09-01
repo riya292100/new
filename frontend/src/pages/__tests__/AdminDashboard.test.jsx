@@ -4,6 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import AdminDashboard from '../AdminDashboard';
 import { adminApi, catalogApi } from '../../services/api';
 import * as ToastContextModule from '../../context/ToastContext';
+import logger from '../../utils/logger';
 
 describe('AdminDashboard Page Component', () => {
   beforeEach(() => {
@@ -56,6 +57,39 @@ describe('AdminDashboard Page Component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Admin Control Center')).toBeInTheDocument();
+    });
+  });
+
+  it('logs structured error via logger.error when getDashboardStats rejects', async () => {
+    const loggerSpy = vi.spyOn(logger, 'error');
+    const networkErr = new Error('Database connection failed');
+    vi.spyOn(adminApi, 'getDashboardStats').mockRejectedValue(networkErr);
+
+    render(<AdminDashboard />);
+
+    await waitFor(() => {
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'AdminDashboard',
+        'getDashboardStats failed',
+        networkErr
+      );
+    });
+  });
+
+  it('surfaces an error toast when getDashboardStats rejects', async () => {
+    const mockAddToast = vi.fn();
+    vi.spyOn(ToastContextModule, 'useToast').mockReturnValue({
+      addToast: mockAddToast,
+    });
+    vi.spyOn(adminApi, 'getDashboardStats').mockRejectedValue(new Error('Internal Server Error'));
+
+    render(<AdminDashboard />);
+
+    await waitFor(() => {
+      expect(mockAddToast).toHaveBeenCalledWith(
+        expect.stringMatching(/failed to load dashboard/i),
+        'error'
+      );
     });
   });
 });

@@ -24,9 +24,18 @@ const HomePage = () => {
     const fetchData = async () => {
       try {
         const [catRes, featRes, dealsRes] = await Promise.all([
-          catalogApi.getCategories().catch(() => null),
-          catalogApi.getFeaturedProducts().catch(() => null),
-          catalogApi.getDailyDeals().catch(() => null),
+          catalogApi.getCategories().catch((err) => {
+            logger.error('HomePage', 'getCategories failed', err);
+            return null;
+          }),
+          catalogApi.getFeaturedProducts().catch((err) => {
+            logger.error('HomePage', 'getFeaturedProducts failed', err);
+            return null;
+          }),
+          catalogApi.getDailyDeals().catch((err) => {
+            logger.error('HomePage', 'getDailyDeals failed', err);
+            return null;
+          }),
         ]);
 
         const loadedCats = catRes?.data || (Array.isArray(catRes) ? catRes : null) || [];
@@ -41,7 +50,7 @@ const HomePage = () => {
           loadedDeals.length > 0 ? loadedDeals : FALLBACK_PRODUCTS.filter((p) => p.isDeal)
         );
       } catch (err) {
-        logger.warn('HomePage', 'Failed to load homepage data, using demo fallback', err);
+        logger.error('HomePage', 'Failed to load homepage data, using demo fallback', err);
         setCategories(FALLBACK_CATEGORIES);
         setFeaturedProducts(FALLBACK_PRODUCTS.filter((p) => p.isFeatured));
         setDailyDeals(FALLBACK_PRODUCTS.filter((p) => p.isDeal));

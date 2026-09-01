@@ -97,6 +97,7 @@ export const AuthProvider = ({ children }) => {
         return userData;
       }
     } catch (err) {
+      logger.error('AuthContext', 'Login failed', err);
       addToast(err.message || 'Login failed', 'error');
       throw err;
     }
@@ -123,6 +124,7 @@ export const AuthProvider = ({ children }) => {
         return userObj;
       }
     } catch (err) {
+      logger.error('AuthContext', 'Registration failed', err);
       addToast(err.message || 'Registration failed', 'error');
       throw err;
     }

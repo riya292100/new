@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { catalogApi } from '../services/api';
 import { FALLBACK_PRODUCTS } from '../utils/demoConfig';
+import logger from '../utils/logger';
 import ProductDetailModal from '../components/ProductDetailModal';
 
 const ProductDetailsPage = () => {
@@ -22,7 +23,8 @@ const ProductDetailsPage = () => {
             else navigate('/category/all');
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          logger.error('ProductDetailsPage', 'getProductById failed, using fallback', err);
           const fb = FALLBACK_PRODUCTS.find((p) => String(p.id) === String(id));
           if (fb) setProduct(fb);
           else navigate('/category/all');

@@ -54,6 +54,7 @@ export const CartProvider = ({ children }) => {
         addToast(`Added ${product.name} to cart`, 'success');
       }
     } catch (err) {
+      logger.error('CartContext', 'Could not add to cart', err);
       addToast(err.message || 'Could not add to cart', 'error');
     } finally {
       setLoading(false);
@@ -67,6 +68,7 @@ export const CartProvider = ({ children }) => {
         setCart(res.data);
       }
     } catch (err) {
+      logger.error('CartContext', 'Failed to update quantity', err);
       addToast(err.message || 'Failed to update quantity', 'error');
     }
   };
@@ -79,6 +81,7 @@ export const CartProvider = ({ children }) => {
         addToast('Item removed from cart', 'info');
       }
     } catch (err) {
+      logger.error('CartContext', 'Failed to remove item', err);
       addToast(err.message || 'Failed to remove item', 'error');
     }
   };
@@ -94,6 +97,7 @@ export const CartProvider = ({ children }) => {
         addToast(res?.data?.message || 'Invalid coupon', 'error');
       }
     } catch (err) {
+      logger.error('CartContext', 'Failed to validate coupon', err);
       addToast(err.message || 'Failed to validate coupon', 'error');
     }
   };

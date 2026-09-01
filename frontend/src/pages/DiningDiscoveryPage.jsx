@@ -133,14 +133,18 @@ const DiningDiscoveryPage = () => {
       .then((res) => {
         if (res?.data?.data) setCuisines(res.data.data);
       })
-      .catch(() => {});
+      .catch((err) => {
+        logger.error('DiningDiscoveryPage', 'getCuisines failed', err);
+      });
 
     restaurantApi
       .getCities()
       .then((res) => {
         if (res?.data?.data) setCities(res.data.data);
       })
-      .catch(() => {});
+      .catch((err) => {
+        logger.error('DiningDiscoveryPage', 'getCities failed', err);
+      });
   }, []);
 
   useEffect(() => {

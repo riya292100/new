@@ -3,11 +3,13 @@ import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { catalogApi, categoryApi } from '../services/api';
 import { FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../utils/demoConfig';
 import logger from '../utils/logger';
+import { useToast } from '../context/ToastContext';
 import ProductCard from '../components/ProductCard';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { Filter, SlidersHorizontal, ArrowUpDown, Check } from 'lucide-react';
 
 const CategoryPage = () => {
+  const { addToast } = useToast();
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search');
@@ -28,7 +30,8 @@ const CategoryPage = () => {
       .then((res) => {
         if (res?.data && res.data.length > 0) setCategories(res.data);
       })
-      .catch(() => {
+      .catch((err) => {
+        logger.error('CategoryPage', 'getCategories failed, using fallback', err);
         setCategories(FALLBACK_CATEGORIES);
       });
   }, []);
@@ -38,7 +41,10 @@ const CategoryPage = () => {
       setLoading(true);
       try {
         if (searchQuery) {
-          const res = await catalogApi.searchProducts(searchQuery).catch(() => null);
+          const res = await catalogApi.searchProducts(searchQuery).catch((err) => {
+            logger.error('CategoryPage', 'searchProducts failed', err);
+            return null;
+          });
           const found = res?.data || (Array.isArray(res) ? res : null);
           if (found && found.length > 0) {
             setProducts(found);
@@ -55,7 +61,10 @@ const CategoryPage = () => {
             description: `Matching products for ${searchQuery}`,
           });
         } else if (slug && slug !== 'all') {
-          const catRes = await catalogApi.getCategoryBySlug(slug).catch(() => null);
+          const catRes = await catalogApi.getCategoryBySlug(slug).catch((err) => {
+            logger.error('CategoryPage', 'getCategoryBySlug failed', err);
+            return null;
+          });
           const currentCat = catRes?.data ||
             FALLBACK_CATEGORIES.find((c) => c.slug === slug) || {
               id: 1,
@@ -71,7 +80,10 @@ const CategoryPage = () => {
               sortDirection,
               size: 50,
             })
-            .catch(() => null);
+            .catch((err) => {
+              logger.error('CategoryPage', 'getProducts for category failed', err);
+              return null;
+            });
 
           const catProds =
             prodRes?.data?.content || (Array.isArray(prodRes?.data) ? prodRes.data : null);
@@ -90,8 +102,14 @@ const CategoryPage = () => {
             description: 'Browse full instant delivery catalog',
           });
           const res = isDeal
-            ? await catalogApi.getDailyDeals().catch(() => null)
-            : await catalogApi.getProducts({ size: 50, sortBy, sortDirection }).catch(() => null);
+            ? await catalogApi.getDailyDeals().catch((err) => {
+                logger.error('CategoryPage', 'getDailyDeals failed', err);
+                return null;
+              })
+            : await catalogApi.getProducts({ size: 50, sortBy, sortDirection }).catch((err) => {
+                logger.error('CategoryPage', 'getProducts failed', err);
+                return null;
+              });
 
           const allProds = res?.data?.content || (Array.isArray(res?.data) ? res.data : null);
 
@@ -102,7 +120,8 @@ const CategoryPage = () => {
           }
         }
       } catch (err) {
-        logger.warn('CategoryPage', 'Error fetching category products, using fallback', err);
+        logger.error('CategoryPage', 'Error fetching category products, using fallback', err);
+        addToast('Failed to load products', 'error');
         setProducts(FALLBACK_PRODUCTS);
       } finally {
         setLoading(false);

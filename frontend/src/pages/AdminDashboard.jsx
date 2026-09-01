@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { adminApi, catalogApi } from '../services/api';
 import { FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../utils/demoConfig';
 import { useToast } from '../context/ToastContext';
+import logger from '../utils/logger';
 import { ShieldCheck, RefreshCw } from 'lucide-react';
 import AdminStatsCards from '../components/admin/AdminStatsCards';
 import AdminProductTable from '../components/admin/AdminProductTable';
@@ -105,13 +106,34 @@ const AdminDashboard = () => {
   const fetchAllData = async () => {
     setLoading(true);
     try {
+      let statsFailed = false;
       const [statsRes, prodRes, catRes, coupRes, lowRes] = await Promise.all([
-        adminApi.getDashboardStats().catch(() => null),
-        catalogApi.getProducts({ size: 100 }).catch(() => null),
-        catalogApi.getCategories().catch(() => null),
-        adminApi.getAllCoupons().catch(() => null),
-        adminApi.getLowStockProducts().catch(() => null),
+        adminApi.getDashboardStats().catch((err) => {
+          logger.error('AdminDashboard', 'getDashboardStats failed', err);
+          statsFailed = true;
+          return null;
+        }),
+        catalogApi.getProducts({ size: 100 }).catch((err) => {
+          logger.error('AdminDashboard', 'getProducts failed', err);
+          return null;
+        }),
+        catalogApi.getCategories().catch((err) => {
+          logger.error('AdminDashboard', 'getCategories failed', err);
+          return null;
+        }),
+        adminApi.getAllCoupons().catch((err) => {
+          logger.error('AdminDashboard', 'getAllCoupons failed', err);
+          return null;
+        }),
+        adminApi.getLowStockProducts().catch((err) => {
+          logger.error('AdminDashboard', 'getLowStockProducts failed', err);
+          return null;
+        }),
       ]);
+
+      if (statsFailed || !statsRes?.data) {
+        addToast('Failed to load dashboard data', 'error');
+      }
 
       if (statsRes?.data) setStats(statsRes.data);
       if (prodRes?.data?.content && prodRes.data.content.length > 0) {
@@ -123,7 +145,8 @@ const AdminDashboard = () => {
         setLowStockProducts(lowRes.data);
       }
     } catch (err) {
-      // Fallback already initialized
+      logger.error('AdminDashboard', 'fetch failed', err);
+      addToast('Failed to load dashboard data', 'error');
     } finally {
       setLoading(false);
     }
@@ -147,6 +170,7 @@ const AdminDashboard = () => {
       setEditingProduct(null);
       fetchAllData();
     } catch (err) {
+      logger.error('AdminDashboard', 'handleSaveProduct failed, using local demo fallback', err);
       // Local mutation fallback
       if (editingProduct) {
         setProducts((prev) =>
@@ -176,6 +200,7 @@ const AdminDashboard = () => {
       addToast('Product deleted', 'info');
       fetchAllData();
     } catch (err) {
+      logger.error('AdminDashboard', 'handleDeleteProduct failed, applying local fallback', err);
       setProducts((prev) => prev.filter((p) => p.id !== id));
       addToast('Product deleted', 'info');
     }
@@ -189,6 +214,7 @@ const AdminDashboard = () => {
       setShowCouponModal(false);
       fetchAllData();
     } catch (err) {
+      logger.error('AdminDashboard', 'handleCreateCoupon failed, applying local fallback', err);
       const newCoupon = {
         ...couponForm,
         id: Date.now(),
@@ -206,6 +232,7 @@ const AdminDashboard = () => {
       addToast(`Restocked +${quantity} units!`, 'success');
       fetchAllData();
     } catch (err) {
+      logger.error('AdminDashboard', 'handleRestock failed, applying local fallback', err);
       setProducts((prev) =>
         prev.map((p) =>
           p.id === productId
