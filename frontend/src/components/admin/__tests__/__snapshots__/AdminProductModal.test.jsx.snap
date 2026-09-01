@@ -1,0 +1,220 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AdminProductModal Component > renders inputs and labels using shared formControls CSS module classes 1`] = `
+<div
+  class="_overlay_835f62"
+>
+  <div
+    class="_cardScrollable_835f62 glass-card"
+    style="max-width: 580px;"
+  >
+    <div
+      class="_header_835f62"
+    >
+      <h3
+        class="_title_835f62"
+      >
+        Add New Product
+      </h3>
+      <button
+        aria-label="Close product modal"
+        class="_closeButton_835f62"
+      >
+        <svg
+          class="lucide lucide-x"
+          fill="none"
+          height="18"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="18"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M18 6 6 18"
+          />
+          <path
+            d="m6 6 12 12"
+          />
+        </svg>
+      </button>
+    </div>
+    <form
+      style="display: flex; flex-direction: column; gap: 14px;"
+    >
+      <div>
+        <label
+          class="_label_9e54c1"
+        >
+          Product Title
+        </label>
+        <input
+          class="_input_9e54c1 input-control"
+          placeholder="Fresh Organic Avocados"
+          required=""
+          type="text"
+          value="Fresh Alphonso Mangoes"
+        />
+      </div>
+      <div
+        class="_formGrid2_9e54c1"
+      >
+        <div>
+          <label
+            class="_label_9e54c1"
+          >
+            Category
+          </label>
+          <select
+            class="_select_9e54c1 input-control"
+          >
+            <option
+              value="1"
+            >
+              Fresh Fruits & Vegetables
+            </option>
+          </select>
+        </div>
+        <div>
+          <label
+            class="_label_9e54c1"
+          >
+            Brand / Farm
+          </label>
+          <input
+            class="_input_9e54c1 input-control"
+            placeholder="Farm Fresh"
+            type="text"
+            value="QuickFarm"
+          />
+        </div>
+      </div>
+      <div
+        class="_formGrid3_9e54c1"
+      >
+        <div>
+          <label
+            class="_label_9e54c1"
+          >
+            Selling Price (₹)
+          </label>
+          <input
+            class="_input_9e54c1 input-control"
+            placeholder="120"
+            required=""
+            step="0.01"
+            type="number"
+            value=""
+          />
+        </div>
+        <div>
+          <label
+            class="_label_9e54c1"
+          >
+            MRP (₹)
+          </label>
+          <input
+            class="_input_9e54c1 input-control"
+            placeholder="150"
+            required=""
+            step="0.01"
+            type="number"
+            value="499"
+          />
+        </div>
+        <div>
+          <label
+            class="_label_9e54c1"
+          >
+            Unit / Weight
+          </label>
+          <input
+            class="_input_9e54c1 input-control"
+            placeholder="500 g"
+            type="text"
+            value="1 kg"
+          />
+        </div>
+      </div>
+      <div
+        class="_formGrid2_9e54c1"
+      >
+        <div>
+          <label
+            class="_label_9e54c1"
+          >
+            Initial Stock
+          </label>
+          <input
+            class="_input_9e54c1 input-control"
+            type="number"
+            value="100"
+          />
+        </div>
+        <div>
+          <label
+            class="_label_9e54c1"
+          >
+            Low Stock Alert Below
+          </label>
+          <input
+            class="_input_9e54c1 input-control"
+            type="number"
+            value="10"
+          />
+        </div>
+      </div>
+      <div>
+        <label
+          class="_label_9e54c1"
+        >
+          Image URL
+        </label>
+        <input
+          class="_input_9e54c1 input-control"
+          type="url"
+          value="https://images.unsplash.com/mango"
+        />
+      </div>
+      <div
+        style="display: flex; gap: 16px; margin-top: 6px;"
+      >
+        <label
+          style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: rgb(51, 65, 85); cursor: pointer;"
+        >
+          <input
+            type="checkbox"
+          />
+          Featured Product
+        </label>
+        <label
+          style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: rgb(51, 65, 85); cursor: pointer;"
+        >
+          <input
+            type="checkbox"
+          />
+          Deal of the Day
+        </label>
+      </div>
+      <div
+        style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px;"
+      >
+        <button
+          class="btn btn-outline"
+          type="button"
+        >
+          Cancel
+        </button>
+        <button
+          class="btn btn-primary"
+          type="submit"
+        >
+          Create Product
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+`;

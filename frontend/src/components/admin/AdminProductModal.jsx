@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { X } from 'lucide-react';
 import modalStyles from '../../styles/modal.module.css';
+import formStyles from '../../styles/formControls.module.css';
 
 const AdminProductModal = ({
   show,
@@ -36,46 +37,26 @@ const AdminProductModal = ({
 
         <form onSubmit={onSave} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '0.8rem',
-                fontWeight: '600',
-                color: '#334155',
-                marginBottom: '4px',
-              }}
-            >
-              Product Title
-            </label>
+            <label className={formStyles.label}>Product Title</label>
             <input
               type="text"
               required
               value={productForm.name}
               onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
               placeholder="Fresh Organic Avocados"
-              className="input-control"
+              className={`${formStyles.input} input-control`}
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div className={formStyles.formGrid2}>
             <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.8rem',
-                  fontWeight: '600',
-                  color: '#334155',
-                  marginBottom: '4px',
-                }}
-              >
-                Category
-              </label>
+              <label className={formStyles.label}>Category</label>
               <select
                 value={productForm.categoryId}
                 onChange={(e) =>
                   setProductForm({ ...productForm, categoryId: parseInt(e.target.value) })
                 }
-                className="input-control"
+                className={`${formStyles.select} input-control`}
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -86,40 +67,20 @@ const AdminProductModal = ({
             </div>
 
             <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.8rem',
-                  fontWeight: '600',
-                  color: '#334155',
-                  marginBottom: '4px',
-                }}
-              >
-                Brand / Farm
-              </label>
+              <label className={formStyles.label}>Brand / Farm</label>
               <input
                 type="text"
                 value={productForm.brand}
                 onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })}
                 placeholder="Farm Fresh"
-                className="input-control"
+                className={`${formStyles.input} input-control`}
               />
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+          <div className={formStyles.formGrid3}>
             <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.8rem',
-                  fontWeight: '600',
-                  color: '#334155',
-                  marginBottom: '4px',
-                }}
-              >
-                Selling Price (₹)
-              </label>
+              <label className={formStyles.label}>Selling Price (₹)</label>
               <input
                 type="number"
                 step="0.01"
@@ -127,22 +88,12 @@ const AdminProductModal = ({
                 value={productForm.sellingPrice}
                 onChange={(e) => setProductForm({ ...productForm, sellingPrice: e.target.value })}
                 placeholder="120"
-                className="input-control"
+                className={`${formStyles.input} input-control`}
               />
             </div>
 
             <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.8rem',
-                  fontWeight: '600',
-                  color: '#334155',
-                  marginBottom: '4px',
-                }}
-              >
-                MRP (₹)
-              </label>
+              <label className={formStyles.label}>MRP (₹)</label>
               <input
                 type="number"
                 step="0.01"
@@ -150,67 +101,37 @@ const AdminProductModal = ({
                 value={productForm.mrp}
                 onChange={(e) => setProductForm({ ...productForm, mrp: e.target.value })}
                 placeholder="150"
-                className="input-control"
+                className={`${formStyles.input} input-control`}
               />
             </div>
 
             <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.8rem',
-                  fontWeight: '600',
-                  color: '#334155',
-                  marginBottom: '4px',
-                }}
-              >
-                Unit / Weight
-              </label>
+              <label className={formStyles.label}>Unit / Weight</label>
               <input
                 type="text"
                 value={productForm.unitQuantity}
                 onChange={(e) => setProductForm({ ...productForm, unitQuantity: e.target.value })}
                 placeholder="500 g"
-                className="input-control"
+                className={`${formStyles.input} input-control`}
               />
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div className={formStyles.formGrid2}>
             <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.8rem',
-                  fontWeight: '600',
-                  color: '#334155',
-                  marginBottom: '4px',
-                }}
-              >
-                Initial Stock
-              </label>
+              <label className={formStyles.label}>Initial Stock</label>
               <input
                 type="number"
                 value={productForm.stockQuantity}
                 onChange={(e) =>
                   setProductForm({ ...productForm, stockQuantity: parseInt(e.target.value) || 0 })
                 }
-                className="input-control"
+                className={`${formStyles.input} input-control`}
               />
             </div>
 
             <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.8rem',
-                  fontWeight: '600',
-                  color: '#334155',
-                  marginBottom: '4px',
-                }}
-              >
-                Low Stock Alert Below
-              </label>
+              <label className={formStyles.label}>Low Stock Alert Below</label>
               <input
                 type="number"
                 value={productForm.lowStockThreshold}
@@ -220,28 +141,18 @@ const AdminProductModal = ({
                     lowStockThreshold: parseInt(e.target.value) || 0,
                   })
                 }
-                className="input-control"
+                className={`${formStyles.input} input-control`}
               />
             </div>
           </div>
 
           <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '0.8rem',
-                fontWeight: '600',
-                color: '#334155',
-                marginBottom: '4px',
-              }}
-            >
-              Image URL
-            </label>
+            <label className={formStyles.label}>Image URL</label>
             <input
               type="url"
               value={productForm.imageUrl}
               onChange={(e) => setProductForm({ ...productForm, imageUrl: e.target.value })}
-              className="input-control"
+              className={`${formStyles.input} input-control`}
             />
           </div>
 

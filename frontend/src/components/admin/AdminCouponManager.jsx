@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Plus, Tag, CheckCircle2, XCircle } from 'lucide-react';
+import formStyles from '../../styles/formControls.module.css';
+import modalStyles from '../../styles/modal.module.css';
 
 const AdminCouponManager = ({
   coupons,
@@ -105,19 +107,13 @@ const AdminCouponManager = ({
       </div>
 
       {showCouponModal && (
-        <div className="modal-overlay" onClick={() => setShowCouponModal(false)}>
+        <div className={modalStyles.overlay} onClick={() => setShowCouponModal(false)}>
           <div
-            className="glass-card"
-            style={{
-              width: '100%',
-              maxWidth: '440px',
-              borderRadius: '24px',
-              padding: '28px',
-              background: '#ffffff',
-            }}
+            className={`${modalStyles.card} glass-card`}
+            style={{ maxWidth: '440px' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ fontSize: '1.25rem', color: '#0f172a', marginBottom: '16px' }}>
+            <h3 className={modalStyles.title} style={{ marginBottom: '16px' }}>
               Create New Promo Code
             </h3>
             <form
@@ -125,17 +121,7 @@ const AdminCouponManager = ({
               style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
             >
               <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: '600',
-                    color: '#334155',
-                    marginBottom: '4px',
-                  }}
-                >
-                  Coupon Code
-                </label>
+                <label className={formStyles.label}>Coupon Code</label>
                 <input
                   type="text"
                   required
@@ -144,50 +130,30 @@ const AdminCouponManager = ({
                     setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })
                   }
                   placeholder="FRESH50"
-                  className="input-control"
+                  className={`${formStyles.input} input-control`}
                   style={{ textTransform: 'uppercase', fontWeight: '700' }}
                 />
               </div>
 
               <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: '600',
-                    color: '#334155',
-                    marginBottom: '4px',
-                  }}
-                >
-                  Description
-                </label>
+                <label className={formStyles.label}>Description</label>
                 <input
                   type="text"
                   required
                   value={couponForm.description}
                   onChange={(e) => setCouponForm({ ...couponForm, description: e.target.value })}
                   placeholder="50% OFF on first 3 orders"
-                  className="input-control"
+                  className={`${formStyles.input} input-control`}
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div className={formStyles.formGrid2}>
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: '600',
-                      color: '#334155',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    Discount Type
-                  </label>
+                  <label className={formStyles.label}>Discount Type</label>
                   <select
                     value={couponForm.discountType}
                     onChange={(e) => setCouponForm({ ...couponForm, discountType: e.target.value })}
-                    className="input-control"
+                    className={`${formStyles.select} input-control`}
                   >
                     <option value="PERCENTAGE">Percentage (%)</option>
                     <option value="FLAT">Flat Amount (₹)</option>
@@ -195,17 +161,7 @@ const AdminCouponManager = ({
                 </div>
 
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: '600',
-                      color: '#334155',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    Discount Value
-                  </label>
+                  <label className={formStyles.label}>Discount Value</label>
                   <input
                     type="number"
                     required
@@ -216,24 +172,14 @@ const AdminCouponManager = ({
                         discountValue: parseFloat(e.target.value) || 0,
                       })
                     }
-                    className="input-control"
+                    className={`${formStyles.input} input-control`}
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div className={formStyles.formGrid2}>
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: '600',
-                      color: '#334155',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    Min Order (₹)
-                  </label>
+                  <label className={formStyles.label}>Min Order (₹)</label>
                   <input
                     type="number"
                     value={couponForm.minOrderValue}
@@ -243,22 +189,12 @@ const AdminCouponManager = ({
                         minOrderValue: parseFloat(e.target.value) || 0,
                       })
                     }
-                    className="input-control"
+                    className={`${formStyles.input} input-control`}
                   />
                 </div>
 
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: '600',
-                      color: '#334155',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    Max Discount (₹)
-                  </label>
+                  <label className={formStyles.label}>Max Discount (₹)</label>
                   <input
                     type="number"
                     value={couponForm.maxDiscountAmount}
@@ -268,7 +204,7 @@ const AdminCouponManager = ({
                         maxDiscountAmount: parseFloat(e.target.value) || 0,
                       })
                     }
-                    className="input-control"
+                    className={`${formStyles.input} input-control`}
                   />
                 </div>
               </div>

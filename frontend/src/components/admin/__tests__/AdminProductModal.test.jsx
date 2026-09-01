@@ -69,4 +69,27 @@ describe('AdminProductModal Component', () => {
 
     expect(mockOnClose).toHaveBeenCalled();
   });
+
+  it('renders inputs and labels using shared formControls CSS module classes', () => {
+    const { container } = render(
+      <AdminProductModal
+        show={true}
+        editingProduct={null}
+        productForm={dummyForm}
+        setProductForm={mockSetProductForm}
+        categories={dummyCategories}
+        onSave={mockOnSave}
+        onClose={mockOnClose}
+      />
+    );
+
+    const titleLabel = screen.getByText('Product Title');
+    expect(titleLabel.className).toContain('label');
+
+    const nameInput = screen.getByDisplayValue('Fresh Alphonso Mangoes');
+    expect(nameInput.className).toContain('input');
+    expect(nameInput.className).toContain('input-control');
+
+    expect(container.firstChild).toMatchSnapshot();
+  });
 });

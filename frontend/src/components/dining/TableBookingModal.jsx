@@ -5,6 +5,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { bookingApi } from '../../services/bookingApi';
 import logger from '../../utils/logger';
+import formStyles from '../../styles/formControls.module.css';
+import modalStyles from '../../styles/modal.module.css';
 
 const TableBookingModal = ({ restaurant, onClose = () => {}, onBookingSuccess = () => {} }) => {
   const { user, openAuthModal } = useAuth();
@@ -57,37 +59,18 @@ const TableBookingModal = ({ restaurant, onClose = () => {}, onBookingSuccess = 
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className={modalStyles.overlay} onClick={onClose}>
       <div
-        className="glass-card"
-        style={{
-          width: '100%',
-          maxWidth: '520px',
-          borderRadius: '24px',
-          padding: '28px',
-          background: '#ffffff',
-          position: 'relative',
-        }}
+        className={`${modalStyles.card} glass-card`}
+        style={{ maxWidth: '520px' }}
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: '#f1f5f9',
-            border: 'none',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-          }}
+          className={modalStyles.closeButtonAbsolute}
+          aria-label="Close reservation modal"
         >
-          <X size={18} color="#64748b" />
+          <X size={18} />
         </button>
 
         {confirmedBooking ? (
@@ -151,29 +134,14 @@ const TableBookingModal = ({ restaurant, onClose = () => {}, onBookingSuccess = 
             </div>
 
             <form onSubmit={handleSubmit}>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '12px',
-                  marginBottom: '14px',
-                }}
-              >
+              <div className={formStyles.formGrid2} style={{ marginBottom: '14px' }}>
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.82rem',
-                      fontWeight: '700',
-                      color: '#334155',
-                      marginBottom: '6px',
-                    }}
-                  >
+                  <label className={formStyles.label}>
                     <Calendar size={14} style={{ display: 'inline', marginRight: '4px' }} /> Date
                   </label>
                   <input
                     type="date"
-                    className="input-control"
+                    className={`${formStyles.input} input-control`}
                     min={new Date().toISOString().split('T')[0]}
                     value={bookingDate}
                     onChange={(e) => setBookingDate(e.target.value)}
@@ -182,19 +150,11 @@ const TableBookingModal = ({ restaurant, onClose = () => {}, onBookingSuccess = 
                 </div>
 
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.82rem',
-                      fontWeight: '700',
-                      color: '#334155',
-                      marginBottom: '6px',
-                    }}
-                  >
+                  <label className={formStyles.label}>
                     <Clock size={14} style={{ display: 'inline', marginRight: '4px' }} /> Time
                   </label>
                   <select
-                    className="input-control"
+                    className={`${formStyles.select} input-control`}
                     value={bookingTime}
                     onChange={(e) => setBookingTime(e.target.value)}
                     required
@@ -209,28 +169,13 @@ const TableBookingModal = ({ restaurant, onClose = () => {}, onBookingSuccess = 
                 </div>
               </div>
 
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '12px',
-                  marginBottom: '14px',
-                }}
-              >
+              <div className={formStyles.formGrid2} style={{ marginBottom: '14px' }}>
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.82rem',
-                      fontWeight: '700',
-                      color: '#334155',
-                      marginBottom: '6px',
-                    }}
-                  >
+                  <label className={formStyles.label}>
                     <Users size={14} style={{ display: 'inline', marginRight: '4px' }} /> Guests
                   </label>
                   <select
-                    className="input-control"
+                    className={`${formStyles.select} input-control`}
                     value={numberOfGuests}
                     onChange={(e) => setNumberOfGuests(e.target.value)}
                   >
@@ -243,19 +188,9 @@ const TableBookingModal = ({ restaurant, onClose = () => {}, onBookingSuccess = 
                 </div>
 
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.82rem',
-                      fontWeight: '700',
-                      color: '#334155',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    Seating Area
-                  </label>
+                  <label className={formStyles.label}>Seating Area</label>
                   <select
-                    className="input-control"
+                    className={`${formStyles.select} input-control`}
                     value={seatingPreference}
                     onChange={(e) => setSeatingPreference(e.target.value)}
                   >
@@ -268,20 +203,10 @@ const TableBookingModal = ({ restaurant, onClose = () => {}, onBookingSuccess = 
               </div>
 
               <div style={{ marginBottom: '20px' }}>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.82rem',
-                    fontWeight: '700',
-                    color: '#334155',
-                    marginBottom: '6px',
-                  }}
-                >
-                  Special Requests (Optional)
-                </label>
+                <label className={formStyles.label}>Special Requests (Optional)</label>
                 <input
                   type="text"
-                  className="input-control"
+                  className={`${formStyles.input} input-control`}
                   placeholder="e.g. Birthday anniversary, quiet corner, wheelchair accessible"
                   value={specialRequest}
                   onChange={(e) => setSpecialRequest(e.target.value)}

@@ -1,0 +1,83 @@
+/* Shared Form Controls & Input Field Styles */
+
+.label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 5px;
+}
+
+.input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1.5px solid #cbd5e1;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.select {
+  width: 100%;
+  border-radius: 12px;
+  border: 1.5px solid #cbd5e1;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.select:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1.5px solid #cbd5e1;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+  resize: vertical;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.textarea:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.formGrid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.formGrid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
