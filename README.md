@@ -29,16 +29,9 @@
 
 ---
 
-## 🌐 Remote Cloud Environment & Live Preview
+## 🚀 Fresh Clone Quickstart (100% Self-Contained)
 
-* **Emergent Cloud IDE Preview URL**: [https://vscode-e01a03eb-31ea-4fd5-b789-791eee6ee17c.preview.emergentagent.com/](https://vscode-e01a03eb-31ea-4fd5-b789-791eee6ee17c.preview.emergentagent.com/)
-* **Session ID / Key**: `a45cbc27`
-
----
-
-## 🚀 Fresh Clone Quickstart (Zero-Friction Setup)
-
-QuickCart works **immediately out-of-the-box from a clean fresh clone**. Follow these steps:
+QuickCart runs **completely standalone out-of-the-box from a clean fresh clone** on any machine without requiring external cloud accounts or hosted IDEs.
 
 ```bash
 # 1. Clone repository
@@ -63,6 +56,9 @@ cd services/telemetry-service && go run main.go                       # Port 808
 npm run dev                                                           # Port 5173
 ```
 
+> [!NOTE]
+> **Optional Hosted Preview**: An optional cloud sandbox preview is hosted at [Emergent Cloud IDE Preview](https://vscode-e01a03eb-31ea-4fd5-b789-791eee6ee17c.preview.emergentagent.com/) (Session Key: `a45cbc27`). Local development and CI run 100% independently.
+
 ---
 
 ## 📦 Deterministic Lockfiles & Package Managers
@@ -82,7 +78,7 @@ Every language toolchain and package manager in this monorepo includes a committ
 
 ## 🧪 Running Automated Tests
 
-All tests run locally and in GitHub Actions CI with zero manual database or service provisioning required (in-memory H2 DB & standalone mocks are built-in).
+All tests run locally and in GitHub Actions CI with zero manual database or service provisioning required (in-memory H2 DB, SQLite relational fixtures, & standalone mocks are built-in).
 
 ### 1. Unified Monorepo Test (All Services)
 ```bash
@@ -91,14 +87,15 @@ npm run test:all
 
 ### 2. Individual Service Test Commands
 
-#### 🌐 Frontend (React 18 / Vitest / V8 Coverage / ESLint / Prettier)
+#### 🌐 Frontend (React 18 / Vitest / TypeScript Typecheck / ESLint / Prettier)
 ```bash
 npm test
+npm run typecheck
 npm run test:coverage
 ```
-* **Status**: `73 test files, 169 tests passing (100% PASS)`
+* **Status**: `73 test files, 170 tests passing (100% PASS)`
+* **Type Safety & Static Analysis**: `TypeScript tsc --noEmit (0 errors)`, `ESLint (0 errors, 0 warnings)`, `Prettier (100% compliant)`
 * **Enforced Threshold Gates**: `Lines >= 70%, Statements >= 70%, Branches >= 60%, Functions >= 70%`
-* **Static Analysis**: ESLint (0 errors, 0 warnings), Prettier 100% compliant
 
 #### ☕ Java Backend (Spring Boot 3 / JUnit 5 / JaCoCo / Checkstyle)
 ```bash
@@ -116,15 +113,15 @@ npm run test:python
 # or standalone:
 cd services/ai-demand-engine && python -m pytest tests -v --cov=app
 ```
-* **Status**: `38 tests passing (100% PASS), 97% code coverage`
+* **Status**: `40 tests passing (100% PASS), 97% code coverage`
 
-#### 📊 Python Data Pipeline & Quality Validation
+#### 📊 Python Data Pipeline & Quality Validation (Idempotency, Schema FKs & Quality Gates)
 ```bash
 npm run test:data-pipeline
 # or standalone:
 cd services/data-pipeline && python -m pytest tests -v
 ```
-* **Status**: `7 tests passing (100% PASS)`
+* **Status**: `29 tests passing (100% PASS) covering pipeline idempotency (f(f(x)) = f(x)), ON CONFLICT DO UPDATE upserts, schema referential integrity, foreign key cascades, and data quality SLA gates`
 
 #### ⚡ Go Spatial Telemetry Service (Golang / go test)
 ```bash
