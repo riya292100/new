@@ -22,11 +22,11 @@
     "test:rust": "cd services/flash-sale-engine && (cargo test || echo \"Rust toolchain optional locally\") && cd ../..",
     "test:all": "npm --prefix frontend run test && cd backend && (mvnw.cmd -B test -Dspring.profiles.active=test || ./mvnw -B test -Dspring.profiles.active=test || mvn -B test -Dspring.profiles.active=test) && cd ../services/ai-demand-engine && (python -m pytest || pytest) && cd ../../services/data-pipeline && (python -m pytest tests || pytest tests) && cd ../telemetry-service && go test -v ./... && cd ../..",
     "lint": "npm --prefix frontend run lint",
-    "lint:sql": "echo \"SQLFluff rules configured in .sqlfluff\"",
+    "lint:sql": "sqlfluff lint backend/src/main/resources/db/migration services/data-pipeline --dialect postgres || python -m sqlfluff lint backend/src/main/resources/db/migration services/data-pipeline --dialect postgres",
     "typecheck": "npm --prefix frontend run typecheck",
     "format": "npm --prefix frontend run format",
     "format:check": "npm --prefix frontend run format:check",
-    "lint:all": "npm --prefix frontend run lint && npm --prefix frontend run format:check"
+    "lint:all": "npm --prefix frontend run lint && npm --prefix frontend run format:check && npm run lint:sql"
   },
   "dependencies": {
     "@stomp/stompjs": "^7.0.0",

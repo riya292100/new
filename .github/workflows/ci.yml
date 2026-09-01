@@ -124,7 +124,7 @@ jobs:
         working-directory: ./services/data-pipeline
         run: python -m pytest tests -v
 
-  sql-lint:
+  lint-sql:
     name: SQL Lint (SQLFluff)
     runs-on: ubuntu-latest
     steps:
@@ -136,14 +136,17 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install SQLFluff
-        run: pip install sqlfluff==3.4.0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-      - name: Lint SQL Migrations & Models
-        run: >
-          sqlfluff lint backend/src/main/resources/db/migration/ services/data-pipeline/models/
-          --dialect postgres
-          --config .sqlfluff
+      - name: Install SQLFluff
+        run: pip install sqlfluff==4.3.0
+
+      - name: Run SQL Linter
+        run: npm run lint:sql
 
   go-ci:
     name: Go Spatial Telemetry Service (go test)
@@ -212,7 +215,7 @@ jobs:
   docker-ci:
     name: Docker Stack Build Validation
     runs-on: ubuntu-latest
-    needs: [ frontend-ci, backend-ci, python-ci, go-ci, rust-ci, sql-lint ]
+    needs: [ frontend-ci, backend-ci, python-ci, go-ci, rust-ci, lint-sql ]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
