@@ -64,3 +64,17 @@ def test_recommender_excludes_target_product():
     recs = rank_frequently_bought_together(target_product_id=1, order_baskets=baskets)
     for item in recs:
         assert item["product_id"] != 1
+
+
+def test_forecast_negative_velocity_handling():
+    # Negative sales entries should be handled gracefully or clamped to 0
+    res = calculate_moving_average_velocity([-10, -5, 0])
+    assert res >= 0.0
+
+
+def test_pricing_surge_gradient_monotonicity():
+    # When load increases with everything else constant, surge multiplier must not decrease
+    low_load = calculate_surge_multiplier(current_store_load=20, max_store_capacity=100, available_riders=10)
+    high_load = calculate_surge_multiplier(current_store_load=90, max_store_capacity=100, available_riders=10)
+    assert high_load["surge_multiplier"] >= low_load["surge_multiplier"]
+

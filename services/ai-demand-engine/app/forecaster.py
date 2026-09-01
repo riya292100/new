@@ -11,7 +11,7 @@ def calculate_moving_average_velocity(sales_history: List[int], window_size: int
     """
     if not sales_history:
         return 0.0
-    effective_window = sales_history[-window_size:]
+    effective_window = [max(0, x) for x in sales_history[-window_size:]]
     return round(sum(effective_window) / len(effective_window), 2)
 
 
@@ -21,10 +21,11 @@ def calculate_exponential_smoothing(sales_history: List[int], alpha: float = 0.3
     """
     if not sales_history:
         return 0.0
-    forecast = float(sales_history[0])
-    for actual in sales_history[1:]:
+    clean_history = [max(0, x) for x in sales_history]
+    forecast = float(clean_history[0])
+    for actual in clean_history[1:]:
         forecast = alpha * actual + (1 - alpha) * forecast
-    return round(forecast, 2)
+    return round(max(0.0, forecast), 2)
 
 
 def estimate_reorder_point(

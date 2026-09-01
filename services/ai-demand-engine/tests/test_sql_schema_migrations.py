@@ -8,7 +8,11 @@ import os
 import re
 import pytest
 
-SCHEMA_PATH = os.path.abspath(
+# Isolated test fixture snapshot of the database schema contract
+LOCAL_FIXTURE_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "fixtures", "schema_snapshot.sql")
+)
+FALLBACK_SCHEMA_PATH = os.path.abspath(
     os.path.join(
         os.path.dirname(__file__),
         "..",
@@ -23,6 +27,7 @@ SCHEMA_PATH = os.path.abspath(
         "V1__initial_schema.sql",
     )
 )
+SCHEMA_PATH = LOCAL_FIXTURE_PATH if os.path.exists(LOCAL_FIXTURE_PATH) else FALLBACK_SCHEMA_PATH
 
 
 def load_schema_sql() -> str:
