@@ -1,9 +1,11 @@
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Arc;
+
+use chrono::Utc;
 use parking_lot::RwLock;
 use uuid::Uuid;
-use chrono::Utc;
+
 use crate::models::{ClaimDealRequest, ClaimDealResponse, FlashDeal};
 
 #[derive(Clone)]

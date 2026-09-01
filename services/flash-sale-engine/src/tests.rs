@@ -1,8 +1,9 @@
+use std::sync::Arc;
+use std::thread;
+
 use crate::allocator::FlashSaleManager;
 use crate::models::{ClaimDealRequest, SignReceiptRequest};
 use crate::signer::ReceiptSigner;
-use std::sync::Arc;
-use std::thread;
 
 #[test]
 fn test_deals_seeded_properly() {
@@ -110,7 +111,10 @@ fn test_concurrent_claims_prevent_overselling() {
     assert_eq!(failed_claims, 30, "Excess 30 claims must be rejected");
 
     let deals = manager.get_all_deals();
-    let dark_roast = deals.iter().find(|d| d.deal_id == "DEAL-DARK-ROAST-60").unwrap();
+    let dark_roast = deals
+        .iter()
+        .find(|d| d.deal_id == "DEAL-DARK-ROAST-60")
+        .unwrap();
     assert_eq!(dark_roast.remaining_stock, 0, "Remaining stock must be exactly 0");
 }
 

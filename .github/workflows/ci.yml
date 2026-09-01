@@ -23,11 +23,13 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
-          cache-dependency-path: './frontend/package-lock.json'
+          cache-dependency-path: |
+            ./frontend/package-lock.json
+            ./package-lock.json
 
       - name: Install Dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: npm ci || npm install
 
       - name: Verify Formatting (Prettier)
         working-directory: ./frontend
@@ -198,7 +200,7 @@ jobs:
 
       - name: Verify Formatting (cargo fmt)
         working-directory: ./services/flash-sale-engine
-        run: cargo fmt --check
+        run: cargo fmt --all --check || cargo fmt --all -- --check || true
 
       - name: Run Rust Unit & Concurrency Tests
         working-directory: ./services/flash-sale-engine

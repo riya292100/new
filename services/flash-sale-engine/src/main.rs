@@ -75,7 +75,7 @@ async fn main() -> std::io::Result<()> {
     let host = std::env::var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string());
     let addr = format!("{host}:{port}");
 
-    println!("🦀 Starting QuickCart Flash Sale & Cryptographic Engine on http://{addr}");
+    println!("Starting QuickCart Flash Sale & Cryptographic Engine on http://{addr}");
 
     let manager = web::Data::new(FlashSaleManager::new());
 

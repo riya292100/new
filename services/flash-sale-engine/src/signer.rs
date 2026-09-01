@@ -1,6 +1,7 @@
+use chrono::Utc;
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
-use chrono::Utc;
+
 use crate::models::{SignReceiptRequest, SignReceiptResponse};
 
 type HmacSha256 = Hmac<Sha256>;
