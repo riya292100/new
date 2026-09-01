@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { X } from 'lucide-react';
+import modalStyles from '../../styles/modal.module.css';
 
 const AdminProductModal = ({
   show,
@@ -14,46 +15,22 @@ const AdminProductModal = ({
   if (!show) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className={modalStyles.overlay} onClick={onClose}>
       <div
-        className="glass-card"
-        style={{
-          width: '100%',
-          maxWidth: '580px',
-          borderRadius: '24px',
-          padding: '28px',
-          background: '#ffffff',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-        }}
+        className={`${modalStyles.cardScrollable} glass-card`}
+        style={{ maxWidth: '580px' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '20px',
-          }}
-        >
-          <h3 style={{ fontSize: '1.25rem', color: '#0f172a' }}>
+        <div className={modalStyles.header}>
+          <h3 className={modalStyles.title}>
             {editingProduct ? 'Edit Catalog Product' : 'Add New Product'}
           </h3>
           <button
             onClick={onClose}
-            style={{
-              background: '#f1f5f9',
-              border: 'none',
-              borderRadius: '50%',
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-            }}
+            className={modalStyles.closeButton}
+            aria-label="Close product modal"
           >
-            <X size={18} color="#64748b" />
+            <X size={18} />
           </button>
         </div>
 

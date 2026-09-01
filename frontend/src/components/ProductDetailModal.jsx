@@ -10,6 +10,7 @@ import logger from '../utils/logger';
 import ProductNutritionalTable from './product/ProductNutritionalTable';
 import RelatedProductsRow from './product/RelatedProductsRow';
 import ProductReviewList from './product/ProductReviewList';
+import modalStyles from '../styles/modal.module.css';
 
 const ProductDetailModal = ({ product, onClose }) => {
   const { addToCart, updateQuantity, getItemQuantity, getItemCartId } = useCart();
@@ -88,40 +89,18 @@ const ProductDetailModal = ({ product, onClose }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className={modalStyles.overlay} onClick={onClose}>
       <div
-        className="glass-card"
-        style={{
-          width: '100%',
-          maxWidth: '680px',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          borderRadius: '24px',
-          padding: '28px',
-          background: '#ffffff',
-          position: 'relative',
-        }}
+        className={`${modalStyles.cardScrollable} glass-card`}
+        style={{ maxWidth: '680px' }}
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: '#f1f5f9',
-            border: 'none',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            zIndex: 10,
-          }}
+          className={modalStyles.closeButtonAbsolute}
+          aria-label="Close product details modal"
         >
-          <X size={20} color="#64748b" />
+          <X size={20} />
         </button>
 
         <div

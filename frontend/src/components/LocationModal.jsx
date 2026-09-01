@@ -3,6 +3,7 @@ import { useLocation } from '../context/LocationContext';
 import { addressApi } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { MapPin, Navigation, Check, X, Plus, Home, Briefcase, Building } from 'lucide-react';
+import modalStyles from '../styles/modal.module.css';
 
 const DEFAULT_PRESET_ADDRESSES = [
   {
@@ -113,48 +114,23 @@ const LocationModal = () => {
   };
 
   return (
-    <div className="modal-overlay" onClick={() => setLocationModalOpen(false)}>
+    <div className={modalStyles.overlay} onClick={() => setLocationModalOpen(false)}>
       <div
-        className="glass-card"
-        style={{
-          width: '100%',
-          maxWidth: '500px',
-          borderRadius: '24px',
-          padding: '28px',
-          background: '#ffffff',
-          position: 'relative',
-        }}
+        className={`${modalStyles.card} glass-card`}
+        style={{ maxWidth: '500px' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '20px',
-          }}
-        >
+        <div className={modalStyles.header}>
           <div>
-            <h3 style={{ fontSize: '1.25rem', color: '#0f172a' }}>Select Delivery Location</h3>
-            <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
-              We deliver instant groceries in 10–30 minutes
-            </p>
+            <h3 className={modalStyles.title}>Select Delivery Location</h3>
+            <p className={modalStyles.subtitle}>We deliver instant groceries in 10–30 minutes</p>
           </div>
           <button
             onClick={() => setLocationModalOpen(false)}
-            style={{
-              background: '#f1f5f9',
-              border: 'none',
-              borderRadius: '50%',
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-            }}
+            className={modalStyles.closeButton}
+            aria-label="Close location modal"
           >
-            <X size={18} color="#64748b" />
+            <X size={18} />
           </button>
         </div>
 
