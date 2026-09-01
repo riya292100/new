@@ -13,6 +13,15 @@
         </encoder>
     </appender>
 
+    <!-- Structured JSON Console Appender for Cloud, Docker & Kubernetes Observability -->
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>{"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}","level":"%level","thread":"%thread","logger":"%logger{36}","correlationId":"%X{correlationId:-none}","traceId":"%X{traceId:-none}","userId":"%X{userId:-ANON}","message":"%replace(%msg){'"','\\'}"}%nopex%n</pattern>
+            </layout>
+        </encoder>
+    </appender>
+
     <!-- File Appender for Production / Audit Logging -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/quickcart-application.log</file>
@@ -34,9 +43,18 @@
     <logger name="org.springframework.security" level="INFO" />
     <logger name="org.hibernate.SQL" level="INFO" />
 
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-    </root>
+    <springProfile name="prod,staging">
+        <root level="INFO">
+            <appender-ref ref="JSON_CONSOLE" />
+            <appender-ref ref="FILE" />
+        </root>
+    </springProfile>
 
+    <springProfile name="!prod &amp; !staging">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="JSON_CONSOLE" />
+            <appender-ref ref="FILE" />
+        </root>
+    </springProfile>
 </configuration>

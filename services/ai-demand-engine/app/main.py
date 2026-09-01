@@ -1,9 +1,9 @@
-"""
-QuickCart AI Demand & Recommendation FastAPI Service
-"""
+import time
+import uuid
 from typing import List, Optional
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request, Response
 from pydantic import BaseModel, Field
+import structlog
 from app.forecaster import (
     calculate_moving_average_velocity,
     calculate_exponential_smoothing,
@@ -12,11 +12,45 @@ from app.forecaster import (
 from app.recommender import rank_frequently_bought_together
 from app.pricing import calculate_surge_multiplier
 
+structlog.configure(
+    processors=[
+        structlog.contextvars.merge_contextvars,
+        structlog.processors.add_log_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.JSONRenderer(),
+    ],
+    logger_factory=structlog.PrintLoggerFactory(),
+    cache_logger_on_first_use=True,
+)
+logger = structlog.get_logger("ai_demand_engine")
+
 app = FastAPI(
     title="QuickCart AI Demand & Intelligence Engine",
     description="Python microservice for demand forecasting, dynamic pricing & product recommendations",
     version="1.0.0"
 )
+
+
+@app.middleware("http")
+async def logging_middleware(request: Request, call_next):
+    request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
+    start_time = time.time()
+
+    structlog.contextvars.clear_contextvars()
+    structlog.contextvars.bind_contextvars(request_id=request_id)
+
+    response = await call_next(request)
+    duration_ms = round((time.time() - start_time) * 1000, 2)
+    response.headers["X-Request-ID"] = request_id
+    logger.info(
+        "http_request",
+        request_id=request_id,
+        path=request.url.path,
+        method=request.method,
+        status=response.status_code,
+        duration_ms=duration_ms,
+    )
+    return response
 
 
 # Pydantic Schemas
