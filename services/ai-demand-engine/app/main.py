@@ -24,6 +24,22 @@ structlog.configure(
 )
 logger = structlog.get_logger("ai_demand_engine")
 
+import os
+
+sentry_dsn = os.getenv("SENTRY_DSN")
+if sentry_dsn and sentry_dsn.strip():
+    try:
+        import sentry_sdk
+        sentry_sdk.init(
+            dsn=sentry_dsn.strip(),
+            traces_sample_rate=1.0,
+            profiles_sample_rate=1.0,
+            environment=os.getenv("AI_ENGINE_ENV", "production"),
+        )
+        logger.info("sentry_initialized", environment=os.getenv("AI_ENGINE_ENV", "production"))
+    except ImportError:
+        logger.warning("sentry_sdk_not_installed")
+
 app = FastAPI(
     title="QuickCart AI Demand & Intelligence Engine",
     description="Python microservice for demand forecasting, dynamic pricing & product recommendations",
