@@ -110,3 +110,74 @@ class DataValidator:
             message=f"Orphan records: {len(orphans)} child rows refer to missing parent PKs" if not passed else "Referential integrity 100% intact",
             details={"orphan_count": len(orphans)}
         )
+
+    @staticmethod
+    def validate_sql_injection_safety(
+        records: List[Dict[str, Any]],
+        text_fields: List[str]
+    ) -> DataQualityResult:
+        """
+        Scans inbound ingestion payloads for SQL injection patterns and unsafe boundary vectors.
+        Enforces strict boundary security before records can touch staging tables or pipelines.
+        """
+        import re
+        sql_injection_patterns = [
+            re.compile(r"(--|#|\/\*)", re.IGNORECASE),
+            re.compile(r"(\b(UNION(\s+ALL)?|DROP\s+TABLE|INSERT\s+INTO|ALTER\s+TABLE|TRUNCATE)\b)", re.IGNORECASE),
+            re.compile(r"(;\s*(DROP|DELETE|UPDATE|INSERT))", re.IGNORECASE),
+            re.compile(r"(\bOR\b\s+['\d]+\s*=\s*['\d]+)", re.IGNORECASE),
+            re.compile(r"(\bEXEC(\s+XP_|\s+SP_)?\b)", re.IGNORECASE),
+        ]
+        violations = []
+        for idx, r in enumerate(records):
+            for field in text_fields:
+                val = r.get(field)
+                if val is not None and isinstance(val, str):
+                    for pat in sql_injection_patterns:
+                        if pat.search(val):
+                            violations.append({
+                                "record_index": idx,
+                                "field": field,
+                                "pattern": pat.pattern,
+                                "sample_content": val[:50]
+                            })
+                            break
+
+        passed = (len(violations) == 0)
+        return DataQualityResult(
+            check_name="sql_injection_safety_check",
+            passed=passed,
+            message=f"SQL injection risk: {len(violations)} malicious payload signatures detected" if not passed else "Zero SQL injection signatures detected; boundary secure",
+            details={"violation_count": len(violations), "violations": violations}
+        )
+
+    @staticmethod
+    def validate_ingestion_boundary(
+        records: List[Dict[str, Any]],
+        max_batch_size: int = 10000,
+        required_metadata_keys: Optional[List[str]] = None
+    ) -> DataQualityResult:
+        """
+        Validates batch sizing and metadata provenance (e.g., source timestamp, ingestion trace ID).
+        """
+        req_keys = required_metadata_keys or ["_ingested_at", "_source_system"]
+        if len(records) > max_batch_size:
+            return DataQualityResult(
+                check_name="ingestion_boundary_check",
+                passed=False,
+                message=f"Batch size {len(records)} exceeds upper boundary limit of {max_batch_size}",
+                details={"batch_size": len(records), "max_limit": max_batch_size}
+            )
+
+        missing_meta_count = 0
+        for r in records:
+            if not all(k in r for k in req_keys):
+                missing_meta_count += 1
+
+        passed = (missing_meta_count == 0)
+        return DataQualityResult(
+            check_name="ingestion_boundary_check",
+            passed=passed,
+            message=f"{missing_meta_count} records missing boundary provenance metadata" if not passed else "Ingestion boundary metadata validated",
+            details={"missing_metadata_records": missing_meta_count}
+        )

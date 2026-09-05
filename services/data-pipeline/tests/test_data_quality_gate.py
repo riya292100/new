@@ -133,3 +133,58 @@ def test_orphan_foreign_keys_trigger_gate_failure():
         )
 
     assert "orphan rate 50.00% exceeds threshold 0.00%" in str(exc_info.value)
+
+
+def test_sql_injection_safety_passes_for_clean_records():
+    """Sanitized business payloads must pass boundary security check."""
+    import sys, os
+    pipeline_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if pipeline_dir not in sys.path:
+        sys.path.insert(0, pipeline_dir)
+    from data_validator import DataValidator
+
+    clean_records = [
+        {"product_id": 1, "name": "Fresh Organic Milk", "description": "100% pure cow milk"},
+        {"product_id": 2, "name": "Brown Bread", "description": "Whole wheat freshly baked"},
+    ]
+    result = DataValidator.validate_sql_injection_safety(clean_records, ["name", "description"])
+    assert result.passed is True
+    assert result.details["violation_count"] == 0
+
+
+def test_sql_injection_safety_detects_malicious_payloads():
+    """Malicious SQL injection payloads must be flagged and rejected."""
+    import sys, os
+    pipeline_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if pipeline_dir not in sys.path:
+        sys.path.insert(0, pipeline_dir)
+    from data_validator import DataValidator
+
+    malicious_records = [
+        {"product_id": 1, "name": "Fresh Milk'; DROP TABLE products; --", "description": "Normal desc"},
+        {"product_id": 2, "name": "Bread", "description": "1' OR '1'='1"},
+        {"product_id": 3, "name": "Apples", "description": "' UNION SELECT * FROM users --"},
+    ]
+    result = DataValidator.validate_sql_injection_safety(malicious_records, ["name", "description"])
+    assert result.passed is False
+    assert result.details["violation_count"] == 3
+
+
+def test_ingestion_boundary_validation():
+    """Validates metadata provenance and batch sizing constraints."""
+    import sys, os
+    pipeline_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if pipeline_dir not in sys.path:
+        sys.path.insert(0, pipeline_dir)
+    from data_validator import DataValidator
+    valid_batch = [
+        {"id": 1, "_ingested_at": "2026-09-05T00:00:00Z", "_source_system": "pos_terminal"},
+        {"id": 2, "_ingested_at": "2026-09-05T00:00:01Z", "_source_system": "pos_terminal"},
+    ]
+    res_valid = DataValidator.validate_ingestion_boundary(valid_batch, max_batch_size=100)
+    assert res_valid.passed is True
+
+    # Missing provenance
+    invalid_batch = [{"id": 1}]
+    res_invalid = DataValidator.validate_ingestion_boundary(invalid_batch, max_batch_size=100)
+    assert res_invalid.passed is False
