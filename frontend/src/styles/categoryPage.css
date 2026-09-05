@@ -1,0 +1,147 @@
+/* Category Page Stylesheet */
+
+.category-page-container {
+  padding-top: 24px;
+  padding-bottom: 60px;
+}
+
+.category-header {
+  margin-bottom: 24px;
+}
+
+.category-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.category-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.category-chips-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  scrollbar-width: thin;
+}
+
+.category-chip {
+  white-space: nowrap;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #334155;
+  transition: all 0.15s ease;
+}
+
+.category-chip:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.category-chip.active {
+  background: #059669;
+  color: #ffffff;
+  border-color: #059669;
+}
+
+.category-main-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .category-main-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.category-sidebar {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  height: fit-content;
+}
+
+.category-sidebar-section {
+  margin-bottom: 24px;
+}
+
+.category-sidebar-section:last-child {
+  margin-bottom: 0;
+}
+
+.category-sidebar-heading {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #475569;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.category-sort-select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.9rem;
+  color: #1e293b;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.category-brand-pill {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #334155;
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: all 0.15s ease;
+}
+
+.category-brand-pill:hover {
+  background: #f1f5f9;
+}
+
+.category-brand-pill.active {
+  background: #ecfdf5;
+  color: #059669;
+  border-color: #a7f3d0;
+  font-weight: 700;
+}
+
+.category-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.category-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+}

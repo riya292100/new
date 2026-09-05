@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
-import { catalogApi, categoryApi } from '../services/api';
-import { FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '../utils/demoConfig';
-import logger from '../utils/logger';
 import { useToast } from '../context/ToastContext';
 import ProductCard from '../components/ProductCard';
 import ProductDetailModal from '../components/ProductDetailModal';
-import { Filter, SlidersHorizontal, ArrowUpDown, Check } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
+import { useCategoryProducts } from '../hooks/useCategoryProducts';
+import '../styles/categoryPage.css';
 
 const CategoryPage = () => {
   const { addToast } = useToast();
@@ -15,164 +14,46 @@ const CategoryPage = () => {
   const searchQuery = searchParams.get('search');
   const isDeal = searchParams.get('deal');
 
-  const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
-  const [currentCategory, setCurrentCategory] = useState(null);
-  const [products, setProducts] = useState(FALLBACK_PRODUCTS);
-  const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('id');
   const [sortDirection, setSortDirection] = useState('ASC');
-  const [selectedBrand, setSelectedBrand] = useState('ALL');
-  const [selectedProduct, setSelectedProduct] = useState(null);
 
-  useEffect(() => {
-    catalogApi
-      .getCategories()
-      .then((res) => {
-        if (res?.data && res.data.length > 0) setCategories(res.data);
-      })
-      .catch((err) => {
-        logger.error('CategoryPage', 'getCategories failed, using fallback', err);
-        setCategories(FALLBACK_CATEGORIES);
-      });
-  }, []);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        if (searchQuery) {
-          const res = await catalogApi.searchProducts(searchQuery).catch((err) => {
-            logger.error('CategoryPage', 'searchProducts failed', err);
-            return null;
-          });
-          const found = res?.data || (Array.isArray(res) ? res : null);
-          if (found && found.length > 0) {
-            setProducts(found);
-          } else {
-            const matches = FALLBACK_PRODUCTS.filter(
-              (p) =>
-                p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                p.brand.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-            setProducts(matches.length > 0 ? matches : FALLBACK_PRODUCTS);
-          }
-          setCurrentCategory({
-            name: `Search: "${searchQuery}"`,
-            description: `Matching products for ${searchQuery}`,
-          });
-        } else if (slug && slug !== 'all') {
-          const catRes = await catalogApi.getCategoryBySlug(slug).catch((err) => {
-            logger.error('CategoryPage', 'getCategoryBySlug failed', err);
-            return null;
-          });
-          const currentCat = catRes?.data ||
-            FALLBACK_CATEGORIES.find((c) => c.slug === slug) || {
-              id: 1,
-              name: slug.replace('-', ' '),
-              description: 'Fresh groceries',
-            };
-          setCurrentCategory(currentCat);
-
-          const prodRes = await catalogApi
-            .getProducts({
-              categoryId: currentCat.id,
-              sortBy,
-              sortDirection,
-              size: 50,
-            })
-            .catch((err) => {
-              logger.error('CategoryPage', 'getProducts for category failed', err);
-              return null;
-            });
-
-          const catProds =
-            prodRes?.data?.content || (Array.isArray(prodRes?.data) ? prodRes.data : null);
-
-          if (catProds && catProds.length > 0) {
-            setProducts(catProds);
-          } else {
-            const fallbackFiltered = FALLBACK_PRODUCTS.filter(
-              (p) => p.categorySlug === slug || p.categoryId === currentCat.id
-            );
-            setProducts(fallbackFiltered.length > 0 ? fallbackFiltered : FALLBACK_PRODUCTS);
-          }
-        } else {
-          setCurrentCategory({
-            name: isDeal ? 'Deals of the Day' : 'All Groceries & Essentials',
-            description: 'Browse full instant delivery catalog',
-          });
-          const res = isDeal
-            ? await catalogApi.getDailyDeals().catch((err) => {
-                logger.error('CategoryPage', 'getDailyDeals failed', err);
-                return null;
-              })
-            : await catalogApi.getProducts({ size: 50, sortBy, sortDirection }).catch((err) => {
-                logger.error('CategoryPage', 'getProducts failed', err);
-                return null;
-              });
-
-          const allProds = res?.data?.content || (Array.isArray(res?.data) ? res.data : null);
-
-          if (allProds && allProds.length > 0) {
-            setProducts(allProds);
-          } else {
-            setProducts(isDeal ? FALLBACK_PRODUCTS.filter((p) => p.isDeal) : FALLBACK_PRODUCTS);
-          }
-        }
-      } catch (err) {
-        logger.error('CategoryPage', 'Error fetching category products, using fallback', err);
-        addToast('Failed to load products', 'error');
-        setProducts(FALLBACK_PRODUCTS);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [slug, searchQuery, isDeal, sortBy, sortDirection]);
-
-  // Extract unique brands for filtering
-  const brands = ['ALL', ...new Set(products.map((p) => p.brand).filter(Boolean))];
-  const filteredProducts =
-    selectedBrand === 'ALL' ? products : products.filter((p) => p.brand === selectedBrand);
+  const {
+    categories,
+    currentCategory,
+    filteredProducts,
+    brands,
+    selectedBrand,
+    setSelectedBrand,
+    selectedProduct,
+    setSelectedProduct,
+    loading,
+  } = useCategoryProducts({
+    slug,
+    searchQuery,
+    isDeal,
+    sortBy,
+    sortDirection,
+    onError: (msg) => addToast(msg, 'error'),
+  });
 
   return (
-    <div className="container" style={{ paddingTop: '24px', paddingBottom: '60px' }}>
+    <div className="container category-page-container">
       {/* Category Header */}
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '1.75rem', color: '#0f172a', marginBottom: '4px' }}>
+      <div className="category-header">
+        <h1 className="category-title">
           {currentCategory?.name || 'Browse Groceries'}
         </h1>
-        <p style={{ fontSize: '0.9rem', color: '#64748b' }}>
+        <p className="category-subtitle">
           {currentCategory?.description || 'Fast 10-30 min delivery'} • {filteredProducts.length}{' '}
           items available
         </p>
       </div>
 
       {/* Category Horizontal Quick Filter Chips */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          overflowX: 'auto',
-          paddingBottom: '12px',
-          marginBottom: '20px',
-        }}
-      >
+      <div className="category-chips-bar">
         <Link
           to="/category/all"
-          style={{
-            whiteSpace: 'nowrap',
-            padding: '8px 16px',
-            borderRadius: '9999px',
-            textDecoration: 'none',
-            fontSize: '0.85rem',
-            fontWeight: '700',
-            background: !slug || slug === 'all' ? '#059669' : '#ffffff',
-            color: !slug || slug === 'all' ? '#ffffff' : '#334155',
-            border: '1px solid #e2e8f0',
-            transition: 'all 0.15s',
-          }}
+          className={`category-chip ${!slug || slug === 'all' ? 'active' : ''}`}
         >
           All Items
         </Link>
@@ -180,18 +61,7 @@ const CategoryPage = () => {
           <Link
             key={c.id}
             to={`/category/${c.slug}`}
-            style={{
-              whiteSpace: 'nowrap',
-              padding: '8px 16px',
-              borderRadius: '9999px',
-              textDecoration: 'none',
-              fontSize: '0.85rem',
-              fontWeight: '700',
-              background: slug === c.slug ? '#059669' : '#ffffff',
-              color: slug === c.slug ? '#ffffff' : '#334155',
-              border: '1px solid #e2e8f0',
-              transition: 'all 0.15s',
-            }}
+            className={`category-chip ${slug === c.slug ? 'active' : ''}`}
           >
             {c.name}
           </Link>
