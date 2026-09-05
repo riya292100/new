@@ -47,3 +47,18 @@ vi.mock('@stomp/stompjs', () => ({
 vi.mock('sockjs-client', () => ({
   default: vi.fn(),
 }));
+
+import { server } from './mockServer.js';
+import { beforeAll, afterEach, afterAll } from 'vitest';
+
+beforeAll(() => {
+  server.listen({ onUnhandledRequest: 'bypass' });
+});
+
+afterEach(() => {
+  server.resetHandlers();
+});
+
+afterAll(() => {
+  server.close();
+});
