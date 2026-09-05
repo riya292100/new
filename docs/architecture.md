@@ -68,3 +68,24 @@ QuickCart is an enterprise-grade 10-minute hyperlocal full-stack quick-commerce 
 1. **Order Placement**: Client sends request -> Spring Boot validates via Bean Validation -> Locks inventory in Redis/PostgreSQL -> Emits `OrderPlacedEvent` to Kafka -> Triggers delivery assignment via `SmartDeliveryAssignmentService` -> Returns immediate confirmation.
 2. **Delivery Tracking**: Driver mobile client updates GPS -> Go Telemetry Service tracks spatial coordinates -> Spring Boot streams live status to customer via WebSocket STOMP / SSE.
 3. **Demand Reordering**: Scheduled batch triggers Python AI Engine -> Calculates sales velocity and safety stock -> Generates replenishment alerts for dark store inventory managers.
+
+---
+
+## 4. Centralized Observability & Structured Error Tracking
+
+QuickCart incorporates end-to-end distributed observability and structured error tracking:
+
+1. **Spring Boot Core Backend**:
+   - Integrated with Sentry APM (`io.sentry:sentry-spring-boot-starter-jakarta`) wired via `com.quickcart.config.SentryConfig`.
+   - Activated via `SENTRY_DSN` environment variable; automatically disabled in test profiles (`spring.profiles.active=test`) for zero-network test hermeticity.
+   - Structured JSON logging via SLF4J / Logback with MDC correlation IDs (`correlationId`, `traceId`, `userId`).
+
+2. **Python AI Demand Engine**:
+   - Integrated with `sentry-sdk` in `app/main.py`, guarded by `SENTRY_DSN`.
+   - Structured JSON logging with `structlog` propagating `request_id` context vars and duration metrics.
+
+3. **Frontend PWA Client**:
+   - Centralized structured logging (`logger.js`) with automatic PII and sensitive token sanitization.
+   - Boundary error catching with `ErrorBoundary.jsx` dispatching to Sentry when `VITE_SENTRY_DSN` is configured.
+   - Client-side metrics and health monitoring via `metrics.js` capturing Core Web Vitals and API latency percentiles.
+   - Client-side boundary schema validation (`validation.js`) enforcing structure and types on all incoming catalog and dining payloads.

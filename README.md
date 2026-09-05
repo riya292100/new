@@ -71,6 +71,7 @@ Every language toolchain and package manager in this monorepo includes a committ
 | **Frontend PWA** | `npm 10+` | [`frontend/package.json`](frontend/package.json) | [`frontend/package-lock.json`](frontend/package-lock.json) |
 | **Core Java Backend** | `Maven 3.9+` | [`backend/pom.xml`](backend/pom.xml) | [`backend/mvnw`](backend/mvnw) / [`backend/mvnw.cmd`](backend/mvnw.cmd) |
 | **AI Demand Engine** | `pip` / Python | [`services/ai-demand-engine/requirements.txt`](services/ai-demand-engine/requirements.txt) | [`services/ai-demand-engine/requirements.lock`](services/ai-demand-engine/requirements.lock) |
+| **Data Engineering Pipeline** | `pip` / Python | [`services/data-pipeline/requirements.txt`](services/data-pipeline/requirements.txt) | [`services/data-pipeline/requirements.lock`](services/data-pipeline/requirements.lock) |
 | **Spatial Telemetry** | `Go Modules` | [`services/telemetry-service/go.mod`](services/telemetry-service/go.mod) | [`services/telemetry-service/go.sum`](services/telemetry-service/go.sum) |
 | **Flash Sale Engine** | `Cargo` | [`services/flash-sale-engine/Cargo.toml`](services/flash-sale-engine/Cargo.toml) | [`services/flash-sale-engine/Cargo.lock`](services/flash-sale-engine/Cargo.lock) |
 
@@ -78,11 +79,18 @@ Every language toolchain and package manager in this monorepo includes a committ
 
 ## 🧪 Running Automated Tests
 
-All tests run locally and in GitHub Actions CI with zero manual database or service provisioning required (in-memory H2 DB, SQLite relational fixtures, & standalone mocks are built-in).
+All tests run locally and in GitHub Actions CI with zero manual database or service provisioning required (in-memory H2 DB, SQLite relational fixtures, MSW mock servers, & standalone mocks are built-in).
 
-### 1. Unified Monorepo Test (All Services)
+### 1. Fresh-Clone Verification & Monorepo Test (All Services)
 ```bash
+# Automated fresh clone verification script
+bash scripts/fresh-clone-check.sh
+
+# Or unified monorepo test across all polyglot services
 npm run test:all
+
+# Or repository root contract & architecture suite
+npm test
 ```
 
 ### 2. Individual Service Test Commands
