@@ -16,6 +16,9 @@ import {
   couponSchema,
   checkoutSchema,
   tableBookingSchema,
+  validateProductPayload,
+  validateCategoryPayload,
+  validateRestaurantPayload,
 } from '../validation';
 
 describe('Validation Utility Suite', () => {
@@ -205,6 +208,34 @@ describe('Validation Utility Suite', () => {
       expect(
         validateSchema(checkoutSchema, { addressId: null, paymentMethod: 'INVALID' }).isValid
       ).toBe(false);
+    });
+  });
+
+  describe('Client-Side Boundary Schema Validation', () => {
+    it('validates product payloads correctly', () => {
+      const validProduct = { id: 101, name: 'Fresh Milk', sellingPrice: 30 };
+      expect(validateProductPayload(validProduct).isValid).toBe(true);
+
+      const invalidProduct = { name: 'No ID' };
+      const res = validateProductPayload(invalidProduct);
+      expect(res.isValid).toBe(false);
+      expect(res.errors.length).toBeGreaterThan(0);
+    });
+
+    it('validates category payloads correctly', () => {
+      const validCategory = { id: 1, name: 'Fruits', slug: 'fruits' };
+      expect(validateCategoryPayload(validCategory).isValid).toBe(true);
+
+      const invalidCategory = { id: 1 };
+      expect(validateCategoryPayload(invalidCategory).isValid).toBe(false);
+    });
+
+    it('validates restaurant payloads correctly', () => {
+      const validRestaurant = { id: 'r1', name: 'Trattoria Roma', cuisine: 'Italian' };
+      expect(validateRestaurantPayload(validRestaurant).isValid).toBe(true);
+
+      const invalidRestaurant = { id: 'r1', name: 'Incomplete' };
+      expect(validateRestaurantPayload(invalidRestaurant).isValid).toBe(false);
     });
   });
 });

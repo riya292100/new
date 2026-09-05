@@ -213,3 +213,56 @@ export const tableBookingSchema = {
   guestName: [(v) => validateRequired(v, 'Guest name', 2)],
   guestPhone: [(v) => validatePhone(v)],
 };
+
+/**
+ * Client-side boundary schema validation for incoming catalog product payloads.
+ * @param {Object} product
+ * @returns {{ isValid: boolean, errors: string[] }}
+ */
+export const validateProductPayload = (product) => {
+  const errors = [];
+  if (!product || typeof product !== 'object') {
+    return { isValid: false, errors: ['Product payload must be a non-null object'] };
+  }
+  if (!product.id) errors.push('Product ID is required');
+  if (!product.name || typeof product.name !== 'string') errors.push('Product name is required');
+  if (product.sellingPrice === undefined && product.price === undefined) {
+    errors.push('Product price is required');
+  } else {
+    const price = Number(product.sellingPrice ?? product.price);
+    if (isNaN(price) || price < 0) errors.push('Product price must be a non-negative number');
+  }
+  return { isValid: errors.length === 0, errors };
+};
+
+/**
+ * Client-side boundary schema validation for incoming category payloads.
+ * @param {Object} category
+ * @returns {{ isValid: boolean, errors: string[] }}
+ */
+export const validateCategoryPayload = (category) => {
+  const errors = [];
+  if (!category || typeof category !== 'object') {
+    return { isValid: false, errors: ['Category payload must be a non-null object'] };
+  }
+  if (!category.id) errors.push('Category ID is required');
+  if (!category.name || typeof category.name !== 'string') errors.push('Category name is required');
+  if (!category.slug || typeof category.slug !== 'string') errors.push('Category slug is required');
+  return { isValid: errors.length === 0, errors };
+};
+
+/**
+ * Client-side boundary schema validation for incoming dining restaurant payloads.
+ * @param {Object} restaurant
+ * @returns {{ isValid: boolean, errors: string[] }}
+ */
+export const validateRestaurantPayload = (restaurant) => {
+  const errors = [];
+  if (!restaurant || typeof restaurant !== 'object') {
+    return { isValid: false, errors: ['Restaurant payload must be a non-null object'] };
+  }
+  if (!restaurant.id) errors.push('Restaurant ID is required');
+  if (!restaurant.name || typeof restaurant.name !== 'string') errors.push('Restaurant name is required');
+  if (!restaurant.cuisine || typeof restaurant.cuisine !== 'string') errors.push('Restaurant cuisine is required');
+  return { isValid: errors.length === 0, errors };
+};
