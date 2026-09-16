@@ -4,7 +4,7 @@ FROM rust:1.80-slim-bookworm AS builder
 RUN apt-get update && apt-get install -y --no-install-recommends pkg-config libssl-dev build-essential ca-certificates && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY Cargo.toml ./
+COPY Cargo.toml Cargo.lock* ./
 COPY src ./src
 
 RUN cargo build --release

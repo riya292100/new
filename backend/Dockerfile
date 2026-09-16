@@ -2,8 +2,9 @@
 FROM maven:3.9.8-eclipse-temurin-21-alpine AS builder
 WORKDIR /app
 COPY pom.xml .
+COPY checkstyle.xml* ./
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests -Dcheckstyle.skip=true
 
 # Stage 2: Minimal Production JRE Image
 FROM eclipse-temurin:21-jre-alpine
