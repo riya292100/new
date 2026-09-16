@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "dev": "npm --prefix frontend run dev",
-    "install:all": "npm --prefix frontend ci || npm --prefix frontend install",
+    "install:all": "(npm ci || npm install) && (npm --prefix frontend ci || npm --prefix frontend install)",
     "build": "npm --prefix frontend run build",
     "build:all": "npm --prefix frontend run build && cd backend && (mvnw package -DskipTests || mvn package -DskipTests)",
     "deploy:hosting": "npm --prefix frontend run build && npx.cmd -y firebase-tools@latest deploy --only hosting",

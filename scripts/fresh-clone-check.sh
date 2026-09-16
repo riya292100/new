@@ -37,6 +37,7 @@ fi
 
 # Step 3: Run comprehensive polyglot test suites (Frontend, Java, Python, Go, Rust)
 echo "[3/4] Running all polyglot unit and integration test suites..."
+chmod +x ./backend/mvnw 2>/dev/null || true
 npm run test:all
 
 # Step 4: System integrity & smoke test validation

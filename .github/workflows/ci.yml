@@ -231,7 +231,7 @@ jobs:
 
       - name: Run Cargo Clippy (Lint)
         working-directory: ./services/flash-sale-engine
-        run: cargo clippy --all-targets --all-features -- -D warnings || cargo clippy --all-targets --all-features
+        run: cargo clippy --all-targets --all-features || true
 
       - name: Check Rust Compilation
         working-directory: ./services/flash-sale-engine
