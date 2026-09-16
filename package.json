@@ -11,6 +11,7 @@
     "install:all": "npm --prefix frontend ci || npm --prefix frontend install",
     "build": "npm --prefix frontend run build",
     "build:all": "npm --prefix frontend run build && cd backend && (mvnw package -DskipTests || mvn package -DskipTests)",
+    "deploy:hosting": "npm --prefix frontend run build && npx.cmd -y firebase-tools@latest deploy --only hosting",
     "test": "npx vitest run tests/monorepo.test.js",
     "test:monorepo": "npx vitest run tests/monorepo.test.js",
     "test:frontend": "npm --prefix frontend run test",
