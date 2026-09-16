@@ -4,7 +4,9 @@ WORKDIR /app
 COPY pom.xml .
 COPY checkstyle.xml* ./
 COPY src ./src
-RUN mvn clean package -DskipTests -Dcheckstyle.skip=true
+ENV MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC"
+RUN mvn clean package -DskipTests -Dcheckstyle.skip=true && \
+    find target -maxdepth 1 -name "*.jar" ! -name "*.original" -exec cp {} /app/app.jar \;
 
 # Stage 2: Minimal Production JRE Image
 FROM eclipse-temurin:21-jre-alpine
@@ -12,7 +14,7 @@ WORKDIR /app
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
-COPY --from=builder /app/target/quickcart-backend-*.jar app.jar
+COPY --from=builder /app/app.jar app.jar
 
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod

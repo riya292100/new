@@ -312,4 +312,10 @@ jobs:
         run: docker compose config
 
       - name: Build Fullstack Polyglot Docker Stack
-        run: docker compose build --progress=plain || docker compose build
+        run: |
+          docker compose build --progress=plain frontend
+          docker compose build --progress=plain telemetry-service
+          docker compose build --progress=plain ai-demand-engine
+          docker compose build --progress=plain flash-sale-engine
+          docker compose build --progress=plain backend
+          docker compose build --progress=plain

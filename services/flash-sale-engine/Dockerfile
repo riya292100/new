@@ -7,6 +7,7 @@ WORKDIR /app
 COPY Cargo.toml Cargo.lock* ./
 COPY src ./src
 
+ENV CARGO_BUILD_JOBS=2
 RUN cargo build --release
 
 # Stage 2: Minimal runtime image
