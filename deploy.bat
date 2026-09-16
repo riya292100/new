@@ -1,52 +1,70 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 cd /d "%~dp0"
+title QuickCart - Google Live Deployment
 
-echo ===================================================
-echo   QuickCart - Google Firebase Live Deployment
-echo ===================================================
+echo ======================================================================
+echo           QuickCart - Launching Live on Google Firebase
+echo ======================================================================
 echo.
 
-echo [1/3] Checking Google Firebase authentication...
-call npx.cmd -y firebase-tools@latest projects:list >nul 2>&1
-if %ERRORLEVEL% NEQ 0 (
+:: 1. Authentication Check
+echo [Step 1/3] Checking Google sign-in status...
+call npx.cmd -y firebase-tools@latest login:list 2>nul | findstr /i "No authorized accounts" >nul
+if %ERRORLEVEL% EQU 0 (
     echo.
-    echo Google sign-in required. A browser window will open now...
-    echo Please select your Google account and click Allow.
+    echo Google sign-in required! Opening browser...
+    echo Please sign in with your Google account and click "Allow".
     echo.
     call npx.cmd -y firebase-tools@latest login
     if %ERRORLEVEL% NEQ 0 (
         echo.
-        echo [ERROR] Google sign-in was cancelled or failed.
+        echo [ERROR] Google sign-in failed or was cancelled.
+        echo.
         pause
         exit /b 1
     )
+) else (
+    echo Successfully signed in to Google!
 )
 
+:: 2. Project Selection
 echo.
-echo [2/3] Building production frontend bundle...
-call npm.cmd --prefix frontend run build
-if %ERRORLEVEL% NEQ 0 (
+echo [Step 2/3] Checking Firebase project configuration...
+if not exist ".firebaserc" (
     echo.
-    echo [ERROR] Frontend build failed.
-    pause
-    exit /b 1
+    echo Here are your Google Firebase projects:
+    echo ----------------------------------------------------------------------
+    call npx.cmd -y firebase-tools@latest projects:list
+    echo ----------------------------------------------------------------------
+    echo.
+    set /p PROJ_CHOICE="Enter your Firebase Project ID (or type 'new' to create one): "
+    if /i "!PROJ_CHOICE!"=="new" (
+        set /p NEW_ID="Enter a unique project ID (e.g. quickcart-live-1234): "
+        call npx.cmd -y firebase-tools@latest projects:create !NEW_ID! --display-name "QuickCart"
+        call npx.cmd -y firebase-tools@latest use !NEW_ID!
+    ) else (
+        call npx.cmd -y firebase-tools@latest use !PROJ_CHOICE!
+    )
+) else (
+    echo Firebase project configuration found (.firebaserc).
 )
 
+:: 3. Deploy
 echo.
-echo [3/3] Deploying live to Google Firebase CDN...
+echo [Step 3/3] Deploying QuickCart live to Google global CDN...
+echo.
 call npx.cmd -y firebase-tools@latest deploy --only hosting
-if %ERRORLEVEL% NEQ 0 (
+
+if %ERRORLEVEL% EQU 0 (
     echo.
-    echo [NOTE] If no project was selected, link your project first with:
-    echo        npx.cmd -y firebase-tools@latest use ^<your-project-id^>
-    pause
-    exit /b 1
+    echo ======================================================================
+    echo   CONGRATULATIONS! QuickCart is officially live on Google!
+    echo ======================================================================
+) else (
+    echo.
+    echo [ERROR] Deployment failed. Please review the message above.
 )
 
-echo.
-echo ===================================================
-echo   SUCCESS! QuickCart is officially live on Google!
-echo ===================================================
 echo.
 pause
