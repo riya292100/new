@@ -262,7 +262,9 @@ export const validateRestaurantPayload = (restaurant) => {
     return { isValid: false, errors: ['Restaurant payload must be a non-null object'] };
   }
   if (!restaurant.id) errors.push('Restaurant ID is required');
-  if (!restaurant.name || typeof restaurant.name !== 'string') errors.push('Restaurant name is required');
-  if (!restaurant.cuisine || typeof restaurant.cuisine !== 'string') errors.push('Restaurant cuisine is required');
+  if (!restaurant.name || typeof restaurant.name !== 'string')
+    errors.push('Restaurant name is required');
+  if (!restaurant.cuisine || typeof restaurant.cuisine !== 'string')
+    errors.push('Restaurant cuisine is required');
   return { isValid: errors.length === 0, errors };
 };

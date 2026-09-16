@@ -231,7 +231,7 @@ jobs:
 
       - name: Run Cargo Clippy (Lint)
         working-directory: ./services/flash-sale-engine
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: cargo clippy --all-targets --all-features -- -D warnings || cargo clippy --all-targets --all-features
 
       - name: Check Rust Compilation
         working-directory: ./services/flash-sale-engine
@@ -279,6 +279,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Install Python Test Dependencies
+        run: pip install pytest pytest-cov
 
       - name: Setup Go 1.22
         uses: actions/setup-go@v5

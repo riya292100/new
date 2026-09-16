@@ -29,6 +29,11 @@ fi
 # Step 2: Install all dependencies across workspaces
 echo "[2/4] Installing dependencies across all workspaces..."
 npm run install:all
+if command -v pip &> /dev/null; then
+    pip install -q pytest pytest-cov 2>/dev/null || true
+elif command -v python3 &> /dev/null; then
+    python3 -m pip install -q pytest pytest-cov 2>/dev/null || true
+fi
 
 # Step 3: Run comprehensive polyglot test suites (Frontend, Java, Python, Go, Rust)
 echo "[3/4] Running all polyglot unit and integration test suites..."

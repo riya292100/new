@@ -138,15 +138,13 @@ const AdminDashboard = () => {
           <div>
             <h1 className="admin-header-h1">Admin Control Center</h1>
             <p className="admin-header-sub">
-              Dark store operations, inventory management, catalog curation, and real-time dispatcher.
+              Dark store operations, inventory management, catalog curation, and real-time
+              dispatcher.
             </p>
           </div>
         </div>
 
-        <button
-          onClick={fetchAllData}
-          className="admin-refresh-btn"
-        >
+        <button onClick={fetchAllData} className="admin-refresh-btn">
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh Data
         </button>
       </div>

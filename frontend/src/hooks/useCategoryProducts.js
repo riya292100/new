@@ -147,9 +147,7 @@ export const useCategoryProducts = ({
   }, [products]);
 
   const filteredProducts = useMemo(() => {
-    return selectedBrand === 'ALL'
-      ? products
-      : products.filter((p) => p.brand === selectedBrand);
+    return selectedBrand === 'ALL' ? products : products.filter((p) => p.brand === selectedBrand);
   }, [products, selectedBrand]);
 
   return {

@@ -61,9 +61,7 @@ describe('useCategoryProducts hook', () => {
   });
 
   it('filters by category slug when specific slug is provided', async () => {
-    const { result } = renderHook(() =>
-      useCategoryProducts({ slug: 'fruits-vegetables' })
-    );
+    const { result } = renderHook(() => useCategoryProducts({ slug: 'fruits-vegetables' }));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -89,9 +87,7 @@ describe('useCategoryProducts hook', () => {
   });
 
   it('handles search query parameter properly', async () => {
-    const { result } = renderHook(() =>
-      useCategoryProducts({ searchQuery: 'Apples' })
-    );
+    const { result } = renderHook(() => useCategoryProducts({ searchQuery: 'Apples' }));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);

@@ -59,7 +59,7 @@ impl ReceiptSigner {
             total_amount,
             items_count,
             store_id,
-            secret_seed: secret.map(|s| s.to_string()),
+            secret_seed: secret.map(str::to_string),
         };
 
         match Self::sign_order_receipt(&req) {

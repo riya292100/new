@@ -146,7 +146,7 @@ impl FlashSaleManager {
             {
                 // Record user claim
                 let mut claims = deal.user_claims.write();
-                let current_user_claims = claims.entry(req.user_id).or_insert(0);
+                let current_user_claims = claims.entry(req.user_id).or_default();
                 *current_user_claims += req.quantity;
 
                 let uuid_str = Uuid::new_v4().to_string();
@@ -169,7 +169,7 @@ impl FlashSaleManager {
     fn seed_default_deals(&self) {
         let mut deals = self.deals.write();
 
-        let sample_deals = vec![
+        let sample_deals = [
             (
                 "DEAL-AVOCADO-80".to_string(),
                 101,

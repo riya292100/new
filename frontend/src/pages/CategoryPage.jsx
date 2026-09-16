@@ -40,9 +40,7 @@ const CategoryPage = () => {
     <div className="container category-page-container">
       {/* Category Header */}
       <div className="category-header">
-        <h1 className="category-title">
-          {currentCategory?.name || 'Browse Groceries'}
-        </h1>
+        <h1 className="category-title">{currentCategory?.name || 'Browse Groceries'}</h1>
         <p className="category-subtitle">
           {currentCategory?.description || 'Fast 10-30 min delivery'} • {filteredProducts.length}{' '}
           items available
