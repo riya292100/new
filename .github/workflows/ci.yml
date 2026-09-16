@@ -313,7 +313,7 @@ jobs:
 
       - name: Build Fullstack Polyglot Docker Stack
         run: |
-          set -e
+          set -eo pipefail
           build_svc() {
             local svc="$1"
             echo "::group::Building Docker Service: $svc"
