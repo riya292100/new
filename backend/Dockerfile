@@ -6,7 +6,7 @@ COPY checkstyle.xml* ./
 COPY src ./src
 ENV MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC"
 RUN mvn clean package -DskipTests -Dcheckstyle.skip=true && \
-    find target -maxdepth 1 -name "*.jar" ! -name "*.original" -exec cp {} /app/app.jar \;
+    cp $(ls target/quickcart-backend-*.jar | grep -v 'original') /app/app.jar
 
 # Stage 2: Minimal Production JRE Image
 FROM eclipse-temurin:21-jre-alpine

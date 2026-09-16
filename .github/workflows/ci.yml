@@ -313,9 +313,39 @@ jobs:
 
       - name: Build Fullstack Polyglot Docker Stack
         run: |
-          docker compose build --progress=plain frontend
-          docker compose build --progress=plain telemetry-service
-          docker compose build --progress=plain ai-demand-engine
-          docker compose build --progress=plain flash-sale-engine
-          docker compose build --progress=plain backend
+          set -e
+          build_svc() {
+            local svc="$1"
+            echo "::group::Building Docker Service: $svc"
+            echo "### Docker Build: $svc" >> $GITHUB_STEP_SUMMARY
+            if docker compose build --progress=plain "$svc" 2>&1 | tee "/tmp/build-$svc.log"; then
+              echo "✅ \`$svc\` built successfully" >> $GITHUB_STEP_SUMMARY
+              echo "::endgroup::"
+            else
+              echo "❌ \`$svc\` failed to build" >> $GITHUB_STEP_SUMMARY
+              echo '```text' >> $GITHUB_STEP_SUMMARY
+              tail -n 100 "/tmp/build-$svc.log" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              echo "::endgroup::"
+              exit 1
+            fi
+          }
+
+          build_svc frontend
+          build_svc telemetry-service
+          build_svc ai-demand-engine
+          build_svc flash-sale-engine
+          build_svc backend
+
+          echo "::group::Fullstack Docker Stack Verification"
           docker compose build --progress=plain
+          echo "::endgroup::"
+          echo "🎉 All 5 QuickCart microservices built successfully into Docker containers!" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Docker Build Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-build-logs
+          path: /tmp/build-*.log
+          if-no-files-found: ignore
