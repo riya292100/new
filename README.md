@@ -23,7 +23,7 @@
   Built with <b>Java 21 / Spring Boot 3</b> (Core & Ledger), <b>Rust</b> (Flash Sale Allocation & Cryptographic Signing), <b>Python</b> (AI Demand & Dynamic Pricing), <b>Go</b> (Spatial Driver Telemetry), and <b>React 18</b> (Storefront PWA).
 </p>
 
-[🌐 Live Demo](https://clothing-harper-lamb-charger.trycloudflare.com) • [Architecture Guide](docs/architecture.md) • [Development Setup](docs/development.md) • [Testing Strategy](docs/testing.md) • [Deployment Guide](docs/deployment.md) • [Security Policy](docs/security.md) • [Troubleshooting](docs/troubleshooting.md) • [Data Engineering](docs/data-engineering.md)
+[🌐 Live Demo (GitHub Pages)](https://riya292100.github.io/new/) • [Architecture Guide](docs/architecture.md) • [Development Setup](docs/development.md) • [Testing Strategy](docs/testing.md) • [Deployment Guide](docs/deployment.md) • [Security Policy](docs/security.md) • [Troubleshooting](docs/troubleshooting.md) • [Data Engineering](docs/data-engineering.md)
 
 </div>
 
